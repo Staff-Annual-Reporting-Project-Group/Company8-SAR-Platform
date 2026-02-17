@@ -1,0 +1,79 @@
+{% extends "reports/base.html" %} {%block body%}
+<div
+  class="flex justify-center items-center w-full text-xl font-medium my-10 text-center border-b border-gray-300 rounded-lg p-6"
+>
+  <h1 class="w-1/2">
+    Welcome to the Staff Reporting Site of University of the West Indies’
+    Department of Computing and Information Technology
+  </h1>
+</div>
+
+<!--Report Card Container-->
+<div class='w-auto px-auto h-auto flex flex-row flex-wrap justify-between '>
+    <!--Report Card-->
+    {%for report in reports%}
+        <div class="w-110 h-70  bg-gray-50 rounded-xl shadow-md p-6 
+                hover:bg-gray-100 flex flex-col overflow-hidden mx-5 my-5">
+
+            <!-- Committee -->
+             {%if report.committee%}
+                <div class="text-sm text-gray-500">
+                    Committee
+                </div>
+            {%endif%}
+
+            <!-- Title & Date -->
+            <div>
+                <!-- Title (single line truncate) -->
+                <h1 class="text-xl font-semibold text-gray-800 tracking-wide 
+                        truncate">
+                   {{report.title}}
+                </h1>
+
+                <p class="text-sm text-gray-500 mt-1">
+                    {{report.date_of_report}}
+                </p>
+            </div>
+
+            <!-- Category Badge & Description -->
+            <div class="space-y-2 flex-1 overflow-hidden mt-2">
+
+                <span class="inline-block bg-green-200 text-green-800 
+                            text-xs font-semibold px-4 py-1 
+                            rounded-full uppercase tracking-wide">
+                    {{report.category}}
+                </span>
+
+                <!-- Multi-line truncate -->
+                <p class="text-gray-700 text-sm leading-relaxed 
+                        line-clamp-3">
+                    {{report.description}}
+                </p>
+
+            </div>
+
+            <!-- Bottom Section -->
+            <div class="flex items-center justify-between pt-3 mt-auto">
+
+                <p class="text-sm text-gray-600 truncate">
+                    By {{report.user.username}}
+                </p>
+
+                <button class="px-4 py-1 text-xs font-medium text-gray-700 
+                            border border-gray-400 rounded-full 
+                            hover:bg-gray-200 transition whitespace-nowrap">
+                    VIEW MORE
+                </button>
+
+            </div>
+            {%if report.participants.exists%}
+            <div class="text-xs text-gray-400 pt-2 "> Includes Participants </div>
+            {%endif%}
+        </div>
+    {%endfor%}
+</div>
+
+
+
+
+{% endblock %}

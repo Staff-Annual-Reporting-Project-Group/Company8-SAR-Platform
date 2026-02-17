@@ -27,7 +27,7 @@ class Report(models.Model):
     title = models.CharField(max_length=200,blank=False,null=False)
     description = models.TextField(null=False,blank=False)
     #category
-    participants = models.ManyToManyField(Participant)
+    participants = models.ManyToManyField(Participant,blank=True,null=True)
     category = models.ForeignKey(Category,on_delete=models.SET_NULL,default=1,null=True)
     committee= models.ForeignKey(Committee,on_delete=models.SET_NULL,null=True,blank=True)
     feature_image = models.ImageField(default='default_image.jpg',upload_to='report_images')
