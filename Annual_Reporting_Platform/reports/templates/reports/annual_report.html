@@ -51,8 +51,21 @@
     {% for report in reports %}
     <div class="report-card bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col">
 
-      {% if report.committee %}
-      <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{{ report.committee }}</div>
+      {% if report.committees.exists %}
+      <div class="flex flex-wrap items-center gap-1 mb-1">
+        {% for c in report.committees.all %}
+          {% if forloop.counter <= 2 %}
+          <span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 border border-indigo-100">
+            {{ c.name }}
+          </span>
+          {% endif %}
+        {% endfor %}
+        {% if report.committees.count > 2 %}
+        <span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-md bg-gray-100 text-gray-500 border border-gray-200">
+          +{{ report.committees.count|add:"-2" }} more
+        </span>
+        {% endif %}
+      </div>
       {% endif %}
 
       <h2 class="font-display text-base font-semibold text-gray-800 leading-tight line-clamp-2 mb-1">

@@ -3,6 +3,7 @@
 
 <div class="flex h-[calc(100vh-65px)] overflow-hidden">
 
+  <!-- ══════════  LEFT SIDEBAR — Recent Reports  ══════════ -->
   <aside class="w-80 shrink-0 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
     <div class="px-5 pt-5 pb-3 border-b border-gray-100">
       <h2 class="font-display text-base font-semibold text-gray-700">Recent Reports</h2>
@@ -19,8 +20,8 @@
         </h3>
         <p class="text-xs text-gray-400 mt-0.5">{{ recent.date_of_report }}</p>
 
-        <!-- Badge + Committee -->
-        <div class="flex items-center gap-2 mt-2">
+        <!-- Badge + Committees -->
+        <div class="flex flex-wrap items-center gap-1.5 mt-2">
           {% if recent.category %}
           {% with cat=recent.category.name|lower %}
           <span class="text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide
@@ -33,9 +34,16 @@
           </span>
           {% endwith %}
           {% endif %}
-          {% if recent.committee %}
-          <span class="text-xs text-gray-400 truncate">{{ recent.committee }}</span>
+          {% with cms=recent.committees.all %}
+          {% if cms %}
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 border border-indigo-100 truncate max-w-[100px]">
+              {{ cms.0.name }}
+            </span>
+            {% if cms|length > 1 %}
+            <span class="text-xs text-gray-400">+{{ cms|length|add:"-1" }}</span>
+            {% endif %}
           {% endif %}
+          {% endwith %}
         </div>
 
         <!-- Description snippet -->
@@ -54,8 +62,10 @@
     </div>
   </aside>
 
+  <!-- ══════════  MAIN CONTENT — Report Detail  ══════════ -->
   <main class="flex-1 overflow-y-auto bg-gray-50 px-10 py-8">
 
+    <!-- Breadcrumb -->
     <nav class="text-xs text-gray-400 mb-6 flex items-center gap-1">
       <a href="{% url 'reports:index' %}" class="hover:text-blue-600 transition">Reports</a>
       <span>/</span>
@@ -64,7 +74,7 @@
 
     <div class="flex gap-8 items-start">
 
-      <!-- Feature Image / Temp-Image Fallback -->
+      <!-- Feature Image / UWI Fallback -->
       <div class="shrink-0 w-48 h-48 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-sm overflow-hidden">
         {% if report.feature_image and report.feature_image.name != 'default_image.jpg' %}
           <img src="{{ report.feature_image.url }}" alt="{{ report.title }}" class="w-full h-full object-cover">
@@ -99,16 +109,22 @@
           {{ report.title }}
         </h1>
 
-        <!-- Data Grid -->
+        <!-- Metadata Grid -->
         <dl class="space-y-2 text-sm">
           <div class="flex items-baseline gap-2">
             <dt class="font-semibold text-gray-500 uppercase tracking-wide text-xs w-28 shrink-0">Date</dt>
             <dd class="text-gray-800 font-medium">{{ report.date_of_report }}</dd>
           </div>
-          {% if report.committee %}
-          <div class="flex items-baseline gap-2">
-            <dt class="font-semibold text-gray-500 uppercase tracking-wide text-xs w-28 shrink-0">Committee</dt>
-            <dd class="text-gray-800">{{ report.committee }}</dd>
+          {% if report.committees.exists %}
+          <div class="flex items-start gap-2">
+            <dt class="font-semibold text-gray-500 uppercase tracking-wide text-xs w-28 shrink-0 pt-0.5">Committee</dt>
+            <dd class="flex flex-wrap gap-1.5">
+              {% for c in report.committees.all %}
+              <span class="inline-block text-xs font-semibold px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-600 border border-indigo-100">
+                {{ c.name }}
+              </span>
+              {% endfor %}
+            </dd>
           </div>
           {% endif %}
           <div class="flex items-baseline gap-2">
@@ -140,6 +156,7 @@
       </div>
     </div>
 
+    <!-- Divider -->
     <div class="my-8 border-t border-gray-200"></div>
 
     <!-- Full Description -->
