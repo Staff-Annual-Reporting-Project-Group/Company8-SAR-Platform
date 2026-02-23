@@ -9,10 +9,6 @@ from .models import Report, Committee, Category, Participant
 from .pdf_utils import generate_annual_pdf, generate_my_reports_pdf
 
 
-# ─────────────────────────────────────────────
-#  Index / Report List
-# ─────────────────────────────────────────────
-
 def index(request):
     reports = Report.objects.select_related('user', 'committee', 'category') \
                             .prefetch_related('participants') \
@@ -134,7 +130,7 @@ def my_reports_pdf(request):
 
 
 # ─────────────────────────────────────────────
-#  Profile — My Reports
+#  Profile My Reports
 # ─────────────────────────────────────────────
 
 @login_required(login_url='reports:login')
