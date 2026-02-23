@@ -24,12 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-nn%zl$p377&4yyb960#g5)q#u6w^lgvfu^&g&h(9+02xdh50&s')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'RENDER' not in os.environ
-
 ALLOWED_HOSTS = ['company8-sar-platform.onrender.com', 'localhost', '127.0.0.1']
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-
-
 
 # Application definition
 
@@ -127,3 +123,9 @@ MEDIA_URL = '/images/'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
+
+DEFAULT_FROM_EMAIL = 'DCIT Reports <noreply@example.com>'
