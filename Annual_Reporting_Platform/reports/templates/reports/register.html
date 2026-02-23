@@ -39,7 +39,7 @@
             <label for="id_first_name" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">First Name</label>
             <input type="text" name="first_name" id="id_first_name"
               value="{{ form_data.first_name|default:'' }}"
-              placeholder="e.g. Anthony" autocomplete="given-name"
+              placeholder="e.g. John" autocomplete="given-name"
               class="w-full rounded-xl border {% if 'first_name' in field_errors %}border-red-400 bg-red-50{% else %}border-gray-200 bg-gray-50{% endif %} px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
             />
           </div>
@@ -47,7 +47,7 @@
             <label for="id_last_name" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Last Name</label>
             <input type="text" name="last_name" id="id_last_name"
               value="{{ form_data.last_name|default:'' }}"
-              placeholder="e.g. Mendez" autocomplete="family-name"
+              placeholder="e.g. Doe" autocomplete="family-name"
               class="w-full rounded-xl border {% if 'last_name' in field_errors %}border-red-400 bg-red-50{% else %}border-gray-200 bg-gray-50{% endif %} px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
             />
           </div>
@@ -154,10 +154,10 @@
 </div>
 
 <script>
-  const toggle  = document.getElementById('toggle-password');
+  const toggle = document.getElementById('toggle-password');
   const pwField = document.getElementById('id_password');
   const eyeIcon = document.getElementById('eye-icon-pw');
-  const eyeOpen   = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
+  const eyeOpen = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
   const eyeClosed = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 012.038-3.546M9.88 9.88a3 3 0 104.243 4.243M3 3l18 18"/>`;
   toggle.addEventListener('click', () => {
     const hidden = pwField.type === 'password';
