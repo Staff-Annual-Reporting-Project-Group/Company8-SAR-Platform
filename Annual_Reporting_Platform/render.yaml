@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: dcit-reports
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn Annual_Reporting_Platform/Annual_Reporting_Platform.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
