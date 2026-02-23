@@ -1,7 +1,29 @@
 from django.urls import path
-from .views import index
+from django.contrib.auth import views as auth_views
+from . import views
 
-app_name= 'reports'
+app_name = 'reports'
+
 urlpatterns = [
-    path('',view=index, name='index'),
+    # Public
+    path('', view=views.index, name='index'),
+    path('report/<int:pk>/', view=views.report_detail, name='report_detail'),
+    path('annual/', view=views.annual_report, name='annual_report'),
+    path('annual/pdf/', view=views.annual_report_pdf, name='annual_report_pdf'),
+
+    # Auth
+    path('login/', view=views.login_view,    name='login'),
+    path('logout/', view=views.logout_view,   name='logout'),
+    path('register/', view=views.register_view, name='register'),
+
+    # Profile & report management
+    path('profile/', view=views.profile, name='profile'),
+    path('profile/download/', view=views.my_reports_pdf,name='my_reports_pdf'),
+    path('profile/create/', view=views.create_report, name='create_report'),
+    path('profile/report/<int:pk>/edit/', view=views.edit_report, name='edit_report'),
+    path('report/<int:pk>/delete/', view=views.delete_report, name='delete_report'),
+    path('profile/account/', view=views.profile, name='account'),
+
+    # Password reset
+    path('password-reset/', auth_views.PasswordResetView.as_view(template_name='reports/password_reset.html'), name='password_reset'),
 ]
