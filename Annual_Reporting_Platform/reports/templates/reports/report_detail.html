@@ -1,0 +1,180 @@
+{% extends "reports/base.html" %}
+{% block body %}
+
+<div class="flex h-[calc(100vh-65px)] overflow-hidden">
+
+  <!-- ══════════  LEFT SIDEBAR — Recent Reports  ══════════ -->
+  <aside class="w-80 shrink-0 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
+    <div class="px-5 pt-5 pb-3 border-b border-gray-100">
+      <h2 class="font-display text-base font-semibold text-gray-700">Recent Reports</h2>
+    </div>
+
+    <div class="flex-1 overflow-y-auto divide-y divide-gray-100">
+      {% for recent in recent_reports %}
+      <a href="{% url 'reports:report_detail' recent.pk %}"
+         class="block px-5 py-4 hover:bg-gray-50 transition group {% if recent.pk == report.pk %}bg-blue-50 border-l-2 border-blue-500{% endif %}">
+
+        <!-- Title -->
+        <h3 class="text-sm font-semibold text-gray-800 group-hover:text-blue-700 line-clamp-1 transition">
+          {{ recent.title }}
+        </h3>
+        <p class="text-xs text-gray-400 mt-0.5">{{ recent.date_of_report }}</p>
+
+        <!-- Badge + Committee -->
+        <div class="flex items-center gap-2 mt-2">
+          {% if recent.category %}
+          {% with cat=recent.category.name|lower %}
+          <span class="text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide
+            {% if cat == 'award' %}badge-award
+            {% elif cat == 'publication' %}badge-publication
+            {% elif cat == 'activity' %}badge-activity
+            {% elif cat == 'initiative' %}badge-initiative
+            {% else %}badge-default{% endif %}">
+            {{ recent.category.name }}
+          </span>
+          {% endwith %}
+          {% endif %}
+          {% if recent.committee %}
+          <span class="text-xs text-gray-400 truncate">{{ recent.committee }}</span>
+          {% endif %}
+        </div>
+
+        <!-- Description snippet -->
+        <p class="text-xs text-gray-500 mt-2 line-clamp-2 leading-relaxed">
+          {{ recent.description }}
+        </p>
+
+        <div class="mt-2 flex items-center justify-between">
+          <span class="text-xs text-gray-400">By {{ recent.user.get_full_name|default:recent.user.username }}</span>
+          <span class="text-xs font-semibold text-blue-500 group-hover:text-blue-700">VIEW MORE →</span>
+        </div>
+      </a>
+      {% empty %}
+      <div class="px-5 py-8 text-center text-sm text-gray-400">No recent reports.</div>
+      {% endfor %}
+    </div>
+  </aside>
+
+  <main class="flex-1 overflow-y-auto bg-gray-50 px-10 py-8">
+
+    <nav class="text-xs text-gray-400 mb-6 flex items-center gap-1">
+      <a href="{% url 'reports:index' %}" class="hover:text-blue-600 transition">Reports</a>
+      <span>/</span>
+      <span class="text-gray-600 font-medium truncate">{{ report.title }}</span>
+    </nav>
+
+    <div class="flex gap-8 items-start">
+
+      <!-- Feature Image / Temp-Image Fallback -->
+      <div class="shrink-0 w-48 h-48 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-sm overflow-hidden">
+        {% if report.feature_image and report.feature_image.name != 'default_image.jpg' %}
+          <img src="{{ report.feature_image.url }}" alt="{{ report.title }}" class="w-full h-full object-cover">
+        {% else %}
+          <div class="text-center p-4">
+            <div class="w-20 h-20 mx-auto mb-2 rounded-full bg-blue-700 flex items-center justify-center">
+              <span class="font-display text-white font-bold text-2xl">UWI</span>
+            </div>
+            <p class="text-xs text-gray-400 leading-tight">The University<br>of the West Indies</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Report Header Info -->
+      <div class="flex-1 min-w-0">
+        <!-- Category Badge -->
+        {% if report.category %}
+        {% with cat=report.category.name|lower %}
+        <span class="inline-block text-xs font-bold px-3 py-0.5 rounded-full uppercase tracking-wide mb-3
+          {% if cat == 'award' %}badge-award
+          {% elif cat == 'publication' %}badge-publication
+          {% elif cat == 'activity' %}badge-activity
+          {% elif cat == 'initiative' %}badge-initiative
+          {% else %}badge-default{% endif %}">
+          {{ report.category.name }}
+        </span>
+        {% endwith %}
+        {% endif %}
+
+        <!-- Title -->
+        <h1 class="font-display text-3xl font-bold text-gray-900 leading-tight mb-5">
+          {{ report.title }}
+        </h1>
+
+        <!-- Data Grid -->
+        <dl class="space-y-2 text-sm">
+          <div class="flex items-baseline gap-2">
+            <dt class="font-semibold text-gray-500 uppercase tracking-wide text-xs w-28 shrink-0">Date</dt>
+            <dd class="text-gray-800 font-medium">{{ report.date_of_report }}</dd>
+          </div>
+          {% if report.committee %}
+          <div class="flex items-baseline gap-2">
+            <dt class="font-semibold text-gray-500 uppercase tracking-wide text-xs w-28 shrink-0">Committee</dt>
+            <dd class="text-gray-800">{{ report.committee }}</dd>
+          </div>
+          {% endif %}
+          <div class="flex items-baseline gap-2">
+            <dt class="font-semibold text-gray-500 uppercase tracking-wide text-xs w-28 shrink-0">Created By</dt>
+            <dd class="text-gray-800">{{ report.user.get_full_name|default:report.user.username }}</dd>
+          </div>
+          {% if report.participants.exists %}
+          <div class="flex items-baseline gap-2">
+            <dt class="font-semibold text-gray-500 uppercase tracking-wide text-xs w-28 shrink-0">Participants</dt>
+            <dd class="text-gray-800">
+              {% for p in report.participants.all|slice:":3" %}
+                {{ p.name }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+              {% if report.participants.count > 3 %}
+                <button id="show-all-participants"
+                  class="ml-1 text-blue-500 hover:text-blue-700 text-xs underline font-medium">
+                  …see all ({{ report.participants.count }})
+                </button>
+                <span id="all-participants" class="hidden">
+                  {% for p in report.participants.all %}
+                    {% if forloop.counter > 3 %}, {{ p.name }}{% endif %}
+                  {% endfor %}
+                </span>
+              {% endif %}
+            </dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="my-8 border-t border-gray-200"></div>
+
+    <!-- Full Description -->
+    <div class="max-w-3xl">
+      <h2 class="font-display text-lg font-semibold text-gray-800 mb-3">Description</h2>
+      <div class="prose prose-gray text-gray-700 text-base leading-relaxed space-y-4">
+        {{ report.description|linebreaksbr }}
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-12">
+      <a href="{% url 'reports:index' %}"
+         class="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-gray-300 text-sm text-gray-600 hover:bg-white hover:shadow-sm transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Reports
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<!-- Show all participants toggle -->
+<script>
+  const showAllBtn = document.getElementById('show-all-participants');
+  if (showAllBtn) {
+    showAllBtn.addEventListener('click', () => {
+      document.getElementById('all-participants').classList.toggle('hidden');
+      showAllBtn.textContent = showAllBtn.textContent === 'hide' ? '…see all' : 'hide';
+    });
+  }
+</script>
+
+{% endblock %}
