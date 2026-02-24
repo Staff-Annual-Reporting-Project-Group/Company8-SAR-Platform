@@ -199,8 +199,9 @@ def generate_annual_pdf(reports, year):
             ['DATE', str(report.date_of_report)],
             ['SUBMITTED BY', report.user.get_full_name() if hasattr(report.user, 'get_full_name') else report.user.username],
         ]
-        if report.committee:
-            meta_rows.append(['COMMITTEE', str(report.committee)])
+        committees = list(report.committees.all())
+        if committees:
+            meta_rows.append(['COMMITTEE', ', '.join(str(c) for c in committees)])
         if report.category:
             meta_rows.append(['CATEGORY', report.category.name])
 
@@ -304,8 +305,9 @@ def generate_my_reports_pdf(reports, user):
         story.append(Spacer(1, 0.3 * cm))
 
         meta_rows = [['DATE', str(report.date_of_report)]]
-        if report.committee:
-            meta_rows.append(['COMMITTEE', str(report.committee)])
+        committees = list(report.committees.all())
+        if committees:
+            meta_rows.append(['COMMITTEE', ', '.join(str(c) for c in committees)])
         if report.category:
             meta_rows.append(['CATEGORY', report.category.name])
         participants = list(report.participants.all())
