@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -64,5 +64,183 @@
     {%block body%}
         
     {%endblock%}
+</body>
+</html> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>DCIT Reports — UWI</title>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        .font-display { font-family: 'Playfair Display', serif; }
+        #filter-modal { display: none; }
+        #filter-modal.open { display: flex; }
+        .badge-award       { background:#dcfce7; color:#166534; }
+        .badge-publication { background:#dbeafe; color:#1e40af; }
+        .badge-activity    { background:#fef9c3; color:#854d0e; }
+        .badge-initiative  { background:#f3e8ff; color:#6b21a8; }
+        .badge-default     { background:#f1f5f9; color:#475569; }
+        .report-card { transition: box-shadow .2s, transform .2s; }
+        .report-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.10); transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<header class="w-full bg-white border-b border-gray-200 px-6 py-3 sticky top-0 z-40 shadow-sm">
+  <div class="flex items-center justify-between gap-4">
+
+    <!-- Logo -->
+    <a href="{% url 'reports:index' %}" class="font-display text-lg font-bold tracking-wide text-gray-800 whitespace-nowrap shrink-0">
+      DCIT REPORTS
+    </a>
+
+    <!-- Search + Filter -->
+    <div class="flex items-center gap-3 flex-1 max-w-2xl">
+      <form method="GET" action="{% url 'reports:index' %}" class="flex-1">
+        <div class="relative">
+          <input name="q" type="text" value="{{ request.GET.q }}" placeholder="Search by title…"
+            class="w-full rounded-full border border-gray-300 bg-gray-50 px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"/>
+          <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <button id="open-filter"
+        class="flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 whitespace-nowrap transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18M7 8h10M10 12h4"/>
+        </svg>
+        Filtering
+      </button>
+    </div>
+
+    <!-- Right Buttons -->
+    <div class="flex items-center gap-2 shrink-0">
+      <!--Annual Report Button-->
+      <a href=""
+         class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v13a2 2 0 01-2 2z"/>
+        </svg>
+        Annual Report
+      </a>
+
+      <!-- Auth button -->
+      {% if request.user.is_authenticated %}
+      <a href=""
+         title="{{ user.get_full_name|default:user.username }}"
+         class="flex items-center justify-center w-9 h-9 rounded-full border border-blue-300 bg-blue-50 hover:bg-blue-100 overflow-hidden transition">
+       
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
+          </svg>
+      </a>
+      {% else %}
+      <!--Login Button-->
+      <a href=""
+         class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
+        </svg>
+        Login
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+<!--Filter Modal-->
+<div id="filter-modal"
+     class="fixed inset-0 z-50 items-start justify-center pt-24 bg-black/20 backdrop-blur-sm"
+     role="dialog" aria-modal="true">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 relative">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="font-display text-lg font-semibold text-gray-800">Filter</h2>
+      <button id="close-filter" class="text-gray-400 hover:text-gray-600 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <form method="GET" action="{% url 'reports:index' %}" class="space-y-4">
+      <!--Period-->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Select a period</label>
+        <select name="period" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+          <option value="Forever" selected>Forever</option>
+          <option value="this_week"  {% if request.GET.period == 'this_week'  %}selected{% endif %}>This Week</option>
+          <option value="this_month" {% if request.GET.period == 'this_month' %}selected{% endif %}>This Month</option>
+          <option value="this_year"  {% if request.GET.period == 'this_year'  %}selected{% endif %}>This Year</option>
+        </select>
+      </div>
+      <!--Category-->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Select Type</label>
+        <select name="category" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+          <option  value="All" selected>All</option>
+          <option value="Award"       {% if request.GET.type == 'Award'       %}selected{% endif %}>Award</option>
+          <option value="Publication" {% if request.GET.type == 'Publication' %}selected{% endif %}>Publication</option>
+          <option value="Activity"    {% if request.GET.type == 'Activity'    %}selected{% endif %}>Activity</option>
+          <option value="Initiative"  {% if request.GET.type == 'Initiative'  %}selected{% endif %}>Initiative</option>
+        </select>
+      </div>
+      <!--Committee-->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Select Committee</label>
+        <select name="committee" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+          <option value="All" selected>All</option>
+          {% for committee in committees %}
+          <option value="{{ committee.id }}" {% if request.GET.committee == committee.id|stringformat:"s" %}selected{% endif %}>
+            {{ committee }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">List Participant</label>
+        <input type="text" name="participant" value="{{ request.GET.participant }}" placeholder="e.g. Anthony Mendez"
+          class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200"/>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <a href="{% url 'reports:index' %}"
+           class="flex-1 text-center rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition font-medium">
+          Reset
+        </a>
+        <button type="submit"
+          class="flex-1 rounded-full bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 transition font-medium">
+          Confirm
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% block body %}{% endblock %}
+
+<script>
+  const modal    = document.getElementById('filter-modal');
+  const openBtn  = document.getElementById('open-filter');
+  const closeBtn = document.getElementById('close-filter');
+  openBtn.addEventListener('click',  () => modal.classList.add('open'));
+  closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', 
+    (e) => 
+      { 
+        if (e.target === modal) 
+          modal.classList.remove('open'); 
+      }
+  ); 
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal.classList.remove('open'); });
+</script>
 </body>
 </html>

@@ -4,5 +4,6 @@ from .models import Report
 
 # Create your views here.
 def index(request):
-    reports = Report.objects.all()
+    keyword = request.GET.get('q') if request.GET.get('q') != None else ''
+    reports = Report.objects.search(keyword)
     return render(request,'reports/index.html',{'reports':reports})
