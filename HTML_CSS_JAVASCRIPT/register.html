@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>.font-display { font-family: ui-sans-serif, system-ui, sans-serif; }</style>
+</head>
+<body class="bg-gray-50">
+
+<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
+  <div class="w-full max-w-lg">
+
+    <!-- Registration Card -->
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 px-8 py-10">
+
+      <!-- Header -->
+      <div class="flex flex-col items-center mb-8">
+        <div class="w-14 h-14 rounded-2xl bg-blue-700 flex items-center justify-center mb-4 shadow-md">
+          <span class="font-display text-white font-bold text-xl">UWI</span>
+        </div>
+        <h1 class="font-display text-2xl font-bold text-gray-900">Create an account</h1>
+        <p class="text-sm text-gray-400 mt-1">DCIT Department staff only</p>
+      </div>
+
+      <form action="login.html" class="space-y-4" novalidate>
+
+        <!-- First & Last name -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="id_first_name" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">First Name</label>
+            <input type="text" name="first_name" id="id_first_name"
+              placeholder="e.g. John" autocomplete="given-name"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+            />
+          </div>
+          <div>
+            <label for="id_last_name" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Last Name</label>
+            <input type="text" name="last_name" id="id_last_name"
+              placeholder="e.g. Doe" autocomplete="family-name"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+            />
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div>
+          <label for="id_username" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Username</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9 9 0 1118.88 6.196M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </span>
+            <input type="text" name="username" id="id_username"
+              placeholder="Choose a username" autocomplete="username"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+            />
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="id_email" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Email</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </span>
+            <input type="email" name="email" id="id_email"
+              placeholder="your@email.com" autocomplete="email"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+            />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="id_password" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Password</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-6a4 4 0 10-8 0v3h8V9z"/>
+              </svg>
+            </span>
+            <input type="password" name="password" id="id_password"
+              placeholder="Create a password" autocomplete="new-password"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-10 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+            />
+            <button type="button" id="toggle-password"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+              <svg id="eye-icon-pw" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+          <!-- Strength bar -->
+          <div class="mt-2 h-1 rounded-full bg-gray-200 overflow-hidden">
+            <div id="strength-bar" class="h-full rounded-full transition-all duration-300 w-0"></div>
+          </div>
+          <p id="strength-label" class="text-xs text-gray-400 mt-1">&nbsp;</p>
+        </div>
+
+        <!-- Confirm Password -->
+        <div>
+          <label for="id_password2" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Confirm Password</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </span>
+            <input type="password" name="password2" id="id_password2"
+              placeholder="Repeat your password" autocomplete="new-password"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+            />
+          </div>
+          <p id="match-label" class="text-xs mt-1 text-gray-400">&nbsp;</p>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+          class="w-full mt-2 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm py-3 transition shadow-sm">
+          Create Account
+        </button>
+
+      </form>
+
+      <!-- Link to login -->
+      <p class="text-center text-sm text-gray-400 mt-6">
+        Already have an account?
+        <a href="login.html" class="text-blue-600 font-medium hover:underline">Sign in</a>
+      </p>
+
+    </div>
+
+    <p class="text-center text-xs text-gray-400 mt-6">
+      DCIT Reports &mdash; University of the West Indies
+    </p>
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById('toggle-password');
+  const pwField = document.getElementById('id_password');
+  const eyeIcon = document.getElementById('eye-icon-pw');
+  const eyeOpen = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
+  const eyeClosed = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 012.038-3.546M9.88 9.88a3 3 0 104.243 4.243M3 3l18 18"/>`;
+  toggle.addEventListener('click', () => {
+    const hidden = pwField.type === 'password';
+    pwField.type = hidden ? 'text' : 'password';
+    eyeIcon.innerHTML = hidden ? eyeClosed : eyeOpen;
+  });
+
+  const strengthBar   = document.getElementById('strength-bar');
+  const strengthLabel = document.getElementById('strength-label');
+  const levels = [
+    { color: 'bg-red-400',    label: 'Weak',   width: 'w-1/4' },
+    { color: 'bg-orange-400', label: 'Fair',   width: 'w-2/4' },
+    { color: 'bg-yellow-400', label: 'Good',   width: 'w-3/4' },
+    { color: 'bg-green-500',  label: 'Strong', width: 'w-full' },
+  ];
+  pwField.addEventListener('input', () => {
+    const v = pwField.value;
+    let score = 0;
+    if (v.length >= 8)          score++;
+    if (/[A-Z]/.test(v))        score++;
+    if (/[0-9]/.test(v))        score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    strengthBar.className = 'h-full rounded-full transition-all duration-300';
+    if (!v) { strengthLabel.textContent = '\u00A0'; return; }
+    const lvl = levels[score - 1] || levels[0];
+    strengthBar.classList.add(lvl.color, lvl.width);
+    strengthLabel.textContent = lvl.label;
+    strengthLabel.className = `text-xs mt-1 ${lvl.color.replace('bg-', 'text-')}`;
+  });
+
+  const pw2Field   = document.getElementById('id_password2');
+  const matchLabel = document.getElementById('match-label');
+  function checkMatch() {
+    if (!pw2Field.value) { matchLabel.textContent = '\u00A0'; return; }
+    if (pwField.value === pw2Field.value) {
+      matchLabel.textContent = '✓ Passwords match';
+      matchLabel.className = 'text-xs mt-1 text-green-600';
+    } else {
+      matchLabel.textContent = '✗ Passwords do not match';
+      matchLabel.className = 'text-xs mt-1 text-red-500';
+    }
+  }
+  pw2Field.addEventListener('input', checkMatch);
+  pwField.addEventListener('input', checkMatch);
+</script>
+</body>
+</html>
