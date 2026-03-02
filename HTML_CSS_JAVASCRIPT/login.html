@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>.font-display { font-family: ui-sans-serif, system-ui, sans-serif; }</style>
+</head>
+<body class="bg-gray-50">
+
+<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
+  <div class="w-full max-w-md">
+
+    <!-- Card -->
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 px-8 py-10">
+
+      <!-- Logo mark -->
+      <div class="flex flex-col items-center mb-8">
+        <div class="w-14 h-14 rounded-2xl bg-blue-700 flex items-center justify-center mb-4 shadow-md">
+          <span class="font-display text-white font-bold text-xl">UWI</span>
+        </div>
+        <h1 class="font-display text-2xl font-bold text-gray-900">Welcome back</h1>
+        <p class="text-sm text-gray-400 mt-1">Sign in to your DCIT Reports account</p>
+      </div>
+
+      <!-- Form -->
+      <form action="profile.html" class="space-y-5" novalidate>
+
+        <!-- Username -->
+        <div>
+          <label for="id_username" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            Username
+          </label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9 9 0 1118.88 6.196M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </span>
+            <input type="text" name="username" id="id_username"
+              placeholder="Enter your username" autocomplete="username"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+            />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="id_password" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Password
+            </label>
+          </div>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-6a4 4 0 10-8 0v3h8V9z"/>
+              </svg>
+            </span>
+            <input type="password" name="password" id="id_password"
+              placeholder="Enter your password" autocomplete="current-password"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-10 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+            />
+            <button type="button" id="toggle-password"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+              aria-label="Toggle password visibility">
+              <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember me + Forgot password -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <input type="checkbox" name="remember_me" id="id_remember_me"
+              class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-200 cursor-pointer"/>
+            <label for="id_remember_me" class="text-sm text-gray-600 cursor-pointer select-none">Keep me signed in</label>
+          </div>
+          <a href="#" class="text-xs text-blue-500 hover:underline">Forgot password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+          class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm py-3 transition shadow-sm mt-2">
+          Sign In
+        </button>
+
+      </form>
+
+      <!-- Link to register -->
+      <p class="text-center text-sm text-gray-400 mt-6">
+        Don't have an account?
+        <a href="register.html" class="text-blue-600 font-medium hover:underline">Create one</a>
+      </p>
+
+    </div>
+
+    <p class="text-center text-xs text-gray-400 mt-6">
+      DCIT Reports &mdash; University of the West Indies
+    </p>
+
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById('toggle-password');
+  const pwField = document.getElementById('id_password');
+  const eyeIcon = document.getElementById('eye-icon');
+  const eyeOpen  = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
+  const eyeClosed = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 012.038-3.546M9.88 9.88a3 3 0 104.243 4.243M3 3l18 18"/>`;
+  toggle.addEventListener('click', () => {
+    const isPassword = pwField.type === 'password';
+    pwField.type = isPassword ? 'text' : 'password';
+    eyeIcon.innerHTML = isPassword ? eyeClosed : eyeOpen;
+  });
+</script>
+</body>
+</html>
