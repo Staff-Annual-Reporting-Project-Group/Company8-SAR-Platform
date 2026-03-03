@@ -81,7 +81,7 @@
         <p class="text-xs text-gray-500 truncate max-w-[60%]">
           By {{ report.user.get_full_name|default:report.user.username }}
         </p>
-        <a href=""
+        <a href="{% url 'reports:report_detail' report.pk %}"
            class="px-3 py-1 text-xs font-semibold text-blue-600 border border-blue-300 rounded-full hover:bg-blue-50 transition whitespace-nowrap">
           VIEW MORE
         </a>

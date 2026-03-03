@@ -121,3 +121,12 @@ STATIC_URL = 'static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'images')
 MEDIA_URL = '/images/'
+
+
+#Needed for caching
+CACHES = {
+    "default":{
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": BASE_DIR / "cache",
+    }
+}
