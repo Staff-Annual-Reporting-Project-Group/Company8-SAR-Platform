@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block body %}
+{%load cache%}
 
 <div class="flex h-[calc(100vh-65px)] overflow-hidden">
 
@@ -10,6 +11,7 @@
     </div>
 
     <div class="flex-1 overflow-y-auto divide-y divide-gray-100">
+      {% cache 500 recent_reports %}
       {% for recent in recent_reports %}
       <a href="{% url 'reports:report_detail' recent.pk %}"
          class="block px-5 py-4 hover:bg-gray-50 transition group {% if recent.pk == report.pk %}bg-blue-50 border-l-2 border-blue-500{% endif %}">
