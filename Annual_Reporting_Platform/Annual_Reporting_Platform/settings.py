@@ -20,14 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-nn%zl$p377&4yyb960#g5)q#u6w^lgvfu^&g&h(9+02xdh50&s'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
 
+SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-nn%zl$p377&4yyb960#g5)q#u6w^lgvfu^&g&h(9+02xdh50&s')
+
+# SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = ['company8-sar-platform.onrender.com', 'localhost', '127.0.0.1']
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 
 
@@ -45,9 +45,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    
     'reports.middleware.TimeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
