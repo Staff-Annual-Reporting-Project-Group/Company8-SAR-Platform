@@ -3,8 +3,8 @@
 
 <div class="flex min-h-[calc(100vh-65px)]">
 
-  <aside class="w-52 shrink-0 bg-white border-r border-gray-200 flex flex-col items-center pt-8 pb-6 px-4 gap-4">
-    <!-- Avatar -->
+  <!-- ══════════  LEFT SIDEBAR  ══════════ -->
+  <aside class="hidden md:flex w-52 shrink-0 bg-white border-r border-gray-200 flex-col items-center pt-8 pb-6 px-4 gap-4">
     <div class="w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-center justify-center">
       {% if profile.avatar %}
         <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-full h-full object-cover">
@@ -14,210 +14,214 @@
         </svg>
       {% endif %}
     </div>
-
     <div class="text-center">
       <p class="font-semibold text-sm text-gray-800 leading-tight">{{ request.user.get_full_name|default:request.user.username }}</p>
       <p class="text-xs text-gray-400 mt-0.5 break-all">{{ request.user.email }}</p>
     </div>
-
     <form method="POST" action="{% url 'reports:logout' %}">
       {% csrf_token %}
-      <button type="submit" class="px-4 py-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white text-xs font-semibold transition">
-        SIGN OUT
-      </button>
+      <button type="submit" class="px-4 py-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white text-xs font-semibold transition">SIGN OUT</button>
     </form>
-
     <nav class="w-full mt-2 space-y-1">
       <a href="{% url 'reports:profile' %}"
-         class="block w-full text-sm text-gray-500 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-50 transition">
-        Reports
-      </a>
+         class="block w-full text-sm text-gray-500 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-50 transition">Reports</a>
       <a href="{% url 'reports:account' %}"
-         class="block w-full text-sm font-semibold text-blue-600 px-3 py-2 rounded-lg bg-blue-50">
-        Account Information
-      </a>
+         class="block w-full text-sm font-semibold text-blue-600 px-3 py-2 rounded-lg bg-blue-50">Account Information</a>
     </nav>
   </aside>
 
-  <main class="flex-1 bg-gray-50 px-8 py-8 overflow-y-auto">
-    <h1 class="font-display text-2xl font-bold text-gray-900 mb-1">Account Information</h1>
-    <p class="text-sm text-gray-400 mb-8">Manage your personal details and password</p>
+  <!-- ══════════  MAIN CONTENT  ══════════ -->
+  <main class="flex-1 bg-gray-50 overflow-y-auto">
+    <div class="max-w-4xl mx-auto px-4 md:px-8 py-8">
 
-    <!-- Alerts -->
-    {% if success %}
-    <div class="mb-6 flex items-center gap-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-xl px-4 py-3">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-      </svg>
-      Changes saved successfully.
-    </div>
-    {% endif %}
-    {% if errors %}
-    <div class="mb-6 bg-red-50 border border-red-200 rounded-xl px-4 py-3 space-y-1">
-      {% for err in errors %}
-      <p class="text-sm text-red-600 flex items-start gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/>
-        </svg>
-        {{ err }}
-      </p>
-      {% endfor %}
-    </div>
-    {% endif %}
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-      <!-- ── Personal Information ── -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h2 class="font-display text-base font-semibold text-gray-800 mb-5">Personal Information</h2>
-
-        <form method="POST" action="{% url 'reports:account' %}" enctype="multipart/form-data" class="space-y-4">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="update_info">
-
-          <!-- Avatar upload -->
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Profile Picture</label>
-            <div class="flex items-center gap-4">
-              <div class="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center shrink-0">
-                {% if profile.avatar %}
-                  <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-full h-full object-cover" id="avatar-preview">
-                {% else %}
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" id="avatar-placeholder" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
-                  </svg>
-                {% endif %}
-              </div>
-              <div class="flex flex-col gap-2">
-                <button type="button" onclick="document.getElementById('avatar-input').click()"
-                  class="px-4 py-1.5 rounded-full border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition">
-                  Upload Photo
-                </button>
-                {% if profile.avatar %}
-                <label class="flex items-center gap-1 text-xs text-red-400 cursor-pointer">
-                  <input type="checkbox" name="delete_avatar" class="accent-red-500"> Remove photo
-                </label>
-                {% endif %}
-              </div>
-            </div>
-            <input type="file" id="avatar-input" name="avatar" accept="image/*" class="hidden">
-          </div>
-
-          <!-- First / Last name -->
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">First Name</label>
-              <input type="text" name="first_name" value="{{ request.user.first_name }}"
-                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"/>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Last Name</label>
-              <input type="text" name="last_name" value="{{ request.user.last_name }}"
-                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"/>
-            </div>
-          </div>
-
-          <!-- Username (read-only) -->
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Username</label>
-            <input type="text" value="{{ request.user.username }}" disabled
-              class="w-full rounded-xl border border-gray-100 bg-gray-100 px-3 py-2.5 text-sm text-gray-400 cursor-not-allowed"/>
-            <p class="text-xs text-gray-400 mt-1">Username cannot be changed.</p>
-          </div>
-
-          <!-- Email -->
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Email</label>
-            <input type="email" name="email" value="{{ request.user.email }}"
-              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"/>
-          </div>
-
-          <!-- Bio -->
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Bio <span class="normal-case text-gray-400">(optional)</span></label>
-            <textarea name="bio" rows="3" placeholder="Tell us a little about yourself…"
-              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition resize-none"
-            >{{ profile.bio|default:'' }}</textarea>
-          </div>
-
-          <button type="submit"
-            class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-2.5 transition shadow-sm">
-            Save Changes
-          </button>
-        </form>
-      </div>
-
-      <!-- ── Change Password ── -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h2 class="font-display text-base font-semibold text-gray-800 mb-5">Change Password</h2>
-
-        <form method="POST" action="{% url 'reports:account' %}" class="space-y-4">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="change_password">
-
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Current Password</label>
-            <div class="relative">
-              <input type="password" name="current_password" id="id_current" placeholder="Enter current password"
-                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 pr-10 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"/>
-              <button type="button" onclick="togglePw('id_current', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">New Password</label>
-            <input type="password" name="new_password" id="id_new_pw" placeholder="At least 8 characters"
-              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"/>
-            <!-- Strength bar -->
-            <div class="mt-2 h-1 rounded-full bg-gray-200 overflow-hidden">
-              <div id="pw-strength-bar" class="h-full rounded-full transition-all duration-300 w-0"></div>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Confirm New Password</label>
-            <input type="password" name="confirm_password" id="id_confirm_pw" placeholder="Repeat new password"
-              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"/>
-            <p id="pw-match-label" class="text-xs mt-1 text-gray-400">&nbsp;</p>
-          </div>
-
-          <button type="submit"
-            class="w-full rounded-xl bg-gray-800 hover:bg-gray-900 text-white font-semibold text-sm py-2.5 transition shadow-sm">
-            Update Password
-          </button>
-        </form>
-
-        <!-- Account stats -->
-        <div class="mt-8 pt-6 border-t border-gray-100 space-y-2">
-          <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Account Stats</h3>
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-500">Total Reports</span>
-            <span class="font-semibold text-gray-800">{{ request.user.report_set.count }}</span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-500">Member Since</span>
-            <span class="font-semibold text-gray-800">{{ request.user.date_joined|date:"M j, Y" }}</span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-500">Last Login</span>
-            <span class="font-semibold text-gray-800">{{ request.user.last_login|date:"M j, Y" }}</span>
-          </div>
+      <!-- ── Profile header ── -->
+      <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-200">
+        <div class="w-16 h-16 rounded-full bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-center justify-center shrink-0 relative cursor-pointer"
+             onclick="document.getElementById('avatar-input').click()">
+          {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-full h-full object-cover" id="avatar-preview">
+          {% else %}
+            <svg id="avatar-placeholder" xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
+            </svg>
+          {% endif %}
+        </div>
+        <div>
+          <p class="font-bold text-gray-900 text-lg leading-tight">{{ request.user.get_full_name|default:request.user.username }}</p>
+          <button type="button" onclick="document.getElementById('avatar-input').click()"
+            class="text-xs text-gray-400 hover:text-blue-600 transition mt-0.5">Edit profile picture</button>
+          <input type="file" id="avatar-input" name="avatar" accept="image/*" class="hidden">
+          {% if profile.avatar %}
+          <label class="flex items-center gap-1 text-xs text-red-400 cursor-pointer mt-1">
+            <input type="checkbox" id="delete-avatar-check" class="accent-red-500 h-3 w-3"> Remove photo
+          </label>
+          {% endif %}
         </div>
       </div>
 
+      <!-- Alerts -->
+      {% if success %}
+      <div class="mb-5 flex items-center gap-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-xl px-4 py-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        Changes saved successfully.
+      </div>
+      {% endif %}
+      {% if errors %}
+      <div class="mb-5 bg-red-50 border border-red-200 rounded-xl px-4 py-3 space-y-1">
+        {% for err in errors %}
+        <p class="text-sm text-red-600">{{ err }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- ── Two-column layout: form | tab nav ── -->
+      <div class="flex gap-6 items-start">
+
+        <!-- Form panel -->
+        <div class="flex-1 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+
+          <!-- ════ ACCOUNT INFORMATION TAB ════ -->
+          {% if active_tab == 'info' %}
+          <div class="px-6 py-4 border-b border-gray-100">
+            <h2 class="font-semibold text-gray-900 text-base">Account Information</h2>
+          </div>
+          <form method="POST" action="{% url 'reports:account' %}" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_info">
+            <!-- hidden avatar input linked from header -->
+            <input type="file" id="avatar-form-input" name="avatar" accept="image/*" class="hidden">
+            <input type="checkbox" name="delete_avatar" id="delete-avatar-form" class="hidden">
+
+            <!-- First / Last name -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">First Name <span class="text-red-400">*</span></label>
+                <input type="text" name="first_name" value="{{ request.user.first_name }}"
+                  class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name <span class="text-red-400">*</span></label>
+                <input type="text" name="last_name" value="{{ request.user.last_name }}"
+                  class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-400">*</span></label>
+              <input type="email" name="email" value="{{ request.user.email }}"
+                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
+            </div>
+
+            <!-- Phone -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Phone <span class="text-red-400">*</span></label>
+              <input type="tel" name="phone" value="{{ profile.phone|default:'' }}"
+                placeholder="1 868 000-0000"
+                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
+            </div>
+
+            <!-- Gender -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Gender <span class="text-red-400">*</span></label>
+              <div class="relative">
+                <select name="gender"
+                  class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition pr-10">
+                  <option value="">Prefer not to say</option>
+                  <option value="male"   {% if profile.gender == 'male'   %}selected{% endif %}>Male</option>
+                  <option value="female" {% if profile.gender == 'female' %}selected{% endif %}>Female</option>
+                  <option value="other"  {% if profile.gender == 'other'  %}selected{% endif %}>Other</option>
+                </select>
+                <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <button type="submit"
+              class="px-5 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold transition">
+              Update Changes
+            </button>
+          </form>
+
+          {% else %}
+          <!-- ════ CHANGE PASSWORD TAB ════ -->
+          <div class="px-6 py-4 border-b border-gray-100">
+            <h2 class="font-semibold text-gray-900 text-base">Change Password</h2>
+          </div>
+          <form method="POST" action="{% url 'reports:account' %}?tab=password" class="px-6 py-5 space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="change_password">
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Old Password</label>
+              <input type="password" name="current_password" placeholder="Enter current password"
+                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+              <input type="password" name="new_password" id="id_new_pw" placeholder="Create new password"
+                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
+              <!-- Strength bar -->
+              <div class="mt-2 h-1 rounded-full bg-gray-200 overflow-hidden">
+                <div id="strength-bar" class="h-full rounded-full transition-all duration-300 w-0"></div>
+              </div>
+              <!-- Requirements list -->
+              <ul class="mt-2 space-y-0.5">
+                <li id="req-len"    class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> Minimum characters 12</li>
+                <li id="req-upper"  class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One uppercase character</li>
+                <li id="req-lower"  class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One lowercase character</li>
+                <li id="req-special"class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One special character</li>
+                <li id="req-num"    class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One number</li>
+              </ul>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+              <input type="password" name="confirm_password" id="id_confirm_pw" placeholder="Repeat new password"
+                class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
+              <p id="match-label" class="text-xs mt-1 text-gray-400">&nbsp;</p>
+            </div>
+
+            <button type="submit"
+              class="px-5 py-2 rounded-lg bg-blue-400 hover:bg-blue-500 text-white text-sm font-semibold transition">
+              Change Password
+            </button>
+          </form>
+          {% endif %}
+
+        </div>
+
+        <!-- ── Right tab nav ── -->
+        <div class="w-44 shrink-0 space-y-2">
+          <a href="{% url 'reports:account' %}?tab=info"
+             class="block text-center px-4 py-2.5 rounded-lg text-sm font-semibold transition
+               {% if active_tab == 'info' %}bg-blue-500 text-white shadow-sm{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+            Account Information
+          </a>
+          <a href="{% url 'reports:account' %}?tab=password"
+             class="block text-center px-4 py-2.5 rounded-lg text-sm font-semibold transition
+               {% if active_tab == 'password' %}bg-blue-500 text-white shadow-sm{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+            Change Password
+          </a>
+        </div>
+
+      </div>
     </div>
   </main>
 </div>
 
 <script>
-  // Avatar preview
+  // ── Sync avatar input from header click to form ───────────────
   document.getElementById('avatar-input').addEventListener('change', function() {
     const file = this.files[0];
     if (!file) return;
+    // Update preview
     const url = URL.createObjectURL(file);
     let img = document.getElementById('avatar-preview');
     const ph = document.getElementById('avatar-placeholder');
@@ -225,53 +229,78 @@
       img = document.createElement('img');
       img.id = 'avatar-preview';
       img.className = 'w-full h-full object-cover';
-      if (ph) ph.replaceWith(img);
-      else document.querySelector('.w-16.rounded-full').appendChild(img);
+      if (ph) ph.replaceWith(img); else this.parentElement.appendChild(img);
     }
     img.src = url;
+    // Transfer file to the form input via DataTransfer
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    const formInput = document.getElementById('avatar-form-input');
+    if (formInput) formInput.files = dt.files;
   });
 
-  // Password visibility toggle
-  function togglePw(id, btn) {
-    const field = document.getElementById(id);
-    field.type = field.type === 'password' ? 'text' : 'password';
+  // Sync delete avatar checkbox
+  const delCheck = document.getElementById('delete-avatar-check');
+  const delForm  = document.getElementById('delete-avatar-form');
+  if (delCheck && delForm) {
+    delCheck.addEventListener('change', () => { delForm.checked = delCheck.checked; });
   }
 
-  // New password strength
-  const newPw  = document.getElementById('id_new_pw');
-  const bar    = document.getElementById('pw-strength-bar');
-  const levels = [
-    { color: 'bg-red-400', width: 'w-1/4' },
-    { color: 'bg-orange-400', width: 'w-2/4' },
-    { color: 'bg-yellow-400', width: 'w-3/4' },
-    { color: 'bg-green-500', width: 'w-full' },
-  ];
-  newPw.addEventListener('input', () => {
-    const v = newPw.value;
-    let score = 0;
-    if (v.length >= 8)          score++;
-    if (/[A-Z]/.test(v))        score++;
-    if (/[0-9]/.test(v))        score++;
-    if (/[^A-Za-z0-9]/.test(v)) score++;
-    bar.className = 'h-full rounded-full transition-all duration-300';
-    if (!v) return;
-    const lvl = levels[score - 1] || levels[0];
-    bar.classList.add(lvl.color, lvl.width);
-  });
+  // ── Password requirements ────────────────────────────────────
+  const pwInput = document.getElementById('id_new_pw');
+  if (pwInput) {
+    const bar     = document.getElementById('strength-bar');
+    const confirm = document.getElementById('id_confirm_pw');
+    const matchLbl= document.getElementById('match-label');
 
-  // Confirm password match
-  const confirmPw  = document.getElementById('id_confirm_pw');
-  const matchLabel = document.getElementById('pw-match-label');
-  confirmPw.addEventListener('input', () => {
-    if (!confirmPw.value) { matchLabel.textContent = '\u00A0'; return; }
-    if (newPw.value === confirmPw.value) {
-      matchLabel.textContent = '✓ Passwords match';
-      matchLabel.className = 'text-xs mt-1 text-green-600';
-    } else {
-      matchLabel.textContent = '✗ Passwords do not match';
-      matchLabel.className = 'text-xs mt-1 text-red-500';
+    const reqs = {
+      'req-len':     v => v.length >= 12,
+      'req-upper':   v => /[A-Z]/.test(v),
+      'req-lower':   v => /[a-z]/.test(v),
+      'req-special': v => /[^A-Za-z0-9]/.test(v),
+      'req-num':     v => /[0-9]/.test(v),
+    };
+    const strengthColors = ['bg-red-400','bg-orange-400','bg-yellow-400','bg-blue-400','bg-green-500'];
+
+    pwInput.addEventListener('input', () => {
+      const v = pwInput.value;
+      let passed = 0;
+      Object.entries(reqs).forEach(([id, fn]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (fn(v)) {
+          el.classList.remove('text-gray-400');
+          el.classList.add('text-green-600');
+          el.querySelector('.req-dot').textContent = '✓';
+          passed++;
+        } else {
+          el.classList.add('text-gray-400');
+          el.classList.remove('text-green-600');
+          el.querySelector('.req-dot').textContent = '•';
+        }
+      });
+      bar.className = 'h-full rounded-full transition-all duration-300';
+      if (v) {
+        const widths = ['w-1/5','w-2/5','w-3/5','w-4/5','w-full'];
+        bar.classList.add(strengthColors[passed - 1] || strengthColors[0], widths[passed - 1] || widths[0]);
+      }
+      checkMatch();
+    });
+
+    if (confirm) {
+      confirm.addEventListener('input', checkMatch);
+      function checkMatch() {
+        if (!confirm.value) { matchLbl.textContent = '\u00A0'; return; }
+        if (pwInput.value === confirm.value) {
+          matchLbl.textContent = '✓ Passwords match';
+          matchLbl.className = 'text-xs mt-1 text-green-600';
+        } else {
+          matchLbl.textContent = '✗ Passwords do not match';
+          matchLbl.className = 'text-xs mt-1 text-red-500';
+        }
+      }
     }
-  });
+  }
 </script>
 
 {% endblock %}
