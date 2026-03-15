@@ -3,6 +3,7 @@
 
 <div class="flex min-h-[calc(100vh-65px)]">
 
+  <!-- ══════════  LEFT SIDEBAR  ══════════ -->
   <aside class="w-52 shrink-0 bg-white border-r border-gray-200 flex flex-col items-center pt-8 pb-6 px-4 gap-4">
     <div class="w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-center justify-center">
       {% if request.user.profile.avatar %}
@@ -32,6 +33,7 @@
     </nav>
   </aside>
 
+  <!-- ══════════  MAIN CONTENT  ══════════ -->
   <main class="flex-1 bg-gray-50 px-8 py-8 overflow-y-auto">
 
     <h1 class="font-display text-2xl font-bold text-gray-900 mb-8">
@@ -91,20 +93,29 @@
           <!-- Participants -->
           <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">Add Participants</label>
-            <p class="text-xs text-gray-400 mb-2">Type a full name and press <kbd class="bg-gray-100 px-1 rounded">Enter</kbd> to add</p>
+            <p class="text-xs text-gray-400 mb-2">Type a name and select from the list, or press <kbd class="bg-gray-100 px-1 rounded">Enter</kbd> to add manually</p>
             <div id="participant-tags" class="flex flex-wrap gap-2 mb-2">
               {% if editing %}
                 {% for p in report.participants.all %}
                 <span class="participant-tag inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full">
                   {{ p.name }}
                   <button type="button" onclick="removeTag(this)" class="ml-1 hover:text-red-500 font-bold">×</button>
-                  <input type="hidden" name="participants" value="{{ p.name }}">
+                  <input type="hidden" name="participants" value="{{ p.name }}{% if p.user %}::{{ p.user.username }}{% endif %}">
                 </span>
                 {% endfor %}
               {% endif %}
             </div>
-            <input type="text" id="participant-input" placeholder="e.g. Jane Doe"
-              class="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"/>
+
+            <!-- Input + dropdown wrapper -->
+            <div class="relative">
+              <input type="text" id="participant-input" placeholder="e.g. Joshua Weekes"
+                autocomplete="off"
+                class="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"/>
+              <!-- Dropdown -->
+              <ul id="participant-dropdown"
+                class="absolute z-20 left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden">
+              </ul>
+            </div>
           </div>
 
         </div>
@@ -206,6 +217,7 @@
 </div>
 
 <script>
+  // ── Restrict date to today and earlier ──────────────────────
   const dateInput = document.getElementById('id_date');
   const today = new Date().toISOString().split('T')[0];
   dateInput.setAttribute('max', today);
@@ -214,28 +226,91 @@
   if (!dateInput.value) dateInput.value = today;
   {% endif %}
 
-  // ── Participant tags ──────────────────────────────────────
-  const input    = document.getElementById('participant-input');
-  const tagsArea = document.getElementById('participant-tags');
+  // -- Participant autocomplete --
+  const input      = document.getElementById('participant-input');
+  const tagsArea   = document.getElementById('participant-tags');
+  const dropdown   = document.getElementById('participant-dropdown');
+  const searchUrl  = "{% url 'reports:user_search' %}";
+  let debounceTimer = null;
+
+  function addTag(name, username) {
+    const value = username ? `${name}::${username}` : name;
+    const span = document.createElement('span');
+    span.className = 'participant-tag inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full';
+    span.innerHTML = `${name} <button type="button" onclick="removeTag(this)" class="ml-1 hover:text-red-500 font-bold">×</button><input type="hidden" name="participants" value="${value}">`;
+    tagsArea.appendChild(span);
+  }
+
+  function removeTag(btn) {
+    btn.closest('.participant-tag').remove();
+  }
+
+  function hideDropdown() {
+    dropdown.classList.add('hidden');
+    dropdown.innerHTML = '';
+  }
+
+  function showDropdown(results) {
+    dropdown.innerHTML = '';
+    if (!results.length) {
+      hideDropdown();
+      return;
+    }
+    results.forEach(user => {
+      const li = document.createElement('li');
+      li.className = 'flex items-center gap-2 px-4 py-2.5 hover:bg-blue-50 cursor-pointer text-sm text-gray-700 transition';
+      li.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-400 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
+        </svg>
+        <span class="font-medium">${user.name}</span>
+        <span class="text-gray-400 text-xs">@${user.username}</span>`;
+      li.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        addTag(user.name, user.username);
+        input.value = '';
+        hideDropdown();
+      });
+      dropdown.appendChild(li);
+    });
+    dropdown.classList.remove('hidden');
+  }
+
+  input.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const q = input.value.trim();
+    if (!q) { hideDropdown(); return; }
+    debounceTimer = setTimeout(async () => {
+      try {
+        const res = await fetch(`${searchUrl}?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        showDropdown(data);
+      } catch { hideDropdown(); }
+    }, 200);
+  });
 
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       const name = input.value.trim();
       if (!name) return;
-      addTag(name);
-      input.value = '';
+      // If dropdown has exactly one result, use it
+      const first = dropdown.querySelector('li');
+      if (first && !dropdown.classList.contains('hidden')) {
+        first.dispatchEvent(new MouseEvent('mousedown'));
+      } else {
+        addTag(name, null);
+        input.value = '';
+        hideDropdown();
+      }
     }
+    if (e.key === 'Escape') hideDropdown();
   });
-  function addTag(name) {
-    const span = document.createElement('span');
-    span.className = 'participant-tag inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full';
-    span.innerHTML = `${name} <button type="button" onclick="removeTag(this)" class="ml-1 hover:text-red-500 font-bold">×</button><input type="hidden" name="participants" value="${name}">`;
-    tagsArea.appendChild(span);
-  }
-  function removeTag(btn) {
-    btn.closest('.participant-tag').remove();
-  }
+
+  input.addEventListener('blur', () => {
+    // Small delay so mousedown on dropdown item fires first
+    setTimeout(hideDropdown, 150);
+  });
 
   // ── Image preview ─────────────────────────────────────────
   const fileInput    = document.getElementById('id_feature_image');
