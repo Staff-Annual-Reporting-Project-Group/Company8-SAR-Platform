@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import timezone
-from django.db.models import Min
+from django.db.models import Min, Q
 
 from .models import Report, Committee, Category, Participant, StaffProfile
 from .pdf_utils import generate_annual_pdf, generate_my_reports_pdf
@@ -319,11 +319,22 @@ def create_report(request):
         if committee_ids:
             report.committees.set(Committee.objects.filter(id__in=committee_ids))
 
-        for name in participant_names:
-            name = name.strip()
-            if name:
-                p, _ = Participant.objects.get_or_create(name=name)
-                report.participants.add(p)
+        for item in participant_names:
+            item = item.strip()
+            if not item:
+                continue
+            # Format: "Full Name::username" when selected from dropdown, else plain name
+            if '::' in item:
+                name, username = item.split('::', 1)
+                linked_user = User.objects.filter(username=username).first()
+            else:
+                name = item
+                linked_user = None
+            p, _ = Participant.objects.get_or_create(name=name)
+            if linked_user:
+                p.user = linked_user
+                p.save(update_fields=['user'])
+            report.participants.add(p)
 
         return redirect('reports:profile')
 
@@ -374,11 +385,21 @@ def edit_report(request, pk):
         report.committees.set(Committee.objects.filter(id__in=committee_ids))
 
         report.participants.clear()
-        for name in request.POST.getlist('participants'):
-            name = name.strip()
-            if name:
-                p, _ = Participant.objects.get_or_create(name=name)
-                report.participants.add(p)
+        for item in request.POST.getlist('participants'):
+            item = item.strip()
+            if not item:
+                continue
+            if '::' in item:
+                name, username = item.split('::', 1)
+                linked_user = User.objects.filter(username=username).first()
+            else:
+                name = item
+                linked_user = None
+            p, _ = Participant.objects.get_or_create(name=name)
+            if linked_user:
+                p.user = linked_user
+                p.save(update_fields=['user'])
+            report.participants.add(p)
 
         return redirect('reports:profile')
 
@@ -432,11 +453,18 @@ def admin_dashboard(request):
     earliest_year = earliest.year if earliest else current_ay_start
     ay_range = range(current_ay_start, earliest_year - 1, -1)
 
+    all_users = User.objects.select_related('profile') \
+                            .order_by('first_name', 'last_name')
+
+    active_tab = request.GET.get('tab', 'accounts')
+
     return render(request, 'reports/admin_dashboard.html', {
         'pending_accounts': pending_accounts,
         'pending_reports': pending_reports,
         'all_reports': all_reports,
+        'all_users': all_users,
         'status_filter': status_filter,
+        'active_tab': active_tab,
         'q': q,
         'ay_range': ay_range,
         'committees': _committees(),
@@ -449,6 +477,31 @@ def admin_dashboard(request):
             'declined_reports': Report.objects.filter(status=Report.STATUS_DECLINED).count(),
         },
     })
+
+
+@admin_required
+def admin_delete_user(request, user_id):
+    if request.method != 'POST':
+        return redirect('reports:admin_dashboard')
+    user = get_object_or_404(User, id=user_id)
+    # Prevent self-deletion
+    if user == request.user:
+        return redirect('reports:admin_dashboard')
+    # Delete Cloudinary images before removing the user
+    if hasattr(user, 'profile') and user.profile.avatar:
+        delete_image(user.profile.avatar)
+    for report in user.report_set.all():
+        if report.feature_image:
+            delete_image(report.feature_image)
+    user.delete()
+    return redirect('reports:admin_dashboard')
+
+
+
+    if request.method == 'POST':
+        for p in StaffProfile.objects.filter(is_approved=False, user__is_active=False):
+            p.approve()
+    return redirect('reports:admin_dashboard')
 
 
 @admin_required
@@ -543,6 +596,31 @@ def user_profile(request, username):
         'is_own': request.user == viewed_user,
         'committees': _committees(),
     })
+
+
+# -- user search API (autocomplete) --
+
+import json as _json
+
+def user_search(request):
+    q = request.GET.get('q', '').strip()
+    if len(q) < 1:
+        return HttpResponse('[]', content_type='application/json')
+
+    users = User.objects.filter(is_active=True).filter(
+        Q(first_name__icontains=q) |
+        Q(last_name__icontains=q) |
+        Q(username__icontains=q)
+    ).values('id', 'username', 'first_name', 'last_name')[:10]
+
+    results = [
+        {
+            'username': u['username'],
+            'name': f"{u['first_name']} {u['last_name']}".strip() or u['username'],
+        }
+        for u in users
+    ]
+    return HttpResponse(_json.dumps(results), content_type='application/json')
 
 
 # -- register --

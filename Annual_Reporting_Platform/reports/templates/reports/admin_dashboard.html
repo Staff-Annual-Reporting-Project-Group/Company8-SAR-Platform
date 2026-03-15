@@ -4,18 +4,17 @@
 <div class="min-h-[calc(100vh-65px)] bg-gray-50">
 <div class="max-w-7xl mx-auto px-4 md:px-8 py-8">
 
-  <!-- ── Page header ── -->
-  <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
     <div>
       <p class="text-xs font-semibold uppercase tracking-widest text-orange-500 mb-1">Staff Only</p>
       <h1 class="font-display text-3xl font-bold text-gray-900">Admin Dashboard</h1>
     </div>
 
-    <!-- Academic year PDF download -->
+    <!-- Academic year PDF -->
     <form method="GET" action="{% url 'reports:admin_academic_pdf' %}" class="flex items-center gap-2">
       <label class="text-sm text-gray-600 font-medium">Academic Year:</label>
-      <select name="ay"
-        class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-200">
+      <select name="ay" class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-200">
         {% for ay in ay_range %}
         <option value="{{ ay }}">{{ ay }}/{{ ay|add:"1" }}</option>
         {% endfor %}
@@ -30,8 +29,8 @@
     </form>
   </div>
 
-  <!-- ── Stats row ── -->
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+  <!-- Stats row -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center">
       <p class="font-display text-2xl font-bold text-orange-500">{{ stats.pending_accounts }}</p>
       <p class="text-xs text-gray-400 mt-1 leading-tight">Pending Accounts</p>
@@ -58,9 +57,36 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════
-       SECTION 1 — Pending Account Approvals
-  ══════════════════════════════════════════ -->
+  <!-- Tab nav -->
+  <div class="flex gap-3 mb-8">
+    <a href="?tab=accounts"
+       class="px-6 py-2.5 rounded-lg text-sm font-semibold transition
+         {% if active_tab == 'accounts' %}bg-orange-500 text-white shadow-sm{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+      Accounts
+      {% if stats.pending_accounts > 0 %}
+      <span class="ml-1.5 inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/30 text-xs font-bold">
+        {{ stats.pending_accounts }}
+      </span>
+      {% endif %}
+    </a>
+    <a href="?tab=reports"
+       class="px-6 py-2.5 rounded-lg text-sm font-semibold transition
+         {% if active_tab == 'reports' %}bg-orange-500 text-white shadow-sm{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+      Reports
+      {% if stats.pending_reports > 0 %}
+      <span class="ml-1.5 inline-flex items-center justify-center w-5 h-5 rounded-full
+        {% if active_tab == 'reports' %}bg-white/30{% else %}bg-yellow-400{% endif %} text-xs font-bold
+        {% if active_tab != 'reports' %}text-white{% endif %}">
+        {{ stats.pending_reports }}
+      </span>
+      {% endif %}
+    </a>
+  </div>
+
+  <!-- ACCOUNTS TAB -->
+  {% if active_tab == 'accounts' %}
+
+  <!-- Account Approvals -->
   <section class="mb-10">
     <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
       <div class="flex items-center gap-3">
@@ -104,7 +130,7 @@
               <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center shrink-0">
                   {% if p.avatar %}
-                  <img src="{{ p.avatar.url }}" class="w-full h-full object-cover">
+                  <img src="{{ p.avatar }}" class="w-full h-full object-cover">
                   {% else %}
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
                     <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
@@ -124,18 +150,12 @@
                 <form method="POST" action="{% url 'reports:admin_account_action' p.user.id %}">
                   {% csrf_token %}
                   <input type="hidden" name="action" value="approve">
-                  <button type="submit"
-                    class="px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs font-semibold transition">
-                    Approve
-                  </button>
+                  <button type="submit" class="px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs font-semibold transition">Approve</button>
                 </form>
                 <form method="POST" action="{% url 'reports:admin_account_action' p.user.id %}">
                   {% csrf_token %}
                   <input type="hidden" name="action" value="deny">
-                  <button type="submit"
-                    class="px-3 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-semibold transition">
-                    Deny
-                  </button>
+                  <button type="submit" class="px-3 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-semibold transition">Deny</button>
                 </form>
               </div>
             </td>
@@ -151,9 +171,86 @@
     {% endif %}
   </section>
 
-  <!-- ══════════════════════════════════════════
-       SECTION 2 — Pending Report Approvals
-  ══════════════════════════════════════════ -->
+  <!-- All Accounts -->
+  <section>
+    <h2 class="font-display text-xl font-bold text-gray-800 mb-4">All Accounts</h2>
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 border-b border-gray-100">
+          <tr>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">User</th>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Email</th>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide hidden md:table-cell">Joined</th>
+            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+            <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for u in all_users %}
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-5 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center shrink-0">
+                  {% if u.profile.avatar %}
+                  <img src="{{ u.profile.avatar }}" class="w-full h-full object-cover">
+                  {% else %}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
+                  </svg>
+                  {% endif %}
+                </div>
+                <div>
+                  <a href="{% url 'reports:user_profile' u.username %}"
+                     class="font-semibold text-gray-800 hover:text-blue-600 transition">
+                    {{ u.get_full_name|default:u.username }}
+                  </a>
+                  <p class="text-xs text-gray-400">@{{ u.username }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-gray-600 text-xs hidden md:table-cell">{{ u.email }}</td>
+            <td class="px-5 py-4 text-gray-400 text-xs hidden md:table-cell">{{ u.date_joined|date:"M j, Y" }}</td>
+            <td class="px-5 py-4">
+              {% if u.is_superuser %}
+              <span class="status-badge bg-purple-100 text-purple-700">Superuser</span>
+              {% elif u.is_staff %}
+              <span class="status-badge bg-orange-100 text-orange-700">Staff</span>
+              {% elif u.is_active and u.profile.is_approved %}
+              <span class="status-badge status-approved">Active</span>
+              {% elif not u.is_active %}
+              <span class="status-badge status-pending">Pending</span>
+              {% else %}
+              <span class="status-badge status-declined">Inactive</span>
+              {% endif %}
+            </td>
+            <td class="px-5 py-4">
+              {% if u != request.user and not u.is_superuser %}
+              <div class="flex items-center justify-end gap-2">
+                {% if not u.profile.is_approved %}
+                <form method="POST" action="{% url 'reports:admin_account_action' u.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="approve">
+                  <button type="submit" class="px-2.5 py-1 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 text-xs font-semibold transition">✓</button>
+                </form>
+                {% endif %}
+                <button onclick="openDeleteUserModal('{{ u.id }}', '{{ u.get_full_name|default:u.username|escapejs }}')"
+                  class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-600 text-xs font-semibold transition">🗑</button>
+              </div>
+              {% else %}
+              <span class="text-xs text-gray-300">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- REPORTS TAB -->
+  {% else %}
+
+  <!-- Pending Reports -->
   <section class="mb-10">
     <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
       <div class="flex items-center gap-3">
@@ -195,25 +292,18 @@
           <tr class="hover:bg-gray-50 transition">
             <td class="px-5 py-4">
               <a href="{% url 'reports:report_detail' r.pk %}"
-                 class="font-semibold text-gray-800 hover:text-blue-600 transition line-clamp-1">
-                {{ r.title }}
-              </a>
+                 class="font-semibold text-gray-800 hover:text-blue-600 transition line-clamp-1">{{ r.title }}</a>
               {% if r.category %}
               {% with cat=r.category.name|lower %}
               <span class="inline-block mt-1 text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide
-                {% if cat == 'award' %}badge-award
-                {% elif cat == 'publication' %}badge-publication
-                {% elif cat == 'activity' %}badge-activity
-                {% elif cat == 'initiative' %}badge-initiative
-                {% else %}badge-default{% endif %}">
+                {% if cat == 'award' %}badge-award{% elif cat == 'publication' %}badge-publication{% elif cat == 'initiative' %}badge-initiative{% else %}badge-default{% endif %}">
                 {{ r.category.name }}
               </span>
               {% endwith %}
               {% endif %}
             </td>
             <td class="px-5 py-4">
-              <a href="{% url 'reports:user_profile' r.user.username %}"
-                 class="text-blue-600 hover:underline text-sm">
+              <a href="{% url 'reports:user_profile' r.user.username %}" class="text-blue-600 hover:underline text-sm">
                 {{ r.user.get_full_name|default:r.user.username }}
               </a>
             </td>
@@ -223,20 +313,14 @@
                 <form method="POST" action="{% url 'reports:admin_report_action' r.pk %}">
                   {% csrf_token %}
                   <input type="hidden" name="action" value="approve">
-                  <input type="hidden" name="next" value="{% url 'reports:admin_dashboard' %}">
-                  <button type="submit"
-                    class="px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs font-semibold transition">
-                    Approve
-                  </button>
+                  <input type="hidden" name="next" value="?tab=reports">
+                  <button type="submit" class="px-3 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-white text-xs font-semibold transition">Approve</button>
                 </form>
                 <form method="POST" action="{% url 'reports:admin_report_action' r.pk %}">
                   {% csrf_token %}
                   <input type="hidden" name="action" value="decline">
-                  <input type="hidden" name="next" value="{% url 'reports:admin_dashboard' %}">
-                  <button type="submit"
-                    class="px-3 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-semibold transition">
-                    Decline
-                  </button>
+                  <input type="hidden" name="next" value="?tab=reports">
+                  <button type="submit" class="px-3 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-semibold transition">Decline</button>
                 </form>
               </div>
             </td>
@@ -252,15 +336,12 @@
     {% endif %}
   </section>
 
-  <!-- ══════════════════════════════════════════
-       SECTION 3 — All Reports (manage)
-  ══════════════════════════════════════════ -->
+  <!-- All Reports -->
   <section>
     <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
       <h2 class="font-display text-xl font-bold text-gray-800">All Reports</h2>
-
-      <!-- Search + status filter -->
       <form method="GET" action="{% url 'reports:admin_dashboard' %}" class="flex items-center gap-2 flex-wrap">
+        <input type="hidden" name="tab" value="reports">
         <div class="relative">
           <input type="text" name="q" value="{{ q }}" placeholder="Search reports…"
             class="rounded-full border border-gray-300 bg-white pl-8 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200 w-48"/>
@@ -278,7 +359,7 @@
           <option value="declined" {% if status_filter == 'declined' %}selected{% endif %}>Declined</option>
         </select>
         {% if q or status_filter %}
-        <a href="{% url 'reports:admin_dashboard' %}" class="text-xs text-red-400 hover:text-red-600 underline">Clear</a>
+        <a href="?tab=reports" class="text-xs text-red-400 hover:text-red-600 underline">Clear</a>
         {% endif %}
       </form>
     </div>
@@ -300,25 +381,18 @@
           <tr class="hover:bg-gray-50 transition">
             <td class="px-5 py-4 max-w-xs">
               <a href="{% url 'reports:report_detail' r.pk %}"
-                 class="font-semibold text-gray-800 hover:text-blue-600 transition line-clamp-1 block">
-                {{ r.title }}
-              </a>
+                 class="font-semibold text-gray-800 hover:text-blue-600 transition line-clamp-1 block">{{ r.title }}</a>
             </td>
             <td class="px-5 py-4 hidden md:table-cell">
-              <a href="{% url 'reports:user_profile' r.user.username %}"
-                 class="text-blue-600 hover:underline text-xs">
+              <a href="{% url 'reports:user_profile' r.user.username %}" class="text-blue-600 hover:underline text-xs">
                 {{ r.user.get_full_name|default:r.user.username }}
               </a>
             </td>
             <td class="px-5 py-4 text-gray-400 text-xs hidden md:table-cell">{{ r.date_of_report|date:"M j, Y" }}</td>
             <td class="px-5 py-4">
-              {% if r.status == 'approved' %}
-              <span class="status-badge status-approved">Approved</span>
-              {% elif r.status == 'declined' %}
-              <span class="status-badge status-declined">Declined</span>
-              {% else %}
-              <span class="status-badge status-pending">Pending</span>
-              {% endif %}
+              {% if r.status == 'approved' %}<span class="status-badge status-approved">Approved</span>
+              {% elif r.status == 'declined' %}<span class="status-badge status-declined">Declined</span>
+              {% else %}<span class="status-badge status-pending">Pending</span>{% endif %}
             </td>
             <td class="px-5 py-4">
               <div class="flex items-center justify-end gap-1.5 flex-wrap">
@@ -359,7 +433,58 @@
     {% endif %}
   </section>
 
+  {% endif %}
+
 </div>
 </div>
+
+<!-- Delete user confirmation modal -->
+<div id="delete-user-modal"
+     class="fixed inset-0 z-50 hidden items-center justify-center bg-black/30 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-8 text-center">
+    <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/>
+      </svg>
+    </div>
+    <p class="text-gray-700 text-base font-medium mb-1">Delete account?</p>
+    <p class="text-sm text-gray-400 mb-1">
+      <span id="delete-user-name" class="font-semibold text-gray-700"></span>
+    </p>
+    <p class="text-xs text-red-400 mb-6">This will permanently delete their account and all their reports.</p>
+    <div class="flex gap-3">
+      <button onclick="closeDeleteUserModal()"
+        class="flex-1 px-4 py-2 rounded-full border border-gray-300 text-sm text-gray-600 hover:bg-gray-50 font-semibold transition">
+        Cancel
+      </button>
+      <form id="delete-user-form" method="POST" action="" class="flex-1">
+        {% csrf_token %}
+        <button type="submit"
+          class="w-full px-4 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white text-sm font-semibold transition">
+          Delete
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openDeleteUserModal(userId, name) {
+    document.getElementById('delete-user-name').textContent = name;
+    document.getElementById('delete-user-form').action = '/reports/admin-panel/account/' + userId + '/delete/';
+    const modal = document.getElementById('delete-user-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+  function closeDeleteUserModal() {
+    const modal = document.getElementById('delete-user-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+  document.getElementById('delete-user-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteUserModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDeleteUserModal(); });
+</script>
 
 {% endblock %}

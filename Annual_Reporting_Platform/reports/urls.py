@@ -25,9 +25,12 @@ urlpatterns = [
     path('profile/account/', view=views.account, name='account'),
     path('user/<str:username>/', view=views.user_profile, name='user_profile'),
 
+    path('api/user-search/', view=views.user_search, name='user_search'),
+
     # Admin
     path('admin-panel/', view=views.admin_dashboard, name='admin_dashboard'),
     path('admin-panel/account/<int:user_id>/', view=views.admin_account_action, name='admin_account_action'),
+    path('admin-panel/account/<int:user_id>/delete/', view=views.admin_delete_user, name='admin_delete_user'),
     path('admin-panel/accounts/approve-all/', view=views.admin_approve_all_accounts, name='admin_approve_all_accounts'),
     path('admin-panel/report/<int:pk>/', view=views.admin_report_action, name='admin_report_action'),
     path('admin-panel/reports/approve-all/', view=views.admin_approve_all_reports, name='admin_approve_all_reports'),
