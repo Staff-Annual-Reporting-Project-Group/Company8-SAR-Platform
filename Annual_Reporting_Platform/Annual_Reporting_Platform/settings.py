@@ -25,7 +25,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-nn%zl$p377&4y
 
 # SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = ['company8-sar-platform.onrender.com', 'localhost', '127.0.0.1']
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True
 
 # Application definition
 
@@ -64,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'reports.context_processors.global_context',
             ],
         },
     },

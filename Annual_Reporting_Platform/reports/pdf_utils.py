@@ -11,21 +11,85 @@ from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib import colors
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, PageBreak,
-    HRFlowable, Table, TableStyle
+    HRFlowable, Table, TableStyle, Flowable
 )
-from reportlab.platypus.tableofcontents import TableOfContents
-from reportlab.pdfgen import canvas as rl_canvas
+from reportlab.pdfbase.pdfmetrics import stringWidth
 
 
 # ── Colour palette ────────────────────────────────────────────
 UWI_BLUE   = colors.HexColor('#1e3a8a')
 UWI_LIGHT  = colors.HexColor('#dbeafe')
 GRAY_MID   = colors.HexColor('#6b7280')
-GRAY_LIGHT = colors.HexColor('#f3f4f6')
 BLACK      = colors.black
 
+# ── Page geometry ─────────────────────────────────────────────
+MARGIN     = 2.5 * cm
+PAGE_W     = A4[0]
+TEXT_W     = PAGE_W - 2 * MARGIN   # ≈ 453 pt
 
-# ── Shared styles ─────────────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════
+#  Custom TOC Entry Flowable
+#  Measures actual rendered widths so dots always fill exactly
+# ═══════════════════════════════════════════════════════════════
+
+class TOCEntry(Flowable):
+    """
+    Renders one TOC line:
+      [indent]  N.  Title ............... page
+    Uses pdfmetrics.stringWidth() so dots fill precisely regardless
+    of title length or font proportions.
+    """
+    FONT      = 'Times-Roman'
+    FONT_SIZE = 11
+    LINE_H    = 20      # total flowable height (pt)
+    BASELINE  = 5       # distance from bottom of flowable to text baseline
+
+    def __init__(self, number, title, page_str, width=None, bold=False):
+        Flowable.__init__(self)
+        self.number    = number
+        self.title     = title
+        self.page_str  = str(page_str)
+        self.width     = width or TEXT_W
+        self.bold      = bold
+        self.font      = 'Times-Bold' if bold else 'Times-Roman'
+        self.font_size = 12 if bold else 11
+        self.indent    = 0.5 * cm if number else 0
+        self.height    = 22 if bold else 20
+
+    def draw(self):
+        c = self.canv
+        c.setFillColor(UWI_BLUE)
+        c.setFont(self.font, self.font_size)
+
+        label = f"{self.number}.    {self.title}" if self.number else self.title
+
+        # Measure actual pixel widths
+        label_w = stringWidth(label,         self.font, self.font_size)
+        page_w  = stringWidth(self.page_str, self.font, self.font_size)
+        dot_w   = stringWidth('.',           self.font, self.font_size)
+
+        # Space available for dots (4pt gap before page number)
+        available = self.width - self.indent - label_w - page_w - 4
+        num_dots  = max(3, int(available / dot_w))
+        dots      = '.' * num_dots
+
+        y = self.BASELINE
+
+        # Draw title
+        c.drawString(self.indent, y, label)
+        # Draw dots immediately after title
+        c.drawString(self.indent + label_w, y, dots)
+        # Draw page number flush right
+        c.drawRightString(self.width, y, self.page_str)
+
+        # Underline everything
+        c.setStrokeColor(UWI_BLUE)
+        c.setLineWidth(0.5)
+        c.line(self.indent, y - 2, self.width, y - 2)
+
+
+# ── Shared paragraph styles ───────────────────────────────────
 def _styles():
     return {
         'cover_title': ParagraphStyle(
@@ -40,19 +104,17 @@ def _styles():
             leading=18, alignment=TA_CENTER,
             textColor=GRAY_MID, spaceAfter=4,
         ),
-        'toc_heading': ParagraphStyle(
-            'toc_heading',
-            fontName='Times-Bold', fontSize=13,
-            leading=18, alignment=TA_LEFT,
-            textColor=UWI_BLUE, underlineWidth=1,
-            underlineColor=UWI_BLUE,
+        'toc_main_heading': ParagraphStyle(
+            'toc_main_heading',
+            fontName='Times-Bold', fontSize=12,
+            leading=17, textColor=UWI_BLUE,
+            spaceAfter=0,
         ),
-        'toc_entry': ParagraphStyle(
-            'toc_entry',
-            fontName='Times-Roman', fontSize=11,
-            leading=18, leftIndent=18,
-            textColor=UWI_BLUE, underlineWidth=0.5,
-            underlineColor=UWI_BLUE,
+        'toc_date_line': ParagraphStyle(
+            'toc_date_line',
+            fontName='Times-Bold', fontSize=11,
+            leading=16, textColor=UWI_BLUE,
+            spaceBefore=4, spaceAfter=8,
         ),
         'section_heading': ParagraphStyle(
             'section_heading',
@@ -78,60 +140,12 @@ def _styles():
             leading=16, textColor=BLACK,
             spaceBefore=6, spaceAfter=6,
         ),
-        'badge': ParagraphStyle(
-            'badge',
-            fontName='Helvetica-Bold', fontSize=8,
-            leading=12, textColor=UWI_BLUE,
-        ),
-        'page_num': ParagraphStyle(
-            'page_num',
-            fontName='Times-Roman', fontSize=9,
-            alignment=TA_RIGHT, textColor=GRAY_MID,
-        ),
     }
 
 
-def _toc_row(number, title, page_str, styles):
-    """Build a single dotted TOC row."""
-    label = f"{number}.    {title}" if number else title
-    dots  = '.' * max(5, 90 - len(label) - len(page_str))
-    text  = f'<u>{label}{dots}{page_str}</u>'
-    indent = 36 if number else 0
-    style = ParagraphStyle(
-        'toc_r',
-        fontName='Times-Roman', fontSize=11,
-        leading=18, leftIndent=indent,
-        textColor=UWI_BLUE,
-    )
-    return Paragraph(text, style)
-
-
-# ═══════════════════════════════════════════════════════════════
-#  ANNUAL REPORT PDF
-# ═══════════════════════════════════════════════════════════════
-
-def generate_annual_pdf(reports, year):
-    """
-    Returns a BytesIO containing the annual report PDF.
-    reports  : queryset of Report objects
-    year     : int
-    """
-    buf    = BytesIO()
-    s      = _styles()
-    W, H   = A4
-    margin = 2.5 * cm
-
-    doc = SimpleDocTemplate(
-        buf, pagesize=A4,
-        leftMargin=margin, rightMargin=margin,
-        topMargin=margin,  bottomMargin=margin,
-        title=f'DCIT Annual Report {year}',
-        author='University of the West Indies – DCIT',
-    )
-
-    story = []
-
-    # ── Cover page ────────────────────────────────────────────
+# ── Cover page builder ────────────────────────────────────────
+def _cover(story, title_line, date_line, total):
+    s = _styles()
     story.append(Spacer(1, 3 * cm))
     story.append(Paragraph(
         'University of the West Indies',
@@ -147,46 +161,44 @@ def generate_annual_pdf(reports, year):
     story.append(Spacer(1, 1 * cm))
     story.append(HRFlowable(width='100%', thickness=2, color=UWI_BLUE))
     story.append(Spacer(1, 0.5 * cm))
-    story.append(Paragraph(f'Annual Report {year}', s['cover_title']))
+    story.append(Paragraph(title_line, s['cover_title']))
     story.append(Spacer(1, 0.3 * cm))
-    story.append(Paragraph(
-        f'01 August {year - 1} \u2013 31 July {year}',
-        s['cover_sub']
-    ))
+    story.append(Paragraph(date_line, s['cover_sub']))
     story.append(Spacer(1, 0.5 * cm))
     story.append(HRFlowable(width='100%', thickness=1, color=UWI_BLUE))
     story.append(Spacer(1, 1 * cm))
     story.append(Paragraph(
-        f'Total Submissions: {len(reports)}',
+        f'Total Submissions: {total}',
         ParagraphStyle('tot', fontName='Times-Roman', fontSize=12,
                        alignment=TA_CENTER, textColor=GRAY_MID)
     ))
     story.append(PageBreak())
 
-    # ── Table of Contents ────────────────────────────────────
-    story.append(Paragraph(
-        'Guidelines for the Preparation of the Narrative Sections '
-        'of the Annual &amp; Faculty Reports',
-        s['toc_heading']
-    ))
-    story.append(Spacer(1, 0.2 * cm))
-    story.append(Paragraph(
-        f'01 August {year - 1} \u2013 31 July {year}',
-        ParagraphStyle('dp', fontName='Times-Bold', fontSize=11,
-                       leading=16, textColor=UWI_BLUE)
-    ))
-    story.append(Spacer(1, 0.5 * cm))
 
+# ── TOC page builder ─────────────────────────────────────────
+def _toc_page(story, heading_text, date_text, reports):
+    s = _styles()
+    # Heading — the long bold guidelines title
+    story.append(Paragraph(heading_text, s['toc_main_heading']))
+    story.append(Spacer(1, 0.15 * cm))
+    # Date line
+    story.append(Paragraph(date_text, s['toc_date_line']))
+
+    # One TOCEntry per report
     for i, report in enumerate(reports, start=1):
-        title = report.title
-        story.append(_toc_row(i, title, str(i + 2), s))
-
+        story.append(TOCEntry(
+            number=i,
+            title=report.title,
+            page_str=str(i + 2),   # page estimate (cover=1, toc=2, reports from 3)
+            width=TEXT_W,
+        ))
     story.append(PageBreak())
 
-    # ── Report Sections ──────────────────────────────────────
-    for i, report in enumerate(reports, start=1):
 
-        # Section heading
+# ── Report sections builder ──────────────────────────────────
+def _report_sections(story, reports, include_author=True):
+    s = _styles()
+    for i, report in enumerate(reports, start=1):
         story.append(Paragraph(
             f'{i}.&nbsp;&nbsp;&nbsp;{report.title}',
             s['section_heading']
@@ -194,38 +206,31 @@ def generate_annual_pdf(reports, year):
         story.append(HRFlowable(width='100%', thickness=0.5, color=UWI_LIGHT))
         story.append(Spacer(1, 0.3 * cm))
 
-        # Metadata table
-        meta_rows = [
-            ['DATE', str(report.date_of_report)],
-            ['SUBMITTED BY', report.user.get_full_name() if hasattr(report.user, 'get_full_name') else report.user.username],
-        ]
+        meta_rows = [['DATE', str(report.date_of_report)]]
+        if include_author:
+            meta_rows.insert(0, ['SUBMITTED BY',
+                                  report.user.get_full_name() or report.user.username])
         committees = list(report.committees.all())
         if committees:
             meta_rows.append(['COMMITTEE', ', '.join(str(c) for c in committees)])
         if report.category:
             meta_rows.append(['CATEGORY', report.category.name])
-
         participants = list(report.participants.all())
         if participants:
             meta_rows.append(['PARTICIPANTS', ', '.join(p.name for p in participants)])
 
-        meta_table_data = [
-            [
-                Paragraph(row[0], s['meta_label']),
-                Paragraph(row[1], s['meta_value']),
-            ]
-            for row in meta_rows
+        meta_data = [
+            [Paragraph(r[0], s['meta_label']), Paragraph(r[1], s['meta_value'])]
+            for r in meta_rows
         ]
-        meta_table = Table(meta_table_data, colWidths=[3.5 * cm, None])
+        meta_table = Table(meta_data, colWidths=[3.5 * cm, None])
         meta_table.setStyle(TableStyle([
-            ('VALIGN',    (0, 0), (-1, -1), 'TOP'),
-            ('ROWPADDING',(0, 0), (-1, -1), 3),
+            ('VALIGN',      (0, 0), (-1, -1), 'TOP'),
+            ('ROWPADDING',  (0, 0), (-1, -1), 3),
             ('LEFTPADDING', (0, 0), (-1, -1), 0),
         ]))
         story.append(meta_table)
         story.append(Spacer(1, 0.4 * cm))
-
-        # Body
         story.append(Paragraph(report.description, s['body']))
         story.append(Spacer(1, 0.5 * cm))
 
@@ -233,6 +238,36 @@ def generate_annual_pdf(reports, year):
             story.append(HRFlowable(width='100%', thickness=0.3,
                                     color=GRAY_MID, dash=(2, 4)))
             story.append(Spacer(1, 0.6 * cm))
+
+
+# ═══════════════════════════════════════════════════════════════
+#  ANNUAL REPORT PDF
+# ═══════════════════════════════════════════════════════════════
+
+def generate_annual_pdf(reports, year):
+    buf = BytesIO()
+    doc = SimpleDocTemplate(
+        buf, pagesize=A4,
+        leftMargin=MARGIN, rightMargin=MARGIN,
+        topMargin=MARGIN,  bottomMargin=MARGIN,
+        title=f'DCIT Annual Report {year}',
+        author='University of the West Indies – DCIT',
+    )
+    story = []
+    date_str = f'01 August {year - 1} \u2013 31 July {year}'
+
+    _cover(story,
+           title_line=f'Annual Report {year}',
+           date_line=date_str,
+           total=len(reports))
+
+    _toc_page(story,
+              heading_text='Guidelines for the Preparation of the Narrative '
+                           'Sections of the Annual &amp; Faculty Reports',
+              date_text=date_str,
+              reports=reports)
+
+    _report_sections(story, reports, include_author=True)
 
     doc.build(story)
     buf.seek(0)
@@ -244,26 +279,20 @@ def generate_annual_pdf(reports, year):
 # ═══════════════════════════════════════════════════════════════
 
 def generate_my_reports_pdf(reports, user):
-    """
-    Returns a BytesIO containing a PDF of the user's own reports.
-    """
-    buf    = BytesIO()
-    s      = _styles()
-    margin = 2.5 * cm
-
+    buf       = BytesIO()
     full_name = user.get_full_name() or user.username
 
     doc = SimpleDocTemplate(
         buf, pagesize=A4,
-        leftMargin=margin, rightMargin=margin,
-        topMargin=margin,  bottomMargin=margin,
+        leftMargin=MARGIN, rightMargin=MARGIN,
+        topMargin=MARGIN,  bottomMargin=MARGIN,
         title=f'My Reports – {full_name}',
         author=full_name,
     )
-
     story = []
+    s = _styles()
 
-    # ── Cover ─────────────────────────────────────────────────
+    # Cover
     story.append(Spacer(1, 3 * cm))
     story.append(Paragraph(
         'University of the West Indies – DCIT',
@@ -288,51 +317,49 @@ def generate_my_reports_pdf(reports, user):
     ))
     story.append(PageBreak())
 
-    # ── Table of Contents ────────────────────────────────────
-    story.append(Paragraph('Table of Contents', s['toc_heading']))
-    story.append(Spacer(1, 0.5 * cm))
-    for i, report in enumerate(reports, start=1):
-        story.append(_toc_row(i, report.title, str(i + 2), s))
-    story.append(PageBreak())
+    # TOC
+    _toc_page(story,
+              heading_text='Table of Contents',
+              date_text=f'Submitted by {full_name}',
+              reports=reports)
 
-    # ── Report sections ──────────────────────────────────────
-    for i, report in enumerate(reports, start=1):
-        story.append(Paragraph(
-            f'{i}.&nbsp;&nbsp;&nbsp;{report.title}',
-            s['section_heading']
-        ))
-        story.append(HRFlowable(width='100%', thickness=0.5, color=UWI_LIGHT))
-        story.append(Spacer(1, 0.3 * cm))
+    _report_sections(story, reports, include_author=False)
 
-        meta_rows = [['DATE', str(report.date_of_report)]]
-        committees = list(report.committees.all())
-        if committees:
-            meta_rows.append(['COMMITTEE', ', '.join(str(c) for c in committees)])
-        if report.category:
-            meta_rows.append(['CATEGORY', report.category.name])
-        participants = list(report.participants.all())
-        if participants:
-            meta_rows.append(['PARTICIPANTS', ', '.join(p.name for p in participants)])
+    doc.build(story)
+    buf.seek(0)
+    return buf
 
-        meta_table_data = [
-            [Paragraph(r[0], s['meta_label']), Paragraph(r[1], s['meta_value'])]
-            for r in meta_rows
-        ]
-        meta_table = Table(meta_table_data, colWidths=[3.5 * cm, None])
-        meta_table.setStyle(TableStyle([
-            ('VALIGN',      (0, 0), (-1, -1), 'TOP'),
-            ('ROWPADDING',  (0, 0), (-1, -1), 3),
-            ('LEFTPADDING', (0, 0), (-1, -1), 0),
-        ]))
-        story.append(meta_table)
-        story.append(Spacer(1, 0.4 * cm))
-        story.append(Paragraph(report.description, s['body']))
-        story.append(Spacer(1, 0.5 * cm))
 
-        if i < len(reports):
-            story.append(HRFlowable(width='100%', thickness=0.3,
-                                    color=GRAY_MID, dash=(2, 4)))
-            story.append(Spacer(1, 0.6 * cm))
+# ═══════════════════════════════════════════════════════════════
+#  ACADEMIC YEAR PDF  (Aug 1 – Jul 31)
+# ═══════════════════════════════════════════════════════════════
+
+def generate_academic_pdf(reports, start_year):
+    buf      = BytesIO()
+    end_year = start_year + 1
+    date_str = f'01 August {start_year} \u2013 31 July {end_year}'
+
+    doc = SimpleDocTemplate(
+        buf, pagesize=A4,
+        leftMargin=MARGIN, rightMargin=MARGIN,
+        topMargin=MARGIN,  bottomMargin=MARGIN,
+        title=f'DCIT Academic Report {start_year}/{end_year}',
+        author='University of the West Indies – DCIT',
+    )
+    story = []
+
+    _cover(story,
+           title_line=f'Academic Year Report {start_year}/{end_year}',
+           date_line=date_str,
+           total=len(reports))
+
+    _toc_page(story,
+              heading_text='Guidelines for the Preparation of the Narrative '
+                           'Sections of the Annual &amp; Faculty Reports',
+              date_text=date_str,
+              reports=reports)
+
+    _report_sections(story, reports, include_author=True)
 
     doc.build(story)
     buf.seek(0)

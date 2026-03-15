@@ -1,0 +1,77 @@
+{% extends "reports/base.html" %}
+{% block body %}
+
+<!-- Hero Banner -->
+<div class="flex justify-center items-center w-full my-10 text-center px-4">
+  <div class="max-w-xl">
+    <p class="text-xs font-semibold uppercase tracking-widest text-blue-500 mb-2">Staff Reporting Site</p>
+    <h1 class="font-display text-2xl font-bold text-gray-800 leading-snug">
+      University of the West Indies'<br>
+      Department of Computing and Information Technology
+    </h1>
+    <div class="mt-4 w-12 h-0.5 bg-blue-500 mx-auto rounded-full"></div>
+  </div>
+</div>
+
+<!-- Active Filters -->
+{% with q=request.GET.q type=request.GET.type period=request.GET.period committee=request.GET.committee participant=request.GET.participant %}
+{% if q or type or period or committee or participant %}
+<div class="flex flex-wrap gap-2 px-6 mb-4 items-center">
+  <span class="text-xs text-gray-500 font-medium">Active filters:</span>
+  {% if q %}
+    <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full border border-blue-200">
+      Search: "{{ q }}"
+    </span>
+  {% endif %}
+  {% if type %}
+    <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full border border-blue-200">
+      Type: {{ type }}
+    </span>
+  {% endif %}
+  {% if period %}
+    <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full border border-blue-200">
+      Period: {{ period|title }}
+    </span>
+  {% endif %}
+  {% if committee %}
+    <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full border border-blue-200">
+      Committee: {{ committee }}
+    </span>
+  {% endif %}
+  {% if participant %}
+    <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full border border-blue-200">
+      Participant: {{ participant }}
+    </span>
+  {% endif %}
+  <a href="{% url 'reports:index' %}" class="text-xs text-red-400 hover:text-red-600 underline ml-1">Clear all</a>
+</div>
+{% endif %}
+{% endwith %}
+
+<!-- Reports Grid -->
+<div class="px-6 pb-12">
+
+  {% if reports %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+    {% for report in reports %}
+      {% include "reports/partials/_report_card.html" with report=report %}
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="flex flex-col items-center justify-center py-24 text-center">
+    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v13a2 2 0 01-2 2z"/>
+      </svg>
+    </div>
+    <h3 class="font-display text-xl font-semibold text-gray-500 mb-1">No reports found</h3>
+    <p class="text-sm text-gray-400 mb-4">Try adjusting your search or filters.</p>
+    <a href="{% url 'reports:index' %}" class="text-sm text-blue-600 hover:underline">Clear all filters</a>
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

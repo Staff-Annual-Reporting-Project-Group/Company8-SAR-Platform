@@ -1,30 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <title>DCIT Reports — UWI</title>
-    <style>
-        body { font-family: 'DM Sans', sans-serif; }
-        .font-display { font-family: 'Playfair Display', serif; }
-        #filter-modal { display: none; }
-        #filter-modal.open { display: flex; }
-        .badge-award       { background:#dcfce7; color:#166534; }
-        .badge-publication { background:#dbeafe; color:#1e40af; }
-        .badge-activity    { background:#fef9c3; color:#854d0e; }
-        .badge-initiative  { background:#f3e8ff; color:#6b21a8; }
-        .badge-default     { background:#f1f5f9; color:#475569; }
-        .report-card { transition: box-shadow .2s, transform .2s; }
-        .report-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.10); transform: translateY(-2px); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>DCIT Reports — UWI</title>
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .font-display { font-family: 'Playfair Display', serif; }
+
+    /* Filter modal */
+    #filter-modal { display: none; }
+    #filter-modal.open { display: flex; }
+
+    /* Mobile menu */
+    #mobile-menu { display: none; }
+    #mobile-menu.open { display: block; }
+    #mobile-search-bar { display: none; }
+    #mobile-search-bar.open { display: flex; }
+
+    /* Category badges */
+    .badge-award       { background:#dcfce7; color:#166534; }
+    .badge-publication { background:#dbeafe; color:#1e40af; }
+    .badge-activity    { background:#fef9c3; color:#854d0e; }
+    .badge-initiative  { background:#f3e8ff; color:#6b21a8; }
+    .badge-default     { background:#f1f5f9; color:#475569; }
+
+    /* Status badges */
+    .status-badge    { display:inline-flex; align-items:center; padding:4px 12px; border-radius:6px; font-size:11px; font-weight:700; letter-spacing:.03em; }
+    .status-approved { background:#d1fae5; color:#065f46; }
+    .status-pending  { background:#cffafe; color:#0e7490; }
+    .status-declined { background:#fee2e2; color:#991b1b; }
+
+    /* Card action buttons */
+    .card-btn             { display:inline-flex; align-items:center; justify-content:center; padding:5px 16px; border-radius:6px; font-size:12px; font-weight:600; border:1.5px solid; transition:background .15s, color .15s; cursor:pointer; text-decoration:none; }
+    .card-btn-delete      { border-color:#d1d5db; color:#374151; background:#fff; }
+    .card-btn-delete:hover{ background:#fee2e2; border-color:#fca5a5; color:#991b1b; }
+    .card-btn-edit        { border-color:#d1d5db; color:#374151; background:#fff; }
+    .card-btn-edit:hover  { background:#dbeafe; border-color:#93c5fd; color:#1d4ed8; }
+
+    .report-card { transition: box-shadow .2s, transform .2s; }
+    .report-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.10); transform: translateY(-2px); }
+  </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-<header class="w-full bg-white border-b border-gray-200 px-6 py-3 sticky top-0 z-40 shadow-sm">
+<!-- ═══════════════════  DESKTOP HEADER  ═══════════════════ -->
+<header class="hidden md:block w-full bg-white border-b border-gray-200 px-6 py-3 sticky top-0 z-40 shadow-sm">
   <div class="flex items-center justify-between gap-4">
 
     <!-- Logo -->
@@ -45,7 +70,6 @@
           </button>
         </div>
       </form>
-
       <button id="open-filter"
         class="flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 whitespace-nowrap transition">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,7 +79,7 @@
       </button>
     </div>
 
-    <!-- Right Buttons -->
+    <!-- Right buttons -->
     <div class="flex items-center gap-2 shrink-0">
       <a href="{% url 'reports:annual_report' %}"
          class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
@@ -64,11 +88,8 @@
         </svg>
         Annual Report
       </a>
-
-      <!-- Auth button -->
       {% if user.is_authenticated %}
-      <a href="{% url 'reports:profile' %}"
-         title="{{ user.get_full_name|default:user.username }}"
+      <a href="{% url 'reports:profile' %}" title="{{ user.get_full_name|default:user.username }}"
          class="flex items-center justify-center w-9 h-9 rounded-full border border-blue-300 bg-blue-50 hover:bg-blue-100 overflow-hidden transition">
         {% if user.profile.avatar %}
           <img src="{{ user.profile.avatar.url }}" alt="avatar" class="w-full h-full object-cover">
@@ -78,6 +99,15 @@
           </svg>
         {% endif %}
       </a>
+      {% if user.is_staff or user.is_superuser %}
+      <a href="{% url 'reports:admin_dashboard' %}"
+         class="flex items-center gap-1.5 rounded-full border border-orange-300 bg-orange-50 hover:bg-orange-100 px-3 py-2 text-xs font-semibold text-orange-700 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        Admin
+      </a>
+      {% endif %}
       {% else %}
       <a href="{% url 'reports:login' %}"
          class="flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
@@ -91,12 +121,93 @@
   </div>
 </header>
 
+<!-- ═══════════════════  MOBILE HEADER  ═══════════════════ -->
+<header class="md:hidden sticky top-0 z-40">
+
+  <!-- Main mobile bar -->
+  <div class="bg-blue-600 px-4 py-3 flex items-center justify-between">
+    <a href="{% url 'reports:index' %}" class="font-display text-base font-bold text-white tracking-wide">
+      DCIT REPORTS
+    </a>
+    <div class="flex items-center gap-3">
+      <!-- Search toggle -->
+      <button id="mobile-search-toggle" class="text-white hover:text-blue-200 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+        </svg>
+      </button>
+      <!-- Three dots menu -->
+      <button id="mobile-menu-toggle" class="text-white hover:text-blue-200 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+          <circle cx="5"  cy="12" r="2"/>
+          <circle cx="12" cy="12" r="2"/>
+          <circle cx="19" cy="12" r="2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile search bar (expandable) -->
+  <div id="mobile-search-bar" class="bg-blue-700 px-4 py-2">
+    <form method="GET" action="{% url 'reports:index' %}" class="flex items-center gap-2">
+      <div class="relative flex-1">
+        <input name="q" type="text" value="{{ request.GET.q }}" placeholder="Search by title…"
+          class="w-full rounded-full bg-white/20 text-white placeholder-blue-200 border border-white/30 px-4 py-2 pr-10 text-sm focus:outline-none focus:bg-white/30 transition"/>
+        <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Mobile dropdown menu -->
+  <div id="mobile-menu" class="bg-blue-600 border-t border-blue-500 px-4 py-3 space-y-2">
+    {% if user.is_authenticated %}
+    <a href="{% url 'reports:profile' %}"
+       class="block w-full text-center py-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-semibold tracking-wide transition">
+      ACCOUNT
+    </a>
+    {% if user.is_staff or user.is_superuser %}
+    <a href="{% url 'reports:admin_dashboard' %}"
+       class="block w-full text-center py-2.5 rounded-lg bg-orange-500/80 hover:bg-orange-500 text-white text-sm font-semibold tracking-wide transition">
+      ADMIN PANEL
+    </a>
+    {% endif %}
+    {% else %}
+    <a href="{% url 'reports:login' %}"
+       class="block w-full text-center py-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-semibold tracking-wide transition">
+      LOGIN
+    </a>
+    {% endif %}
+
+    <button id="mobile-open-filter"
+      class="block w-full text-center py-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-semibold tracking-wide transition">
+      FILTER
+    </button>
+
+    <a href="{% url 'reports:annual_report' %}"
+       class="block w-full text-center py-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-semibold tracking-wide transition">
+      GENERATE ANNUAL REPORT
+    </a>
+  </div>
+
+</header>
+
+
+<!-- ═══════════════════════  FILTER MODAL  ═══════════════════════ -->
 <div id="filter-modal"
-     class="fixed inset-0 z-50 items-start justify-center pt-24 bg-black/20 backdrop-blur-sm"
+     class="fixed inset-0 z-50 items-start justify-center pt-16 md:pt-24 bg-black/20 backdrop-blur-sm"
      role="dialog" aria-modal="true">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 relative">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="font-display text-lg font-semibold text-gray-800">Filter</h2>
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18M7 8h10M10 12h4"/>
+        </svg>
+        <h2 class="font-display text-lg font-semibold text-gray-800">Filter</h2>
+      </div>
       <button id="close-filter" class="text-gray-400 hover:text-gray-600 transition">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -107,47 +218,60 @@
     <form method="GET" action="{% url 'reports:index' %}" class="space-y-4">
       <div>
         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Select a period</label>
-        <select name="period" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
-          <option value="">Forever</option>
-          <option value="this_week"  {% if request.GET.period == 'this_week'  %}selected{% endif %}>This Week</option>
-          <option value="this_month" {% if request.GET.period == 'this_month' %}selected{% endif %}>This Month</option>
-          <option value="this_year"  {% if request.GET.period == 'this_year'  %}selected{% endif %}>This Year</option>
-        </select>
+        <div class="relative">
+          <select name="period" class="w-full appearance-none rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 pr-8">
+            <option value="">Forever</option>
+            <option value="this_week"  {% if request.GET.period == 'this_week'  %}selected{% endif %}>This Week</option>
+            <option value="this_month" {% if request.GET.period == 'this_month' %}selected{% endif %}>This Month</option>
+            <option value="this_year"  {% if request.GET.period == 'this_year'  %}selected{% endif %}>This Year</option>
+          </select>
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </span>
+        </div>
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Select Type</label>
-        <select name="type" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
-          <option value="">All</option>
-          <option value="Award"       {% if request.GET.type == 'Award'       %}selected{% endif %}>Award</option>
-          <option value="Publication" {% if request.GET.type == 'Publication' %}selected{% endif %}>Publication</option>
-          <option value="Activity"    {% if request.GET.type == 'Activity'    %}selected{% endif %}>Activity</option>
-          <option value="Initiative"  {% if request.GET.type == 'Initiative'  %}selected{% endif %}>Initiative</option>
-        </select>
+        <div class="relative">
+          <select name="type" class="w-full appearance-none rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 pr-8">
+            <option value="">All</option>
+            <option value="Award"       {% if request.GET.type == 'Award'       %}selected{% endif %}>Award</option>
+            <option value="Publication" {% if request.GET.type == 'Publication' %}selected{% endif %}>Publication</option>
+            <option value="Activity"    {% if request.GET.type == 'Activity'    %}selected{% endif %}>Activity</option>
+            <option value="Initiative"  {% if request.GET.type == 'Initiative'  %}selected{% endif %}>Initiative</option>
+          </select>
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </span>
+        </div>
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Select Committee</label>
-        <select name="committee" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
-          <option value="">All</option>
-          {% for committee in committees %}
-          <option value="{{ committee.id }}" {% if request.GET.committee == committee.id|stringformat:"s" %}selected{% endif %}>
-            {{ committee.name }}
-          </option>
-          {% endfor %}
-        </select>
+        <div class="relative">
+          <select name="committee" class="w-full appearance-none rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 pr-8">
+            <option value="">All</option>
+            {% for committee in committees %}
+            <option value="{{ committee.id }}" {% if request.GET.committee == committee.id|stringformat:"s" %}selected{% endif %}>{{ committee.name }}</option>
+            {% endfor %}
+          </select>
+          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </span>
+        </div>
       </div>
       <div>
         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">List Participant</label>
         <input type="text" name="participant" value="{{ request.GET.participant }}" placeholder="e.g. Anthony Mendez"
-          class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200"/>
+          class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200"/>
       </div>
       <div class="flex gap-3 pt-2">
         <a href="{% url 'reports:index' %}"
-           class="flex-1 text-center rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 transition font-medium">
-          Reset
+           class="flex-1 text-center rounded-full border-2 border-red-400 px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition font-bold">
+          RESET
         </a>
         <button type="submit"
-          class="flex-1 rounded-full bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 transition font-medium">
-          Confirm
+          class="flex-1 rounded-full bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 transition font-bold">
+          CONFIRM
         </button>
       </div>
     </form>
@@ -157,13 +281,47 @@
 {% block body %}{% endblock %}
 
 <script>
+  // ── Desktop filter modal ─────────────────────────────────────
   const modal    = document.getElementById('filter-modal');
   const openBtn  = document.getElementById('open-filter');
   const closeBtn = document.getElementById('close-filter');
-  openBtn.addEventListener('click',  () => modal.classList.add('open'));
-  closeBtn.addEventListener('click', () => modal.classList.remove('open'));
-  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') modal.classList.remove('open'); });
+  if (openBtn)  openBtn.addEventListener('click',  () => modal.classList.add('open'));
+  if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+  // ── Mobile filter button ─────────────────────────────────────
+  const mobileFilter = document.getElementById('mobile-open-filter');
+  if (mobileFilter) mobileFilter.addEventListener('click', () => {
+    document.getElementById('mobile-menu').classList.remove('open');
+    modal.classList.add('open');
+  });
+
+  // ── Mobile menu toggle ───────────────────────────────────────
+  const mobileMenu   = document.getElementById('mobile-menu');
+  const menuToggle   = document.getElementById('mobile-menu-toggle');
+  const searchToggle = document.getElementById('mobile-search-toggle');
+  const searchBar    = document.getElementById('mobile-search-bar');
+
+  if (menuToggle) menuToggle.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+    searchBar.classList.remove('open');
+  });
+
+  if (searchToggle) searchToggle.addEventListener('click', () => {
+    searchBar.classList.toggle('open');
+    mobileMenu.classList.remove('open');
+    if (searchBar.classList.contains('open')) {
+      searchBar.querySelector('input')?.focus();
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      modal.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      searchBar.classList.remove('open');
+    }
+  });
 </script>
 </body>
 </html>
