@@ -111,7 +111,7 @@
 
       <!-- Feature Image -->
       <div class="shrink-0 w-32 h-32 sm:w-48 sm:h-48 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-sm overflow-hidden">
-        {% if report.feature_image and report.feature_image %}
+        {% if report.feature_image and report.feature_image != "default_image.jpg" %}
           <img src="{{ report.feature_image }}" alt="{{ report.title }}" class="w-full h-full object-cover">
         {% else %}
           <div class="text-center p-4">
