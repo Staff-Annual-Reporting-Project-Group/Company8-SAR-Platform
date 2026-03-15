@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +26,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-nn%zl$p377&4y
 
 # SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = ['company8-sar-platform.onrender.com', 'localhost', '127.0.0.1']
-# DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# DEBUG = True
 
 # Application definition
 
@@ -129,3 +130,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DEFAULT_FROM_EMAIL = 'DCIT Reports <noreply@example.com>'
+
+os.environ.setdefault('CLOUDINARY_CLOUD_NAME', config('CLOUDINARY_CLOUD_NAME', default=''))
+os.environ.setdefault('CLOUDINARY_API_KEY',    config('CLOUDINARY_API_KEY',    default=''))
+os.environ.setdefault('CLOUDINARY_API_SECRET', config('CLOUDINARY_API_SECRET', default=''))
