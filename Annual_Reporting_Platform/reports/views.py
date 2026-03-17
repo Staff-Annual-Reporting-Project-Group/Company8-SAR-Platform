@@ -584,15 +584,26 @@ def admin_academic_pdf(request):
 def user_profile(request, username):
     viewed_user = get_object_or_404(User, username=username)
     profile, _ = StaffProfile.objects.get_or_create(user=viewed_user)
-    reports = Report.objects.filter(
+
+    # Reports created by this user
+    created_reports = Report.objects.filter(
         user=viewed_user, status='approved'
     ).select_related('category').prefetch_related('committees', 'participants') \
+     .order_by('-date_of_report')
+
+    # Reports where this user appears as a participant (but didn't create)
+    participated_reports = Report.objects.filter(
+        participants__user=viewed_user,
+        status='approved',
+    ).exclude(user=viewed_user) \
+     .select_related('user', 'category').prefetch_related('committees', 'participants') \
      .order_by('-date_of_report')
 
     return render(request, 'reports/user_profile.html', {
         'viewed_user': viewed_user,
         'profile': profile,
-        'reports': reports,
+        'created_reports': created_reports,
+        'participated_reports': participated_reports,
         'is_own': request.user == viewed_user,
         'committees': _committees(),
     })

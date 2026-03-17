@@ -3,10 +3,8 @@
 
 <div class="max-w-5xl mx-auto px-4 md:px-8 py-10">
 
-  <!-- Profile header card -->
+  <!-- Profile header -->
   <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8 mb-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-
-    <!-- Avatar -->
     <div class="w-24 h-24 rounded-full bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-center justify-center shrink-0">
       {% if profile.avatar %}
         <img src="{{ profile.avatar }}" alt="{{ viewed_user.get_full_name }}" class="w-full h-full object-cover">
@@ -17,7 +15,6 @@
       {% endif %}
     </div>
 
-    <!-- Info -->
     <div class="flex-1 text-center sm:text-left">
       <h1 class="font-display text-2xl font-bold text-gray-900">
         {{ viewed_user.get_full_name|default:viewed_user.username }}
@@ -27,10 +24,14 @@
       <p class="text-sm text-gray-600 mt-3 max-w-xl">{{ profile.bio }}</p>
       {% endif %}
 
-      <div class="flex flex-wrap justify-center sm:justify-start gap-4 mt-4">
+      <div class="flex flex-wrap justify-center sm:justify-start gap-6 mt-4">
         <div class="text-center">
-          <p class="font-display text-xl font-bold text-blue-600">{{ reports|length }}</p>
-          <p class="text-xs text-gray-400 uppercase tracking-wide">Approved Reports</p>
+          <p class="font-display text-xl font-bold text-blue-600">{{ created_reports|length }}</p>
+          <p class="text-xs text-gray-400 uppercase tracking-wide">Reports</p>
+        </div>
+        <div class="text-center">
+          <p class="font-display text-xl font-bold text-indigo-600">{{ participated_reports|length }}</p>
+          <p class="text-xs text-gray-400 uppercase tracking-wide">Participated In</p>
         </div>
         <div class="text-center">
           <p class="font-display text-xl font-bold text-gray-700">{{ viewed_user.date_joined|date:"Y" }}</p>
@@ -39,7 +40,6 @@
       </div>
     </div>
 
-    <!-- Own profile shortcut -->
     {% if is_own %}
     <a href="{% url 'reports:account' %}"
        class="shrink-0 px-4 py-2 rounded-full border border-gray-300 text-sm text-gray-600 hover:bg-gray-50 transition font-medium">
@@ -48,31 +48,50 @@
     {% endif %}
   </div>
 
-  <!-- Reports section -->
-  <div class="mb-6 flex items-center justify-between">
-    <h2 class="font-display text-lg font-semibold text-gray-800">
-      Reports by {{ viewed_user.first_name|default:viewed_user.username }}
-    </h2>
-    <span class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">{{ reports|length }} approved</span>
+  <!-- Created reports -->
+  <div class="mb-10">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-display text-lg font-semibold text-gray-800">
+        Reports by {{ viewed_user.first_name|default:viewed_user.username }}
+      </h2>
+      <span class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">{{ created_reports|length }}</span>
+    </div>
+
+    {% if created_reports %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {% for report in created_reports %}
+        {% include "reports/partials/_report_card.html" with report=report %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="flex flex-col items-center justify-center py-14 text-center bg-white rounded-2xl border border-gray-100">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v13a2 2 0 01-2 2z"/>
+      </svg>
+      <p class="text-gray-400 text-sm">No approved reports yet.</p>
+    </div>
+    {% endif %}
   </div>
 
-  {% if reports %}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-    {% for report in reports %}
-      {% include "reports/partials/_report_card.html" with report=report %}
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-gray-100">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v13a2 2 0 01-2 2z"/>
-    </svg>
-    <p class="text-gray-400 text-sm">No approved reports yet.</p>
+  <!-- Participated in -->
+  {% if participated_reports %}
+  <div class="mb-10">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-display text-lg font-semibold text-gray-800">
+        Also participated in
+      </h2>
+      <span class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">{{ participated_reports|length }}</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {% for report in participated_reports %}
+        {% include "reports/partials/_report_card.html" with report=report %}
+      {% endfor %}
+    </div>
   </div>
   {% endif %}
 
   <!-- Back link -->
-  <div class="mt-8">
+  <div class="mt-4">
     <a href="{% url 'reports:index' %}"
        class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
