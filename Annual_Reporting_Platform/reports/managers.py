@@ -2,11 +2,21 @@ from django.db import models
 from django.contrib.auth.models import User
 import django.utils.timezone as timezone
 class ReportManager(models.Manager):
+    def all(self):
+        return self.filter(state__icontains='Approved')
+    
+    def all_submitted(self):
+        return self.filter(state='Submitted')
+    
+
+    def user_reports(self,user):
+        return self.filter(user=user)
+    
     def search(self,keyword):
-        return self.filter(title__icontains=keyword)
+        return self.all().filter(title__icontains=keyword)
     
     def filterReports(self,period,report_type, committee, participant):
-        queryset = self.get_queryset()
+        queryset = self.all()
         period = str(period).lower().strip() if period != None else None
         if period:
             if period == 'forever':

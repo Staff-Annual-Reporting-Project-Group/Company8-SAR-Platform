@@ -2,7 +2,8 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib import messages
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def loginPage(request):
@@ -25,3 +26,13 @@ def loginPage(request):
             messages.error(request, 'Username OR password does not exist')
 
     return render(request,'users/login.html',{})
+
+
+def logout_view(request):
+    logout(request)
+    return render(request,'reports/index')
+
+@login_required
+def profile_view(request):
+    return render(request,'users/profile.html')
+

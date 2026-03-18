@@ -1,11 +1,14 @@
+
+
 from django.shortcuts import render
 from django.http.response import HttpResponse
 from .models import Report
 from django.views.decorators.cache import cache_page
 
 # Create your views here.
-@cache_page(60 * 15)
+# @cache_page(60 * 15)
 def index(request):
+    
     filtered = True if request.GET.get('period') != None else False
     if filtered:
         period = request.GET.get('period')
