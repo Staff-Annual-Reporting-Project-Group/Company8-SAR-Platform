@@ -139,7 +139,7 @@
     {% if reports %}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {% for report in reports %}
-        {% include "reports/partials/_report_card.html" with report=report show_actions=True %}
+        {% include "reports/_report_card.html" with report=report show_actions=True %}
       {% endfor %}
     </div>
 
