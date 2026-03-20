@@ -1,145 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Annual Report</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  .badge-award       { background:#fef9c3; color:#a16207; border:1px solid #fde68a; }
-  .badge-publication { background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
-  .badge-initiative  { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
-  .badge-default     { background:#f3f4f6; color:#6b7280; border:1px solid #e5e7eb; }
-  .font-display { font-family: ui-sans-serif, system-ui, sans-serif; }
-</style>
-</head>
-<body class="bg-gray-50">
+{% extends "reports/base.html" %}
+{% block body %}
 
-<div class="flex min-h-screen">
-
-  <!-- Sidebar (mirrors profile.html) -->
-  <aside class="w-52 shrink-0 bg-white border-r border-gray-200 flex flex-col items-center pt-8 pb-6 px-4 gap-4">
-    <div class="w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-center justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-        <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
-      </svg>
-    </div>
-    <div class="text-center">
-      <p class="font-semibold text-sm text-gray-800 leading-tight">Jane Smith</p>
-      <p class="text-xs text-gray-400 mt-0.5 break-all">jane.smith@uwi.edu</p>
-    </div>
-    <a href="login.html"
-      class="px-4 py-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white text-xs font-semibold transition">
-      SIGN OUT
-    </a>
-    <nav class="w-full mt-2 space-y-1">
-      <a href="profile.html"
-         class="block w-full text-sm text-gray-500 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-50 transition">
-        My Reports
-      </a>
-      <a href="annual_report.html"
-         class="block w-full text-sm font-semibold text-blue-600 px-3 py-2 rounded-lg bg-blue-50">
-        Annual Report
-      </a>
-      <a href="#"
-         class="block w-full text-sm text-gray-500 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-50 transition">
-        Account Information
-      </a>
-    </nav>
-  </aside>
-
-  <!-- Main content -->
-  <main class="flex-1 px-8 py-10 overflow-y-auto">
+<div class="px-8 py-10 max-w-6xl mx-auto">
 
   <!-- Header -->
   <div class="mb-8 flex items-end justify-between flex-wrap gap-4">
     <div>
       <p class="text-xs font-semibold uppercase tracking-widest text-blue-500 mb-1">Annual Report</p>
-      <h1 class="font-display text-3xl font-bold text-gray-900">DCIT Reports — 2024</h1>
-      <p class="text-sm text-gray-400 mt-1">All reports submitted in 2024</p>
+      <h1 class="font-display text-3xl font-bold text-gray-900">DCIT Reports — {{ year }}</h1>
+      <p class="text-sm text-gray-400 mt-1">All reports submitted in {{ year }}</p>
     </div>
 
     <div class="flex items-center gap-3">
-      <a href="#"
+      {% if user.is_authenticated %}
+      <a href="{% url 'reports:annual_report_pdf' %}?year={{ year }}"
          class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition shadow-sm">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
         </svg>
         Download PDF
       </a>
-      <div class="flex items-center gap-2">
+      {% endif %}
+      <form method="GET" class="flex items-center gap-2">
         <label class="text-sm text-gray-500">Year:</label>
-        <select class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
-          <option>2024</option>
-          <option>2023</option>
-          <option>2022</option>
+        <select name="year" onchange="this.form.submit()"
+          class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+          {% for y in year_range %}
+          <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
         </select>
-      </div>
+      </form>
     </div>
   </div>
 
   <!-- Stats bar -->
   <div class="grid grid-cols-2 gap-4 mb-10">
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 text-center">
-      <p class="font-display text-3xl font-bold text-blue-600">3</p>
+      <p class="font-display text-3xl font-bold text-blue-600">{{ reports|length }}</p>
       <p class="text-xs text-gray-500 mt-1 uppercase tracking-wide">Total Reports</p>
     </div>
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 text-center">
-      <p class="font-display text-3xl font-bold text-green-600">2024</p>
+      <p class="font-display text-3xl font-bold text-green-600">{{ year }}</p>
       <p class="text-xs text-gray-500 mt-1 uppercase tracking-wide">Reporting Year</p>
     </div>
   </div>
 
   <!-- Reports Grid -->
+  {% if reports %}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-
-    <!-- Card 1 -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col">
-      <div class="flex flex-wrap items-center gap-1 mb-1">
-        <span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 border border-indigo-100">Computing Committee</span>
-      </div>
-      <h2 class="font-display text-base font-semibold text-gray-800 leading-tight line-clamp-2 mb-1">Annual Research Output Summary</h2>
-      <p class="text-xs text-gray-400 mb-2">Jan 15, 2024</p>
-      <span class="inline-block self-start text-xs font-bold px-3 py-0.5 rounded-full uppercase tracking-wide mb-2 badge-publication">Publication</span>
-      <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">A comprehensive overview of all research publications produced by department members throughout the academic year.</p>
-      <div class="flex items-center justify-between pt-3 mt-3 border-t border-gray-100">
-        <p class="text-xs text-gray-500 truncate max-w-[60%]">By Dr. Jane Smith</p>
-        <a href="profile.html" class="px-3 py-1 text-xs font-semibold text-blue-600 border border-blue-300 rounded-full hover:bg-blue-50 transition whitespace-nowrap">VIEW MORE</a>
-      </div>
-    </div>
-
-    <!-- Card 2 -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col">
-      <div class="flex flex-wrap items-center gap-1 mb-1">
-        <span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 border border-indigo-100">Outreach Committee</span>
-      </div>
-      <h2 class="font-display text-base font-semibold text-gray-800 leading-tight line-clamp-2 mb-1">STEM Outreach Initiative Q2</h2>
-      <p class="text-xs text-gray-400 mb-2">Apr 3, 2024</p>
-      <span class="inline-block self-start text-xs font-bold px-3 py-0.5 rounded-full uppercase tracking-wide mb-2 badge-initiative">Initiative</span>
-      <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">Report detailing the department's community outreach efforts targeting secondary school students in STEM disciplines.</p>
-      <div class="flex items-center justify-between pt-3 mt-3 border-t border-gray-100">
-        <p class="text-xs text-gray-500 truncate max-w-[60%]">By Prof. Mark Thomas</p>
-        <a href="profile.html" class="px-3 py-1 text-xs font-semibold text-blue-600 border border-blue-300 rounded-full hover:bg-blue-50 transition whitespace-nowrap">VIEW MORE</a>
-      </div>
-    </div>
-
-    <!-- Card 3 -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col">
-      <div class="flex flex-wrap items-center gap-1 mb-1">
-        <span class="inline-block text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 border border-indigo-100">Recognition Committee</span>
-      </div>
-      <h2 class="font-display text-base font-semibold text-gray-800 leading-tight line-clamp-2 mb-1">Best Lecturer Award 2024</h2>
-      <p class="text-xs text-gray-400 mb-2">Jul 20, 2024</p>
-      <span class="inline-block self-start text-xs font-bold px-3 py-0.5 rounded-full uppercase tracking-wide mb-2 badge-award">Award</span>
-      <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 flex-1">Recognition awarded to the department's top lecturer based on student feedback and peer review evaluations.</p>
-      <div class="flex items-center justify-between pt-3 mt-3 border-t border-gray-100">
-        <p class="text-xs text-gray-500 truncate max-w-[60%]">By Admin Office</p>
-        <a href="profile.html" class="px-3 py-1 text-xs font-semibold text-blue-600 border border-blue-300 rounded-full hover:bg-blue-50 transition whitespace-nowrap">VIEW MORE</a>
-      </div>
-    </div>
-
+    {% for report in reports %}
+      {% include "reports/_report_card.html" with report=report %}
+    {% endfor %}
   </div>
 
-  </main>
-</div>
-</body>
-</html>
+  {% else %}
+  <div class="flex flex-col items-center justify-center py-24 text-center">
+    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v13a2 2 0 01-2 2z"/>
+      </svg>
+    </div>
+    <h3 class="font-display text-xl font-semibold text-gray-500 mb-1">No reports for {{ year }}</h3>
+    <p class="text-sm text-gray-400">Try selecting a different year.</p>
+  </div>
+  {% endif %}
 
+</div>
+{% endblock %}
