@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from reports.models import Report
 
 # Create your views here.
 def loginPage(request):
@@ -34,5 +35,11 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    return render(request,'users/profile.html')
+    user = request.user
+    reports = Report.objects.all().filter(user = user)
+    # reports = user.reports.all()
+    context = {'reports':reports}
+    for report in reports:
+        print(report.state)
+    return render(request,'users/profile.html',context)
 

@@ -30,7 +30,7 @@ class Report(models.Model):
         'APPROVED': 'Approved',
         'REJECTED': 'Rejected',
     }
-    user = models.ForeignKey(User,on_delete=models.CASCADE,null=False)
+    user = models.ForeignKey(User,on_delete=models.CASCADE,null=False,related_name='reports')
     title = models.CharField(max_length=200,blank=False,null=False, db_index=True)
     description = models.TextField(null=False,blank=False)
     #category
@@ -41,9 +41,9 @@ class Report(models.Model):
     date_of_report= models.DateField(blank=False,null=False,default=timezone.now().date())
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    state = models.CharField(max_length=20,choices=REPORT_STATES,default=REPORT_STATES['SUBMITTED'])
-    objects = ReportManager()#Custom manager
-
+    state = models.CharField(max_length=20,choices=REPORT_STATES.items(),default=REPORT_STATES['SUBMITTED'],null=False,blank=False)
+    all_objects = ReportManager()#Custom manager
+    objects = models.Manager()#Default manager
     
 
     class Meta:
