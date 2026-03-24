@@ -4,9 +4,9 @@ import django.utils.timezone as timezone
 class ReportManager(models.Manager):
     def all(self):
         return self.filter(state__icontains='Approved')
-    
     def all_submitted(self):
-        return self.filter(state='Submitted')
+        return self.filter(state__icontains='Submitted')
+    
     
 
     def user_reports(self,user):
