@@ -38,6 +38,9 @@ def reportView(request, pk):
 
 @login_required
 def deleteReport(request,pk):
+    if request.method != "POST":
+        messages.error(request, 'Invalid request method')
+        return redirect('users:profile')
     report = Report.objects.get(pk=pk)
     if not report:
        messages.error(request, 'Report does not exists')

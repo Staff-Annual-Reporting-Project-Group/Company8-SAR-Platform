@@ -261,7 +261,7 @@
         Cancel
       </button>
 
-      <form id="delete-report-form" method="POST" action="">
+      <form id="delete-report-form" method="POST" >
         {% csrf_token %}
         <button
           type="submit"
@@ -278,8 +278,9 @@
   function openDeleteModal(pk, title) {
     document.getElementById("delete-report-name").textContent =
       ' "' + title + '"';
+    const deleteUrlTemplate = "{%url 'reports:delete_report' pk=0 %}";
     document.getElementById("delete-report-form").action =
-      `/reports/${pk}/delete/`;
+      deleteUrlTemplate.replace("0",pk);
     const modal = document.getElementById("delete-modal");
     modal.classList.remove("hidden");
     modal.classList.add("flex");

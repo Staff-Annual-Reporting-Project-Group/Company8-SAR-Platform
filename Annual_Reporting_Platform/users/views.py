@@ -31,7 +31,7 @@ def loginPage(request):
 
 def logout_view(request):
     logout(request)
-    return render(request,'reports/index')
+    return redirect('reports:index')
 
 @login_required
 def profile_view(request):
