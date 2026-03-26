@@ -126,6 +126,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'images')
 MEDIA_URL = '/images/'
 
 STATIC_URL = '/static/'
+#load login images
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
