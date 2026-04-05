@@ -12,7 +12,7 @@
       Create a new report
     </h1>
 
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" action="{%url 'users:create-report'%}">
       {% csrf_token %}
 
       <div class="grid grid-cols-2 gap-10">
