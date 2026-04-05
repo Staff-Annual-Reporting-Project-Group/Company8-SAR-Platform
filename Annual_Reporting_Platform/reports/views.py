@@ -20,11 +20,14 @@ def index(request):
         category  = request.GET.get("category") if request.GET.get("category") != "All" else None
         committee = request.GET.get("committee") if request.GET.get("committee") != "All" else None
         partcipant = request.GET.get("participant") if request.GET.get("participant") != None else None
-        reports = Report.objects.filterReports(period,category,committee,partcipant)
+        reports = Report.objects.filterReports(period,category,committee,partcipant).active()
     else:
         logger.info("Fetching all approved reports from the database based on search")
         keyword = request.GET.get('q') if request.GET.get('q') != None else ''
-        reports = Report.objects.search(keyword)
+
+        reports = Report.objects.search(keyword).active()
+
+
 
     logger.debug(f"Found {reports.count()} reports")
     return render(request,'reports/index.html',{'reports':reports})
@@ -32,14 +35,19 @@ def index(request):
 def reportView(request, pk):
     logger.info(f"Fetching report with id {pk} from the database")
     try:
-        report = get_object_or_404(Report.objects,pk=pk)
+
+        report = get_object_or_404(Report.objects.active(),pk=pk)
+
+
         logger.debug(f"Found report f{report.title}")
     except Exception as e:
         logger.error(f"Error fetching report with id {pk}: {e}")
         raise
 
     
-    recent_reports = Report.objects.all().exclude(pk=report.pk)[:5]
+
+    recent_reports = Report.objects.active().exclude(pk=report.pk)[:5]
+
     context = {
         'report': report,
         'recent_reports': recent_reports

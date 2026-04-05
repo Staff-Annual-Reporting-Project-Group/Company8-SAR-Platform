@@ -37,7 +37,9 @@ class Report(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     isActive = models.BooleanField(auto_created=True,default=True)
+
     objects = ReportQuerySet.as_manager()#Custom manager
+
     
 
     class Meta:

@@ -35,6 +35,7 @@ def logout_view(request):
 
 
 
+
 @login_required
 def profile_view(request):
     q = request.GET.get('q', '').strip()
@@ -79,6 +80,8 @@ def delete_report(request, pk):
         return redirect('users:profile')
 
     return redirect('users:profile')
+
+
 
 
 @login_required
