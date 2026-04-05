@@ -3,9 +3,9 @@ from django.contrib.auth.models import User
 import django.utils.timezone as timezone
 class ReportManager(models.Manager):
     def all(self):
-        return self.filter(state__icontains='Approved')
+        return self.filter(isActive = True)
     def all_submitted(self):
-        return self.filter(state__icontains='Submitted')
+        return self.filter(isActive = True)
     
     
 

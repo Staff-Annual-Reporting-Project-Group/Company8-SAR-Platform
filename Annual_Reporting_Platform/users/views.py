@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from reports.models import Report
+from reports.models import Report,Category
 
 # Create your views here.
 def loginPage(request):
@@ -45,13 +45,22 @@ def profile_view(request):
                     )
     # reports = user.reports.all()
     context = {'reports':reports}
-    for report in reports:
-        print(report.state)
     return render(request,'users/profile.html',context)
 
 @login_required
 def create_report_view(request):
+    # title
+    # description
+    # participants
+    # category
+    # committees
+    # image
+
+    if request.method == "POST":
+        return
+    categories = Category.objects.all()
     context = {
-        'title' : "Create a New Report"
+        'title' : "Create a New Report",
+        'categories': categories
     }
     return render(request,"users/create_report.html",context)

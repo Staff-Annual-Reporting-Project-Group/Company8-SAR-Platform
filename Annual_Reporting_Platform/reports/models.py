@@ -25,23 +25,18 @@ class Committee(models.Model):
 # Create your models here.
 class Report(models.Model):
     #Report States
-    REPORT_STATES = {
-        'SUBMITTED': 'Submitted',
-        'APPROVED': 'Approved',
-        'REJECTED': 'Rejected',
-    }
     user = models.ForeignKey(User,on_delete=models.CASCADE,null=False,related_name='reports')
     title = models.CharField(max_length=200,blank=False,null=False, db_index=True)
     description = models.TextField(null=False,blank=False)
     #category
-    participants = models.ManyToManyField(Participant,blank=True,null=True)
+    participants = models.ManyToManyField(Participant,blank=True)
     category = models.ForeignKey(Category,on_delete=models.SET_NULL,default=1,null=True)
-    committees= models.ManyToManyField(Committee,null=True,blank=True)
+    committees= models.ManyToManyField(Committee,blank=True)
     feature_image = models.ImageField(default='default_image.jpg',upload_to='report_images')
-    date_of_report= models.DateField(blank=False,null=False,default=timezone.now().date())
+    date_of_report= models.DateField(blank=False,null=False,default=timezone.now())
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    state = models.CharField(max_length=20,choices=REPORT_STATES.items(),default=REPORT_STATES['SUBMITTED'],null=False,blank=False)
+    isActive = models.BooleanField(auto_created=True,default=True)
     all_objects = ReportManager()#Custom manager
     objects = models.Manager()#Default manager
     
