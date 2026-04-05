@@ -1,0 +1,5 @@
+db.sqlite3
+*.djcache
+**/__pycache__/
+*.pyc
+db.sqlite3
