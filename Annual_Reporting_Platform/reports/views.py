@@ -15,14 +15,14 @@ def index(request):
     
     filtered = True if request.GET.get('period') != None else False
     if filtered:
-        logger.info("Fetching all approved reports from the database based on filter params")
+        #logger.info("Fetching all approved reports from the database based on filter params")
         period = request.GET.get('period')
         category  = request.GET.get("category") if request.GET.get("category") != "All" else None
         committee = request.GET.get("committee") if request.GET.get("committee") != "All" else None
         partcipant = request.GET.get("participant") if request.GET.get("participant") != None else None
         reports = Report.objects.filterReports(period,category,committee,partcipant).active()
     else:
-        logger.info("Fetching all approved reports from the database based on search")
+        #logger.info("Fetching all approved reports from the database based on search")
         keyword = request.GET.get('q') if request.GET.get('q') != None else ''
 
         reports = Report.objects.search(keyword).active()
@@ -33,13 +33,13 @@ def index(request):
     return render(request,'reports/index.html',{'reports':reports})
 
 def reportView(request, pk):
-    logger.info(f"Fetching report with id {pk} from the database")
+   # logger.info(f"Fetching report with id {pk} from the database")
     try:
 
         report = get_object_or_404(Report.objects.active(),pk=pk)
 
 
-        logger.debug(f"Found report f{report.title}")
+        #logger.debug(f"Found report f{report.title}")
     except Exception as e:
         logger.error(f"Error fetching report with id {pk}: {e}")
         raise
@@ -67,6 +67,7 @@ def deleteReport(request,pk):
         if request.user == report.user:
             report.delete()
             messages.success(request,"Report Deleted Successfully")
+            logger.info(f"Report '{report.title}' with id {report.id} deleted successfully by user '{request.user.username}'")
             return redirect('users:profile')
         else:
             messages.error(request, 'User was not the owner of the report')

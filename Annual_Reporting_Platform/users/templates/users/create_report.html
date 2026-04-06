@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{%extends "base.html" %}
 
 {% block body %}
 <div class="flex min-h-screen">
 
   <!-- Sidebar -->
-  {% include "users/profile-sidebar.html" %}
+  {% include "users/sidebar.html" %}
 
   <!-- Main Content -->
   <main class="flex-1 bg-white px-10 py-8">
@@ -12,132 +12,150 @@
       Create a new report
     </h1>
 
-    <form method="POST" enctype="multipart/form-data" action="{%url 'users:create-report'%}">
-      {% csrf_token %}
+    <form method="POST" enctype="multipart/form-data" action="{% url 'users:create-report' %}">
+  {% csrf_token %}
 
-      <div class="grid grid-cols-2 gap-10">
+  <div class="grid grid-cols-2 gap-10">
 
-        <!-- LEFT COLUMN -->
-        <div>
-          <!-- Title -->
-          <label class="block text-sm font-medium text-gray-700">
-            Report title *
-          </label>
-          <input
-            type="text"
-            name="title"
-            placeholder="New Report"
-            class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
-            required
-          />
+    <!-- LEFT COLUMN -->
+    <div>
 
-          <!-- Description -->
-          <label class="block text-sm font-medium text-gray-700 mt-6">
-            Description *
-          </label>
-          <textarea
-            name="description"
-            rows="8"
-            placeholder="New Report Description"
-            class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
-            required
-          ></textarea>
+      <!-- Title -->
+      <label class="block text-sm font-medium text-gray-700">
+        Report title *
+      </label>
+      <input
+        type="text"
+        name="title"
+        placeholder="New Report"
+        value="{{ form_data.title|default:'' }}"
+        class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
+        required
+      />
 
-          <!-- Participants -->
-          <label class="block text-sm font-medium text-gray-700 mt-6">
-            Add Participants
-          </label>
+      <!-- Description -->
+      <label class="block text-sm font-medium text-gray-700 mt-6">
+        Description *
+      </label>
+      <textarea
+        name="description"
+        rows="8"
+        placeholder="New Report Description"
+        class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
+        required
+      >{{ form_data.description|default:'' }}</textarea>
 
-          <p class="text-xs text-gray-500 mb-2">
-            Type a participant's name and press comma (,) to add them.
-          </p>
+      <!-- Participants -->
+      <label class="block text-sm font-medium text-gray-700 mt-6">
+        Add Participants
+      </label>
 
-          <div
-            id="participants-container"
-            class="flex flex-wrap gap-2 border border-gray-300 rounded px-2 py-2"
-          >
+      <p class="text-xs text-gray-500 mb-2">
+        Type a participant's name and press comma (,) to add them.
+      </p>
+
+      <div
+        id="participants-container"
+        class="flex flex-wrap gap-2 border border-gray-300 rounded px-2 py-2"
+      >
+        <input
+          type="text"
+          id="participant-input"
+          class="flex-1 outline-none text-sm"
+          placeholder="Enter names..."
+        />
+      </div>
+
+      <!-- Hidden input -->
+      <input
+        type="hidden"
+        name="participants"
+        id="participants-hidden"
+        value="{{ form_data.participants|default:'' }}"
+      />
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div>
+
+      <!-- Category -->
+      <label class="block text-sm font-medium text-gray-700">
+        Category *
+      </label>
+      <select
+        name="category"
+        class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
+        required
+      >
+        <option value="">Select Category</option>
+        {% for category in categories %}
+          <option value="{{ category.id }}"
+            {% if form_data.category_id == category.id|stringformat:"s" %}selected{% endif %}>
+            {{ category.name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <!-- Committees -->
+      {% if committees %}
+      <label class="block text-sm font-medium text-gray-700 mt-6">
+        Committee
+      </label>
+
+      <div class="grid grid-cols-2 gap-3 mt-2">
+        {% for committee in committees %}
+          <label class="flex items-center gap-2 text-sm text-gray-700">
             <input
-              type="text"
-              id="participant-input"
-              class="flex-1 outline-none text-sm"
-              placeholder="Enter names..."
+              type="checkbox"
+              name="committees"
+              value="{{ committee.id }}"
+              class="accent-blue-500"
+              {% if form_data.committee_ids and committee.id|stringformat:"s" in form_data.committee_ids %}
+                checked
+              {% endif %}
             />
-          </div>
-
-          <!-- Hidden input to submit -->
-          <input type="hidden" name="participants" id="participants-hidden" />
-        </div>
-
-        <!-- RIGHT COLUMN -->
-        <div>
-          <!-- Category Dropdown -->
-          <label class="block text-sm font-medium text-gray-700">
-            Category *
+            {{ committee.name }}
           </label>
-          <select
-            name="category"
-            class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
-            required
-          >
-            <option value="">Select Category</option>
-            {% for category in categories %}
-            <option value="{{ category.id }}">{{ category.name }}</option>
-            {% endfor %}
-          </select>
-
-          <!-- Committee (ONLY IF EXISTS) -->
-          {% if committees %}
-          <label class="block text-sm font-medium text-gray-700 mt-6">
-            Committee
-          </label>
-
-          <div class="grid grid-cols-2 gap-3 mt-2">
-            {% for committee in committees %}
-            <label class="flex items-center gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                name="committees"
-                value="{{ committee.id }}"
-                class="accent-blue-500"
-              />
-              {{ committee.name }}
-            </label>
-            {% endfor %}
-          </div>
-          {% endif %}
-
-          <!-- Feature Image -->
-          <label class="block text-sm font-medium text-gray-700 mt-6">
-            Add Feature Image
-          </label>
-
-          <div class="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <p class="text-xs text-gray-400 mb-2">
-              10.0MB maximum file size
-            </p>
-            <input type="file" name="image" class="hidden" id="imageUpload"/>
-            <label
-              for="imageUpload"
-              class="cursor-pointer inline-block px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
-            >
-              Upload Image
-            </label>
-          </div>
-        </div>
-
+        {% endfor %}
       </div>
+      {% endif %}
 
-      <!-- Submit -->
-      <div class="mt-10">
-        <button
-          type="submit"
-          class="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-3 rounded"
+      <!-- Feature Image -->
+      <label class="block text-sm font-medium text-gray-700 mt-6">
+        Add Feature Image
+      </label>
+
+      <div class="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+        <p class="text-xs text-gray-400 mb-2">
+          10.0MB maximum file size
+        </p>
+
+        <input type="file" name="image" class="hidden" id="imageUpload"/>
+
+        <label
+          for="imageUpload"
+          class="cursor-pointer inline-block px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
         >
-          SUBMIT REPORT FOR APPROVAL
-        </button>
+          Upload Image
+        </label>
       </div>
 
-    </form>
+    </div>
+
+  </div>
+
+  <!-- Submit -->
+  <div class="mt-10">
+    <button
+      type="submit"
+      class="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-3 rounded"
+    >
+      SUBMIT REPORT FOR APPROVAL
+    </button>
+  </div>
+
+</form>
   </main>
 </div>
 
