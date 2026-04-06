@@ -126,6 +126,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'images')
 MEDIA_URL = '/images/'
 
 STATIC_URL = '/static/'
+LOGIN_REDIRECT_URL = 'myapp:index'
+LOGIN_URL = 'users:login'
 #load login images
 STATICFILES_DIRS = [
     BASE_DIR / "static",

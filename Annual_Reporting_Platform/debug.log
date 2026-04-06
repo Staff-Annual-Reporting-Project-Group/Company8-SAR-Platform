@@ -1,7 +1,6 @@
 Watching for file changes with StatReloader
 /mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/users/views.py changed, reloading.
 Watching for file changes with StatReloader
-<<<<<<< HEAD
 Watching for file changes with StatReloader
 Not Found: /
 Not Found: /favicon.ico
@@ -909,8 +908,6 @@ Traceback (most recent call last):
   File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/urls/resolvers.py", line 842, in _reverse_with_prefix
     raise NoReverseMatch(msg)
 django.urls.exceptions.NoReverseMatch: Reverse for 'profile' not found. 'profile' is not a valid view function or pattern name.
-=======
->>>>>>> main
 Watching for file changes with StatReloader
 Fetching all approved reports from the database based on search
 Found 4 reports
