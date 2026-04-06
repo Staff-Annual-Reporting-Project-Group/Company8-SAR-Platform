@@ -5,65 +5,51 @@
 <div class="flex h-[calc(100vh-65px)] overflow-hidden">
 
   <!-- ══════════  LEFT SIDEBAR — Recent Reports  ══════════ -->
-  <aside class="w-80 shrink-0 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
-    <div class="px-5 pt-5 pb-3 border-b border-gray-100">
-      <h2 class="font-display text-base font-semibold text-gray-700">Recent Reports</h2>
-    </div>
+<aside class="w-72 shrink-0 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
+  <div class="px-5 pt-5 pb-3 border-b border-gray-100">
+    <h2 class="font-display text-xs font-semibold text-gray-400 uppercase tracking-widest">Recent Reports</h2>
+  </div>
 
-    <div class="flex-1 overflow-y-auto divide-y divide-gray-100">
-      {% cache 500 recent_reports %}
-      {% for recent in recent_reports %}
-      <a href="{% url 'reports:report_detail' recent.pk %}"
-         class="block px-5 py-4 hover:bg-gray-50 transition group {% if recent.pk == report.pk %}bg-blue-50 border-l-2 border-blue-500{% endif %}">
+  <div class="flex-1 overflow-y-auto divide-y divide-gray-100">
+    {% cache 500 recent_reports %}
+    {% for recent in recent_reports %}
+    <a href="{% url 'reports:report_detail' recent.pk %}"
+       class="block px-5 py-3 hover:bg-gray-50 transition group {% if recent.pk == report.pk %}bg-blue-50 border-l-2 border-blue-500{% endif %}">
 
-        <!-- Title -->
-        <h3 class="text-sm font-semibold text-gray-800 group-hover:text-blue-700 line-clamp-1 transition">
+      <!-- Title + Badge -->
+      <div class="flex items-center justify-between gap-2">
+        <h3 class="text-xs font-semibold text-gray-800 group-hover:text-blue-700 line-clamp-1 transition">
           {{ recent.title }}
         </h3>
-        <p class="text-xs text-gray-400 mt-0.5">{{ recent.date_of_report }}</p>
+        {% if recent.category %}
+        {% with cat=recent.category.name|lower %}
+        <span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded
+          {% if cat == 'award' %}badge-award
+          {% elif cat == 'publication' %}badge-publication
+          {% elif cat == 'activity' %}badge-activity
+          {% elif cat == 'initiative' %}badge-initiative
+          {% else %}badge-default{% endif %}">
+          {{ recent.category.name }}
+        </span>
+        {% endwith %}
+        {% endif %}
+      </div>
 
-        <!-- Badge + Committees -->
-        <div class="flex flex-wrap items-center gap-1.5 mt-2">
-          {% if recent.category %}
-          {% with cat=recent.category.name|lower %}
-          <span class="text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide
-            {% if cat == 'award' %}badge-award
-            {% elif cat == 'publication' %}badge-publication
-            {% elif cat == 'activity' %}badge-activity
-            {% elif cat == 'initiative' %}badge-initiative
-            {% else %}badge-default{% endif %}">
-            {{ recent.category.name }}
-          </span>
-          {% endwith %}
-          {% endif %}
-          {% with cms=recent.committees.all %}
-          {% if cms %}
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 border border-indigo-100 truncate max-w-[100px]">
-              {{ cms.0.name }}
-            </span>
-            {% if cms|length > 1 %}
-            <span class="text-xs text-gray-400">+{{ cms|length|add:"-1" }}</span>
-            {% endif %}
-          {% endif %}
-          {% endwith %}
-        </div>
+      <!-- Author + Date + View -->
+      <div class="flex items-center justify-between mt-1">
+        <span class="text-[11px] text-gray-400">
+          By {{ recent.user.get_full_name|default:recent.user.username }} · {{ recent.date_of_report }}
+        </span>
+        <span class="text-[11px] font-semibold text-blue-400 group-hover:text-blue-600">View →</span>
+      </div>
 
-        <!-- Description snippet -->
-        <p class="text-xs text-gray-500 mt-2 line-clamp-2 leading-relaxed">
-          {{ recent.description }}
-        </p>
-
-        <div class="mt-2 flex items-center justify-between">
-          <span class="text-xs text-gray-400">By {{ recent.user.get_full_name|default:recent.user.username }}</span>
-          <span class="text-xs font-semibold text-blue-500 group-hover:text-blue-700">VIEW MORE →</span>
-        </div>
-      </a>
-      {% empty %}
-      <div class="px-5 py-8 text-center text-sm text-gray-400">No recent reports.</div>
-      {% endfor %}
-      {% endcache %}
-    </div>
-  </aside>
+    </a>
+    {% empty %}
+    <div class="px-5 py-8 text-center text-sm text-gray-400">No recent reports.</div>
+    {% endfor %}
+    {% endcache %}
+  </div>
+</aside>
 
   <!-- ══════════  MAIN CONTENT — Report Detail  ══════════ -->
   <main class="flex-1 overflow-y-auto bg-gray-50 px-10 py-8">
