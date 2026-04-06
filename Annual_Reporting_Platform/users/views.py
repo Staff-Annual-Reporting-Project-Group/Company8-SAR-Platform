@@ -84,130 +84,249 @@ def delete_report(request, pk):
     return redirect('users:profile')
 
 
+def _get_report_form_dependencies():
+    return {
+        'categories': Category.objects.all().order_by('name'),
+        'committees': Committee.objects.all().order_by('name'),
+    }
+
+
+def _get_report_form_data(request):
+    return {
+        'title': request.POST.get('title', '').strip(),
+        'description': request.POST.get('description', '').strip(),
+        'category_id': request.POST.get('category', '').strip(),
+        'committee_ids': request.POST.getlist('committees'),
+        'participants': request.POST.get('participants', '').strip(),
+        'feature_image': request.FILES.get('image'),
+    }
+
+
+def _parse_participant_names(participant_string):
+    raw_names = participant_string.split(',')
+    participant_names = []
+    seen = set()
+
+    for name in raw_names:
+        cleaned_name = name.strip()
+        if cleaned_name:
+            key = cleaned_name.lower()
+            if key not in seen:
+                seen.add(key)
+                participant_names.append(cleaned_name)
+
+    return participant_names
+
+
+def _validate_report_form_data(form_data):
+    errors = []
+
+    title = form_data['title']
+    description = form_data['description']
+    category_id = form_data['category_id']
+    participant_string = form_data['participants']
+
+    if not title:
+        errors.append("Title is required.")
+    elif not verify_title(title):
+        errors.append("Title must be at least 5 characters long and cannot contain profanity.")
+
+    if not description:
+        errors.append("Description is required.")
+    elif not verify_description(description):
+        errors.append("Description must be at least 10 characters long and cannot contain profanity.")
+
+    category = None
+    if not category_id:
+        errors.append("Category is required.")
+    else:
+        try:
+            category = Category.objects.get(id=category_id)
+        except Category.DoesNotExist:
+            errors.append("Selected category is invalid.")
+
+    participant_names = _parse_participant_names(participant_string)
+    for cleaned_name in participant_names:
+        if not verify_title(cleaned_name):
+            errors.append(
+                f"Participant name '{cleaned_name}' must be at least 5 characters long and cannot contain profanity."
+            )
+
+    return errors, category, participant_names
+
+
+def _get_or_create_participants(participant_names, user):
+    participant_objects = []
+
+    for full_name in participant_names:
+        participant = Participant.objects.filter(name__iexact=full_name).first()
+        if not participant:
+            participant = Participant.objects.create(name=full_name, user=user)
+        participant_objects.append(participant)
+
+    return participant_objects
+
+
+def _build_report_context(page, dependencies, report=None, form_data=None):
+    context = {
+        'page': page,
+        'categories': dependencies['categories'],
+        'committees': dependencies['committees'],
+    }
+
+    if report is not None:
+        context['report'] = report
+
+    if form_data is not None:
+        context['form_data'] = {
+            'title': form_data['title'],
+            'description': form_data['description'],
+            'category_id': form_data['category_id'],
+            'committee_ids': form_data['committee_ids'],
+            'participants': form_data['participants'],
+        }
+
+    return context
+
+
+def _save_report(report, user, form_data, category, participant_names):
+    selected_committees = Committee.objects.filter(id__in=form_data['committee_ids'])
+    participant_objects = _get_or_create_participants(participant_names, user)
+
+    with transaction.atomic():
+        is_create = report is None
+
+        if is_create:
+            report = Report.objects.create(
+                user=user,
+                title=form_data['title'],
+                description=form_data['description'],
+                category=category,
+                feature_image=form_data['feature_image'] if form_data['feature_image'] else 'default_image.jpg',
+            )
+        else:
+            report.title = form_data['title']
+            report.description = form_data['description']
+            report.category = category
+
+            if form_data['feature_image']:
+                report.feature_image = form_data['feature_image']
+
+            report.save()
+
+        report.committees.set(selected_committees)
+        report.participants.set(participant_objects)
+
+    return report
 
 
 @login_required
 def create_report_view(request):
-    categories = Category.objects.all().order_by('name')
-    committees = Committee.objects.all().order_by('name')
+    dependencies = _get_report_form_dependencies()
 
     if request.method == "POST":
-        title = request.POST.get('title', '').strip()
-        description = request.POST.get('description', '').strip()
-        category_id = request.POST.get('category', '').strip()
-        committee_ids = request.POST.getlist('committees')
-        participant_string = request.POST.get('participants', '').strip()
-        feature_image = request.FILES.get('image')
-
-        errors = []
-
-        if not title:
-            errors.append("Title is required.")
-
-        else:
-            if not verify_title(title):
-                errors.append("Title must be at least 5 characters long and cannot contain profanity.")
-
-        if not description:
-            errors.append("Description is required.")
-            if not verify_description(description):
-                errors.append("Description must be at least 10 characters long and cannot contain profanity.")
-
-        if not category_id:
-            errors.append("Category is required.")
-
-        category = None
-        if category_id:
-            try:
-                category = Category.objects.get(id=category_id)
-            except Category.DoesNotExist:
-                errors.append("Selected category is invalid.")
-
-        selected_committees = Committee.objects.filter(id__in=committee_ids)
-
-        # Parse participants from hidden comma-separated field
-        raw_names = participant_string.split(',')
-        for name in raw_names:
-            cleaned_name = name.strip()
-            if cleaned_name and not verify_title(cleaned_name):
-                errors.append(f"Participant name '{cleaned_name}' must be at least 5 characters long and cannot contain profanity.")
-        participant_names = []
-        seen = set()
-
-        for name in raw_names:
-            cleaned_name = name.strip()
-            if cleaned_name:
-                key = cleaned_name.lower()
-                if key not in seen:
-                    seen.add(key)
-                    participant_names.append(cleaned_name)
+        form_data = _get_report_form_data(request)
+        errors, category, participant_names = _validate_report_form_data(form_data)
 
         if errors:
             for error in errors:
                 messages.error(request, error)
 
-            context = {
-                'page': 'create-report',
-                'categories': categories,
-                'committees': committees,
-                'form_data': {
-                    'title': title,
-                    'description': description,
-                    'category_id': category_id,
-                    'committee_ids': committee_ids,
-                    'participants': participant_string,
-                }
-            }
+            context = _build_report_context(
+                page='create-report',
+                dependencies=dependencies,
+                form_data=form_data,
+            )
             return render(request, "users/create_report.html", context)
 
         try:
-            with transaction.atomic():#Joshua Weekes here this part is very important to ensure that the A part of the ACID properties are maintained
-                report = Report.objects.create(
-                    user=request.user,
-                    title=title,
-                    description=description,
-                    category=category,
-                    feature_image=feature_image if feature_image else 'default_image.jpg',
-                )
-
-                if selected_committees.exists():
-                    report.committees.set(selected_committees)
-
-                participant_objects = []
-                for full_name in participant_names:
-                    participant = Participant.objects.filter(name__iexact=full_name).first()
-                    if not participant:
-                        participant = Participant.objects.create(name=full_name)
-                    participant_objects.append(participant)
-
-                if participant_objects:
-                    report.participants.set(participant_objects)
-            logger.info(f"Report '{report.title}' created successfully by user '{request.user.username}' with id {report.id}")
+            report = _save_report(
+                report=None,
+                user=request.user,
+                form_data=form_data,
+                category=category,
+                participant_names=participant_names,
+            )
+            logger.info(
+                f"Report '{report.title}' created successfully by user '{request.user.username}' with id {report.id}"
+            )
             messages.success(request, "Report created successfully.")
-            cache.clear()# Clear the cache to ensure that the new report appears in the listings immediately
+            cache.clear()
             return redirect('users:profile')
 
-        except Exception:
-            logger.error(f"Error occurred while creating report by user '{request.user.username}': {str(e)}")
+        except Exception as e:
+            logger.error(
+                f"Error occurred while creating report by user '{request.user.username}': {str(e)}"
+            )
             messages.error(request, "An error occurred while creating the report.")
 
-            context = {
-                'page': 'create-report',
-                'categories': categories,
-                'committees': committees,
-                'form_data': {
-                    'title': title,
-                    'description': description,
-                    'category_id': category_id,
-                    'committee_ids': committee_ids,
-                    'participants': participant_string,
-                }
-            }
+            context = _build_report_context(
+                page='create-report',
+                dependencies=dependencies,
+                form_data=form_data,
+            )
             return render(request, "users/create_report.html", context)
 
-    context = {
-        'page': 'create-report',
-        'categories': categories,
-        'committees': committees,
-    }
+    context = _build_report_context(
+        page='create-report',
+        dependencies=dependencies,
+    )
+    return render(request, "users/create_report.html", context)
+
+
+@login_required
+def edit_report_view(request, pk):
+    report = get_object_or_404(Report, id=pk, user=request.user, isActive=True)
+    dependencies = _get_report_form_dependencies()
+
+    if request.method == "POST":
+        form_data = _get_report_form_data(request)
+        errors, category, participant_names = _validate_report_form_data(form_data)
+
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+
+            context = _build_report_context(
+                page='create-report',
+                dependencies=dependencies,
+                report=report,
+                form_data=form_data,
+            )
+            return render(request, "users/create_report.html", context)
+
+        try:
+            report = _save_report(
+                report=report,
+                user=request.user,
+                form_data=form_data,
+                category=category,
+                participant_names=participant_names,
+            )
+            logger.info(
+                f"Report '{report.title}' updated successfully by user '{request.user.username}' with id {report.id}"
+            )
+            messages.success(request, "Report updated successfully.")
+            cache.clear()
+            return redirect('users:profile')
+
+        except Exception as e:
+            logger.error(
+                f"Error occurred while updating report id {report.id} by user '{request.user.username}': {str(e)}"
+            )
+            messages.error(request, "An error occurred while updating the report.")
+
+            context = _build_report_context(
+                page='create-report',
+                dependencies=dependencies,
+                report=report,
+                form_data=form_data,
+            )
+            return render(request, "users/create_report.html", context)
+
+    context = _build_report_context(
+        page='create-report',
+        dependencies=dependencies,
+        report=report,
+    )
     return render(request, "users/create_report.html", context)
