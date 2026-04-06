@@ -2,11 +2,14 @@
 
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http.response import HttpResponse
-from .models import Report
+from .models import Report,Committee
 from django.views.decorators.cache import cache_page
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import logging
+from django.utils import timezone
+from django.db.models import Min
+from .pdf_utils import generate_annual_pdf, generate_my_reports_pdf
 
 logger = logging.getLogger(__name__)# Create a logger for this module the__name__ variable will be set to the name of the module, which is a common practice for organizing loggers in Python applications.
 # Create your views here.
@@ -73,4 +76,42 @@ def deleteReport(request,pk):
             messages.error(request, 'User was not the owner of the report')
             
     return redirect('users:profile')
-        
+
+@login_required        
+def annual_report(request):
+    current_year = timezone.now().year
+    year = int(request.GET.get('year', current_year))
+
+    reports = list(
+        Report.objects.select_related('user', 'category')
+                      .prefetch_related('committees', 'participants')
+                      .filter(date_of_report__year=year)
+                      .order_by('-date_of_report')
+    )
+
+    earliest = Report.objects.aggregate(Min('date_of_report'))['date_of_report__min']
+    start_year = earliest.year if earliest else current_year
+    year_range = range(current_year, start_year - 1, -1)
+    context = {
+        'reports': reports,
+        'year': year,
+        'year_range': year_range,
+        'committees': Committee.objects.all(),
+        'page': 'annual',
+    }
+    return render(request, 'reports/annual_report.html', context)
+
+
+def annual_report_pdf(request):
+    current_year = timezone.now().year
+    year = int(request.GET.get('year', current_year))
+    reports = list(
+        Report.objects.select_related('user', 'category')
+                      .prefetch_related('committees', 'participants')
+                      .filter(date_of_report__year=year)
+                      .order_by('date_of_report')
+    )
+    buf = generate_annual_pdf(reports, year)
+    response = HttpResponse(buf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="DCIT_Annual_Report_{year}.pdf"'
+    return response
