@@ -77,7 +77,7 @@ def deleteReport(request,pk):
             
     return redirect('users:profile')
 
-@login_required        
+       
 def annual_report(request):
     current_year = timezone.now().year
     year = int(request.GET.get('year', current_year))
@@ -114,4 +114,17 @@ def annual_report_pdf(request):
     buf = generate_annual_pdf(reports, year)
     response = HttpResponse(buf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="DCIT_Annual_Report_{year}.pdf"'
+    return response
+
+@login_required
+def my_reports_pdf(request):
+    reports = list(
+        Report.objects.select_related('category')
+                      .prefetch_related('committees', 'participants')
+                      .filter(user=request.user)
+                      .order_by('date_of_report')
+    )
+    buf = generate_my_reports_pdf(reports, request.user)
+    response = HttpResponse(buf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="My_Reports_{request.user.username}.pdf"'
     return response

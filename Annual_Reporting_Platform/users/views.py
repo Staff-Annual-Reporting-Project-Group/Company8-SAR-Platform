@@ -330,3 +330,139 @@ def edit_report_view(request, pk):
         report=report,
     )
     return render(request, "users/create_report.html", context)
+
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import render
+from django.db import transaction
+
+from .models import UserProfilePic
+
+
+@login_required
+def account_view(request):
+    # Ensure profile pic exists
+    profile = UserProfilePic.objects.get(user=request.user)
+   
+   
+
+    active_tab = request.GET.get('tab', 'info')
+    if active_tab not in ['info', 'password']:
+        active_tab = 'info'
+
+    success = False
+    errors = []
+
+    if request.method == "POST":
+        action = request.POST.get('action', '').strip()
+
+        # ───────────── UPDATE ACCOUNT INFO ─────────────
+        if action == 'update_info':
+            active_tab = 'info'
+
+            first_name = request.POST.get('first_name', '').strip()
+            last_name = request.POST.get('last_name', '').strip()
+            email = request.POST.get('email', '').strip()
+
+            avatar = request.FILES.get('avatar')
+            delete_avatar = request.POST.get('delete_avatar')
+
+            if not first_name:
+                errors.append("First name is required.")
+
+            if not last_name:
+                errors.append("Last name is required.")
+
+            if not email:
+                errors.append("Email is required.")
+
+            if not errors:
+                try:
+                    with transaction.atomic():
+                        # Update user
+                        request.user.first_name = first_name
+                        request.user.last_name = last_name
+                        request.user.email = email
+                        request.user.save()
+
+                        # Handle avatar deletion
+                        if delete_avatar:
+                            if profile.profilePic:
+                                profile.profilePic.delete(save=False)
+                            profile.profilePic = "profile_pictures/user.png"
+
+                        # Handle new upload
+                        if avatar:
+                            profile.profilePic = avatar
+
+                        profile.save()
+
+                    success = True
+
+                    
+
+                except Exception as e:
+                    errors.append(f"Error updating account: {str(e)}")
+
+        # ───────────── CHANGE PASSWORD ─────────────
+        elif action == 'change_password':
+            active_tab = 'password'
+
+            current_password = request.POST.get('current_password', '')
+            new_password = request.POST.get('new_password', '')
+            confirm_password = request.POST.get('confirm_password', '')
+
+            if not current_password:
+                errors.append("Current password is required.")
+
+            if not new_password:
+                errors.append("New password is required.")
+
+            if not confirm_password:
+                errors.append("Please confirm your new password.")
+
+            if current_password and not request.user.check_password(current_password):
+                errors.append("Current password is incorrect.")
+
+            if new_password and confirm_password and new_password != confirm_password:
+                errors.append("Passwords do not match.")
+
+            # Password strength checks
+            if new_password:
+                if len(new_password) < 12:
+                    errors.append("Password must be at least 12 characters.")
+                if not any(c.isupper() for c in new_password):
+                    errors.append("Must include uppercase letter.")
+                if not any(c.islower() for c in new_password):
+                    errors.append("Must include lowercase letter.")
+                if not any(c.isdigit() for c in new_password):
+                    errors.append("Must include a number.")
+                if new_password.isalnum():
+                    errors.append("Must include a special character.")
+
+            if not errors:
+                try:
+                    request.user.set_password(new_password)
+                    request.user.save()
+
+                    # keep user logged in
+                    update_session_auth_hash(request, request.user)
+
+                    success = True
+
+                except Exception as e:
+                    errors.append(f"Error changing password: {str(e)}")
+
+        else:
+            errors.append("Invalid action.")
+
+    context = {
+        'page': 'account',
+        'profile': profile,
+        'active_tab': active_tab,
+        'success': success,
+        'errors': errors,
+    }
+
+    return render(request, 'users/account.html', context)
