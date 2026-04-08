@@ -10,30 +10,32 @@ import logging
 from django.utils import timezone
 from django.db.models import Min
 from .pdf_utils import generate_annual_pdf, generate_my_reports_pdf
+from django.core.paginator import Paginator
+from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)# Create a logger for this module the__name__ variable will be set to the name of the module, which is a common practice for organizing loggers in Python applications.
 # Create your views here.
 # @cache_page(60 * 15)
 def index(request):
-    
     filtered = True if request.GET.get('period') != None else False
-    if filtered:
-        #logger.info("Fetching all approved reports from the database based on filter params")
-        period = request.GET.get('period')
-        category  = request.GET.get("category") if request.GET.get("category") != "All" else None
-        committee = request.GET.get("committee") if request.GET.get("committee") != "All" else None
-        partcipant = request.GET.get("participant") if request.GET.get("participant") != None else None
-        reports = Report.objects.filterReports(period,category,committee,partcipant).active()
-    else:
-        #logger.info("Fetching all approved reports from the database based on search")
-        keyword = request.GET.get('q') if request.GET.get('q') != None else ''
 
+    if filtered:
+        period = request.GET.get('period')
+        category = request.GET.get("category") if request.GET.get("category") != "All" else None
+        committee = request.GET.get("committee") if request.GET.get("committee") != "All" else None
+        participant = request.GET.get("participant") if request.GET.get("participant") != None else None
+
+        reports = Report.objects.filterReports(period, category, committee, participant).active()
+    else:
+        keyword = request.GET.get('q') if request.GET.get('q') != None else ''
         reports = Report.objects.search(keyword).active()
 
+    paginator = Paginator(reports, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'page_obj': page_obj}
 
-
-    logger.debug(f"Found {reports.count()} reports")
-    return render(request,'reports/index.html',{'reports':reports})
+    return render(request, 'reports/index.html', context)
 
 def reportView(request, pk):
    # logger.info(f"Fetching report with id {pk} from the database")
@@ -56,6 +58,30 @@ def reportView(request, pk):
         'recent_reports': recent_reports
     }
     return render(request,'reports/report_details.html',context)
+
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, render
+
+from .models import Report
+
+
+def selectedUserReportsView(request, pk):
+    selected_user = get_object_or_404(User, pk=pk)
+
+    reports = Report.objects.user_reports(selected_user).order_by('-date_of_report', '-created')
+
+    paginator = Paginator(reports, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'selected_user': selected_user,
+        'page_obj': page_obj,
+    }
+
+    return render(request, 'reports/selected_user_reports.html', context)
+
 
 @login_required
 def deleteReport(request,pk):
@@ -128,3 +154,4 @@ def my_reports_pdf(request):
     response = HttpResponse(buf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="My_Reports_{request.user.username}.pdf"'
     return response
+

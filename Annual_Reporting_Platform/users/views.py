@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from reports.models import Report,Category,Committee,Participant
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from .extra_functionality import verify_title,verify_description
 from django.core.cache import cache
 import logging
@@ -466,3 +466,74 @@ def account_view(request):
     }
 
     return render(request, 'users/account.html', context)
+
+
+def registerView(request):
+    context = {}
+    if request.method == "POST":
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        password2 = request.POST.get('password2', '')
+        context = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'username': username,
+            'email': email,
+        }
+        errors = []
+
+        # ───────── VALIDATION ─────────
+        if not username:
+            errors.append("Username is required.")
+
+        if not email:
+            errors.append("Email is required.")
+
+        if not password:
+            errors.append("Password is required.")
+
+        if password != password2:
+            errors.append("Passwords do not match.")
+
+        if len(password) < 8:
+            errors.append("Password must be at least 8 characters long.")
+
+        if User.objects.filter(username=username).exists():
+            errors.append("Username already exists.")
+
+        if User.objects.filter(email=email).exists():
+            errors.append("Email already registered.")
+
+        # ───────── CREATE USER ─────────
+        if not errors:
+            try:
+                user = User.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=password,
+                    first_name=first_name,
+                    last_name=last_name
+                )
+
+                # deactivate account
+                user.is_active = False
+                user.save()
+
+                messages.success(
+                    request,
+                    "Registration successful! Your account is pending admin approval."
+                )
+
+                return redirect('reports:index')
+
+            except IntegrityError:
+                messages.error(request, "An error occurred while creating your account.")
+
+        else:
+            for err in errors:
+                messages.error(request, err)
+
+    return render(request, 'users/register.html',context)

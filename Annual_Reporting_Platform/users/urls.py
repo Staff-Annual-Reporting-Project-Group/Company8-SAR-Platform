@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import account_view, loginPage,logout_view,profile_view,create_report_view,delete_report,edit_report_view
+from .views import account_view, loginPage,logout_view,profile_view,create_report_view,delete_report,edit_report_view,registerView  
 
 
 
@@ -12,5 +12,6 @@ urlpatterns = [
     path("profile/edit-report/<int:pk>",view=edit_report_view,name="edit-report"),
     path("delete-report/<int:pk>",view=delete_report,name="delete-report"),
     path("account/", view=account_view, name="account"),
+    path("register/",view=registerView, name="register")
 
 ]
