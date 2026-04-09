@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="flex min-h-screen bg-gray-50">
+
+  {% include "administration/admin_sidebar.html" with page=page admin_profile=admin_profile %}
+
+  <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Generate Reports</h1>
+        <p class="text-sm text-gray-500 mt-1">
+          Sync DCIT staff accounts and import publication reports.
+        </p>
+      </div>
+
+      {% if messages %}
+        <div class="mb-5 space-y-2">
+          {% for message in messages %}
+            <div class="px-4 py-3 rounded-xl text-sm font-medium
+              {% if message.tags == 'success' %}
+                bg-green-50 text-green-700 border border-green-200
+              {% elif message.tags == 'error' %}
+                bg-red-50 text-red-700 border border-red-200
+              {% else %}
+                bg-blue-50 text-blue-700 border border-blue-200
+              {% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+        <!-- STAFF SYNC -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">Sync Staff Accounts</h2>
+          <p class="text-sm text-gray-500 mb-4">
+            Creates or updates staff users and uploads profile images.
+          </p>
+
+          <form method="POST" id="staffForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="sync_staff">
+
+            <button type="submit"
+              class="w-full px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition">
+              Run Staff Sync
+            </button>
+          </form>
+        </div>
+
+        <!-- PUBLICATIONS -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">Import Publications</h2>
+          <p class="text-sm text-gray-500 mb-4">
+            Imports publications and generates reports.
+          </p>
+
+          <form method="POST" id="pubForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="import_publications">
+
+            <input type="text" name="owner_username" value="admin"
+              class="w-full mb-4 rounded-xl border border-gray-200 px-3 py-2 text-sm"
+              placeholder="Fallback owner username">
+
+            <button type="submit"
+              class="w-full px-5 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white text-sm font-semibold transition">
+              Run Publications Import
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- 🔥 LOADING OVERLAY -->
+<div id="loadingOverlay"
+     class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+
+  <div class="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center gap-4 text-center max-w-sm w-full">
+
+    <!-- Spinner -->
+    <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+
+    <h2 id="loadingTitle" class="text-lg font-semibold text-gray-900">
+      Processing...
+    </h2>
+
+    <p id="loadingText" class="text-sm text-gray-500">
+      Please wait...
+    </p>
+
+  </div>
+</div>
+
+<!-- 🔥 SCRIPT -->
+<script>
+  function showOverlay(type) {
+    const overlay = document.getElementById('loadingOverlay');
+    const title = document.getElementById('loadingTitle');
+    const text = document.getElementById('loadingText');
+
+    if (type === 'staff') {
+      title.textContent = "Syncing Staff Accounts...";
+      text.textContent = "Creating users and uploading images...";
+    } else if (type === 'publications') {
+      title.textContent = "Importing Publications...";
+      text.textContent = "Generating reports from scraped data...";
+    }
+
+    overlay.classList.remove('hidden');
+
+    // disable all buttons
+    document.querySelectorAll('button').forEach(btn => {
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+    });
+  }
+
+  // Attach listeners AFTER DOM loads
+  document.addEventListener("DOMContentLoaded", function() {
+
+    const staffForm = document.getElementById("staffForm");
+    const pubForm = document.getElementById("pubForm");
+
+    if (staffForm) {
+      staffForm.addEventListener("submit", function() {
+        showOverlay('staff');
+      });
+    }
+
+    if (pubForm) {
+      pubForm.addEventListener("submit", function() {
+        showOverlay('publications');
+      });
+    }
+
+  });
+</script>
+
+{% endblock %}

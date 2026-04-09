@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from .report_generation_helpers import generate_staff_accounts, generate_publication_reports
 
 
 
@@ -155,3 +156,34 @@ def adminReportView(request):
         "selected_period": period,
     }
     return render(request, "administration/admin_reports.html", context)
+
+
+
+
+@admin_required
+def generateReportsView(request):
+    admin_profile = getattr(request.user, "profile_pic", None)
+    result = None
+
+    if request.method == "POST":
+        action = request.POST.get("action", "").strip()
+
+        if action == "sync_staff":
+            result = generate_staff_accounts()
+        elif action == "import_publications":
+            owner_username = request.POST.get("owner_username", "admin").strip() or "admin"
+            result = generate_publication_reports(owner_username=owner_username)
+        else:
+            messages.error(request, "Invalid action.")
+
+        if result:
+            if result.get("success"):
+                messages.success(request, result["message"])
+            else:
+                messages.error(request, result["message"])
+
+    context = {
+        "page": "Generate Reports",
+        "admin_profile": admin_profile,
+    }
+    return render(request, "administration/admin_generate_reports.html", context)

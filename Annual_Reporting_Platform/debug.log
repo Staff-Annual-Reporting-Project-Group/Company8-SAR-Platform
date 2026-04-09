@@ -2082,3 +2082,280 @@ Traceback (most recent call last):
   File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/urls/resolvers.py", line 842, in _reverse_with_prefix
     raise NoReverseMatch(msg)
 django.urls.exceptions.NoReverseMatch: Reverse for 'admin-accounts' not found. 'admin-accounts' is not a valid view function or pattern name.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/views.py changed, reloading.
+Watching for file changes with StatReloader
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/views.py changed, reloading.
+Watching for file changes with StatReloader
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/views.py changed, reloading.
+Watching for file changes with StatReloader
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/views.py changed, reloading.
+Watching for file changes with StatReloader
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/views.py changed, reloading.
+Watching for file changes with StatReloader
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/views.py changed, reloading.
+Watching for file changes with StatReloader
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/report_generation_helpers.py changed, reloading.
+Watching for file changes with StatReloader
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/report_generation_helpers.py changed, reloading.
+Watching for file changes with StatReloader
+Starting new HTTPS connection (1): sta.uwi.edu:443
+Starting new HTTPS connection (2): sta.uwi.edu:443
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2026 HTTP/1.1" 200 8020
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2025 HTTP/1.1" 200 12212
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2024 HTTP/1.1" 200 8373
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2023 HTTP/1.1" 200 9614
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2021 HTTP/1.1" 200 9126
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2020 HTTP/1.1" 200 10154
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2019 HTTP/1.1" 200 10326
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2018 HTTP/1.1" 200 9821
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2017 HTTP/1.1" 200 11800
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2016 HTTP/1.1" 200 11662
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2015 HTTP/1.1" 200 10718
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2014 HTTP/1.1" 200 8560
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2013 HTTP/1.1" 200 9870
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2012 HTTP/1.1" 200 13281
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2011 HTTP/1.1" 200 13109
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2010 HTTP/1.1" 200 12086
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2009 HTTP/1.1" 200 9247
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2004 HTTP/1.1" 200 8067
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/1999 HTTP/1.1" 200 7769
+/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/report_generation_helpers.py changed, reloading.
+Watching for file changes with StatReloader
+Starting new HTTPS connection (1): sta.uwi.edu:443
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2026 HTTP/1.1" 200 8022
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2025 HTTP/1.1" 200 12209
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2024 HTTP/1.1" 200 8380
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2023 HTTP/1.1" 200 9618
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2021 HTTP/1.1" 200 9130
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2020 HTTP/1.1" 200 10155
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2019 HTTP/1.1" 200 10317
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2018 HTTP/1.1" 200 9816
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2017 HTTP/1.1" 200 11799
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2016 HTTP/1.1" 200 11664
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2015 HTTP/1.1" 200 10723
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2014 HTTP/1.1" 200 8560
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2013 HTTP/1.1" 200 9864
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2012 HTTP/1.1" 200 13278
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2011 HTTP/1.1" 200 13108
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2010 HTTP/1.1" 200 12081
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2009 HTTP/1.1" 200 9248
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2004 HTTP/1.1" 200 8069
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/1999 HTTP/1.1" 200 7769
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2026 HTTP/1.1" 200 8018
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2025 HTTP/1.1" 200 12217
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2024 HTTP/1.1" 200 8382
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2023 HTTP/1.1" 200 9611
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2021 HTTP/1.1" 200 9126
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2020 HTTP/1.1" 200 10154
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2019 HTTP/1.1" 200 10328
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2018 HTTP/1.1" 200 9823
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2017 HTTP/1.1" 200 11793
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2016 HTTP/1.1" 200 11664
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2015 HTTP/1.1" 200 10723
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2014 HTTP/1.1" 200 8558
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2013 HTTP/1.1" 200 9871
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2012 HTTP/1.1" 200 13279
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2011 HTTP/1.1" 200 13114
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2010 HTTP/1.1" 200 12084
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2009 HTTP/1.1" 200 9248
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2004 HTTP/1.1" 200 8070
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/1999 HTTP/1.1" 200 7771
+Watching for file changes with StatReloader
+Starting new HTTPS connection (1): sta.uwi.edu:443
+Starting new HTTPS connection (2): sta.uwi.edu:443
+https://sta.uwi.edu:443 "GET /fst/dcit/staff-profiles HTTP/1.1" 200 10896
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/vijay.png?itok=RvPGd4fb HTTP/1.1" 200 42715
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Diana%20Ragbir%20Shripat.jpg?itok=IIi3Gw81 HTTP/1.1" 200 6016
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Koffka%20Khan.jpg?itok=Txiky_y5 HTTP/1.1" 200 4683
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/dcitonline-12.jpg?itok=lCduSsAY HTTP/1.1" 200 4687
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Michael%20Hosein-2.jpg?itok=qCxQHQs0 HTTP/1.1" 200 4451
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/professor%20hosein.jpg?itok=p1CpkFee HTTP/1.1" 200 4193
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Duc%20The%20Kieu.jpg?itok=B270hrjZ HTTP/1.1" 200 4794
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/kris.png?itok=XAyVTniU HTTP/1.1" 200 40683
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Phaedra%20Mohammed.jpg?itok=ovt8KSHK HTTP/1.1" 200 6338
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Permanand%20Mohan.jpg?itok=ozk_krk2 HTTP/1.1" 200 4875
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/default_images/male_silhouette.png?itok=Ldg8uHC3 HTTP/1.1" 200 10629
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/default_images/male_silhouette.png?itok=Ldg8uHC3 HTTP/1.1" 200 10629
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/default_images/male_silhouette.png?itok=Ldg8uHC3 HTTP/1.1" 200 10629
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/default_images/male_silhouette.png?itok=Ldg8uHC3 HTTP/1.1" 200 10629
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/narsh%20seegobin.jpg?itok=7ibFPCsa HTTP/1.1" 200 5198
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Avril%20Patterson.jpg?itok=NzYjIXWq HTTP/1.1" 200 5498
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Nirvan%20Bhagwandeen.jpg?itok=S5Lu9WiP HTTP/1.1" 200 5098
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/default_images/male_silhouette.png?itok=Ldg8uHC3 HTTP/1.1" 200 10629
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/NRagoo.jpg?itok=Q1TMNADg HTTP/1.1" 200 5968
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Garvin%20Cadogan.jpg?itok=F4MLDIW_ HTTP/1.1" 200 4785
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/Melissa%20Hee%20Chung.jpg?itok=EJcqm7EO HTTP/1.1" 200 4856
+https://sta.uwi.edu:443 "GET /fst/dcit/sites/default/files/dcit/styles/medium/public/default_images/male_silhouette.png?itok=Ldg8uHC3 HTTP/1.1" 200 10629
+Internal Server Error: /administration/generate-reports/
+Traceback (most recent call last):
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 174, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/loader_tags.py", line 160, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/loader_tags.py", line 66, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/loader_tags.py", line 200, in render
+    template = context.template.engine.select_template(template_name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/engine.py", line 234, in select_template
+    raise TemplateDoesNotExist(", ".join(not_found))
+django.template.exceptions.TemplateDoesNotExist: users/admin_sidebar.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/decorators.py", line 12, in wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/views.py", line 189, in generateReportsView
+    return render(request, "administration/admin_generate_reports.html", context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/backends/django.py", line 109, in render
+    reraise(exc, self.backend)
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/backends/django.py", line 130, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: users/admin_sidebar.html
+Internal Server Error: /administration/generate-reports/
+Traceback (most recent call last):
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 174, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/loader_tags.py", line 160, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/loader_tags.py", line 66, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/loader_tags.py", line 200, in render
+    template = context.template.engine.select_template(template_name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/engine.py", line 234, in select_template
+    raise TemplateDoesNotExist(", ".join(not_found))
+django.template.exceptions.TemplateDoesNotExist: users/admin_sidebar.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/decorators.py", line 12, in wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/Company8-SAR-Platform/Annual_Reporting_Platform/administration/views.py", line 189, in generateReportsView
+    return render(request, "administration/admin_generate_reports.html", context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/backends/django.py", line 109, in render
+    reraise(exc, self.backend)
+  File "/mnt/c/Users/User/Documents/final-year-project/new_ve/lib/python3.12/site-packages/django/template/backends/django.py", line 130, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: users/admin_sidebar.html
+Resetting dropped connection: sta.uwi.edu
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2026 HTTP/1.1" 200 8019
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2025 HTTP/1.1" 200 12206
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2024 HTTP/1.1" 200 8379
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2023 HTTP/1.1" 200 9618
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2021 HTTP/1.1" 200 9127
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2020 HTTP/1.1" 200 10154
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2019 HTTP/1.1" 200 10329
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2018 HTTP/1.1" 200 9821
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2017 HTTP/1.1" 200 11797
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2016 HTTP/1.1" 200 11663
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2015 HTTP/1.1" 200 10720
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2014 HTTP/1.1" 200 8561
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2013 HTTP/1.1" 200 9873
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2012 HTTP/1.1" 200 13281
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2011 HTTP/1.1" 200 13108
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2010 HTTP/1.1" 200 12081
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2009 HTTP/1.1" 200 9242
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2004 HTTP/1.1" 200 8069
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/1999 HTTP/1.1" 200 7770
+Error fetching report with id 214: No Report matches the given query.
+Not Found: /reports/report/214
+Watching for file changes with StatReloader
