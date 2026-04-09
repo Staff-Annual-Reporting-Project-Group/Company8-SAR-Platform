@@ -1,18 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Min
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from .decorators import admin_required
 from reports.models import Report, Category, Committee
 from users.models import UserProfilePic
 from django.core.cache import cache
-from django.contrib import messages
-from django.contrib.auth.models import User
-from django.core.paginator import Paginator
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
 from .report_generation_helpers import generate_staff_accounts, generate_publication_reports
 
 
@@ -182,8 +177,17 @@ def generateReportsView(request):
             else:
                 messages.error(request, result["message"])
 
+    current_year = timezone.now().year
+    earliest = Report.objects.aggregate(Min('date_of_report'))['date_of_report__min']
+    base_year = earliest.year if earliest else current_year
+    year_range = list(range(current_year, base_year - 1, -1))
+    acad_default = current_year if timezone.now().month >= 8 else current_year - 1
+    academic_years = [(y, f'{y}/{y + 1}') for y in range(acad_default, base_year - 1, -1)]
+
     context = {
         "page": "Generate Reports",
         "admin_profile": admin_profile,
+        "year_range": year_range,
+        "academic_years": academic_years,
     }
     return render(request, "administration/admin_generate_reports.html", context)

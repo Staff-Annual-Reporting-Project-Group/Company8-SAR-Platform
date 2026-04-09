@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
 
-<div class="flex min-h-screen bg-gray-50">
+<div class="flex h-full overflow-hidden bg-gray-50">
 
   {% include "administration/admin_sidebar.html" with page=page admin_profile=admin_profile %}
 
@@ -32,7 +32,7 @@
         </div>
       {% endif %}
 
-      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
         <!-- STAFF SYNC -->
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
@@ -74,6 +74,71 @@
           </form>
         </div>
 
+        <!-- DOWNLOAD ANNUAL PDF -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">Download Annual PDF</h2>
+          <p class="text-sm text-gray-500 mb-4">
+            Export a PDF report for a calendar year, academic year, or custom date range.
+          </p>
+
+          {# Tab switcher #}
+          <div class="flex gap-1 mb-4">
+            <button type="button" data-pdftab="year"
+              class="pdf-tab px-3 py-1 rounded-full text-xs font-semibold transition bg-blue-600 text-white">
+              Year
+            </button>
+            <button type="button" data-pdftab="academic"
+              class="pdf-tab px-3 py-1 rounded-full text-xs font-semibold transition text-gray-500 hover:bg-gray-100">
+              Academic Year
+            </button>
+            <button type="button" data-pdftab="custom"
+              class="pdf-tab px-3 py-1 rounded-full text-xs font-semibold transition text-gray-500 hover:bg-gray-100">
+              Custom
+            </button>
+          </div>
+
+          {# Year panel #}
+          <div id="pdf-panel-year" class="pdf-panel mb-4">
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Year</label>
+            <select id="pdfYear"
+              class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+              {% for y in year_range %}
+                <option value="{{ y }}">{{ y }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          {# Academic Year panel #}
+          <div id="pdf-panel-academic" class="pdf-panel hidden mb-4">
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Academic Year</label>
+            <select id="pdfAcadYear"
+              class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+              {% for sy, sy_label in academic_years %}
+                <option value="{{ sy }}">{{ sy_label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          {# Custom panel #}
+          <div id="pdf-panel-custom" class="pdf-panel hidden mb-4 space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Start Date</label>
+              <input type="date" id="pdfDateFrom"
+                class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">End Date</label>
+              <input type="date" id="pdfDateTo"
+                class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+            </div>
+          </div>
+
+          <a id="adminPdfLink" href="#" target="_blank"
+            class="block w-full text-center px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition">
+            Download PDF
+          </a>
+        </div>
+
       </div>
 
     </div>
@@ -102,6 +167,51 @@
 
 <!-- 🔥 SCRIPT -->
 <script>
+  // ── Admin PDF card ──
+  (function () {
+    const PDF_BASE = '{% url "reports:annual_report_pdf" %}';
+    let activePdfTab = 'year';
+
+    const pdfTabs   = document.querySelectorAll('.pdf-tab');
+    const pdfPanels = document.querySelectorAll('.pdf-panel');
+    const pdfLink   = document.getElementById('adminPdfLink');
+
+    function buildPdfHref() {
+      const params = new URLSearchParams({ range_type: activePdfTab });
+      if (activePdfTab === 'year') {
+        params.set('year', document.getElementById('pdfYear').value);
+      } else if (activePdfTab === 'academic') {
+        params.set('start_year', document.getElementById('pdfAcadYear').value);
+      } else {
+        params.set('date_from', document.getElementById('pdfDateFrom').value || '');
+        params.set('date_to',   document.getElementById('pdfDateTo').value   || '');
+      }
+      pdfLink.href = PDF_BASE + '?' + params.toString();
+    }
+
+    pdfTabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        activePdfTab = btn.dataset.pdftab;
+        pdfTabs.forEach(t => {
+          t.classList.remove('bg-blue-600', 'text-white');
+          t.classList.add('text-gray-500', 'hover:bg-gray-100');
+        });
+        btn.classList.add('bg-blue-600', 'text-white');
+        btn.classList.remove('text-gray-500', 'hover:bg-gray-100');
+        pdfPanels.forEach(p => p.classList.add('hidden'));
+        document.getElementById('pdf-panel-' + activePdfTab).classList.remove('hidden');
+        buildPdfHref();
+      });
+    });
+
+    ['pdfYear','pdfAcadYear','pdfDateFrom','pdfDateTo'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', buildPdfHref);
+    });
+
+    buildPdfHref(); // initialise on load
+  })();
+
   function showOverlay(type) {
     const overlay = document.getElementById('loadingOverlay');
     const title = document.getElementById('loadingTitle');

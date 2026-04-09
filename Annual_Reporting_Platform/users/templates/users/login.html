@@ -1,434 +1,86 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'users/auth_base.html' %}
 
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign In — DCIT Reports</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
-  <style>
+{% block page_title %}Sign In{% endblock %}
 
-    
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+{% block right_content %}
 
-    /* colour variables */
-    :root {
-      --blue:       #003DA5;
-      --blue-dark:  #002B78;
-      --blue-glow:  rgba(0, 61, 165, 0.12);
-      --text:       #0D1B2A;
-      --muted:      #556070;
-      --border:     #D4DCE8;
-      --input-bg:   #F7F9FC;
-      --bg:         #F0F4FA;
-      --red:        #C0392B;
-      --white:      #ffffff;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-    }
-
-
-    /* left-panel */
-    .left {
-      width: 42%;
-      background: var(--blue);
-      display: flex;
-      flex-direction: column;
-      /*justify-content: flex-start; /* stack from top */
-      /*gap: 40px;*/
-      padding: 48px 52px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* left-circles */
-    .left::before {
-      content: '';
-      position: absolute;
-      top: -80px; left: -80px;
-      width: 280px; height: 280px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.06);
-    }
-    .left::after {
-      content: '';
-      position: absolute;
-      bottom: -100px; right: -100px;
-      width: 360px; height: 360px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-    }
-
-    /* logo-row */
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      z-index: 1;
-    }
-    /*
-    .brand img {
-      width: 50px; height: 50px;
-      object-fit: contain;
-      /*background: white;
-      border-radius: 8px;
-      padding: 4px;
-    }*/
-
-    .brand img {
-      width: 50px;
-      height: 50px;
-      object-fit: contain;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 6px;
-      padding: 4px;
-    }
-    .brand-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: white;
-      line-height: 1.3;
-    }
-    .brand-sub {
-      font-size: 10px;
-      color: rgba(255,255,255,0.5);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 2px;
-    }
-
-    /* main heading block */
-    .left-body { 
-      z-index: 1;
-      margin-top: auto;
-      margin-bottom: auto; 
-    }
-
-    /*
-    .left-divider {
-      width: 36px; height: 2px;
-      background: rgba(255,255,255,0.4);
-      margin-bottom: 24px;
-    }
-    */
-
-    .left-body h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 42px;
-      color: white;
-      line-height: 1.1;
-      margin-bottom: 18px;
-    }
-
-    .left-body p {
-      font-size: 14px;
-      color: rgba(255,255,255,0.55);
-      line-height: 1.75;
-      font-weight: 300;
-      max-width: 270px;
-    }
-    /*end left*/
-
-    /* right-panel: login section */
-    .right {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 48px 40px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 400px;
-    }
-
-    .card-head {
-      margin-bottom: 28px;
-    }
-    .card-head h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 34px;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    .card-head p {
-      font-size: 14px;
-      color: var(--muted);
-      font-weight: 300;
-    }
-
-
-    /* alerts */
-    .alert {
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      margin-bottom: 16px;
-      border: 1px solid transparent;
-    }
-    .alert-error   { background: #FEF2F2; color: var(--red);  border-color: #FECACA; }
-    .alert-success { background: #EFF6FF; color: var(--blue); border-color: #BFDBFE; }
-
-
-    /* form fields */
-    .form-group { margin-bottom: 16px; }
-
-    .form-label {
-      display: block;
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .input-wrap { position: relative; }
-
-    /* input icons */
-    .input-icon {
-      position: absolute;
-      left: 12px; top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      pointer-events: none;
-    }
-
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 11px 12px 11px 38px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      background: var(--input-bg);
-      font-size: 14px;
-      font-family: 'Inter', sans-serif;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px var(--blue-glow);
-      background: white;
-    }
-
-    /* hide password icon */
-    .toggle-pw {
-      position: absolute;
-      right: 12px; top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      transition: color 0.2s;
-    }
-    .toggle-pw:hover { color: var(--blue); }
-
-
-    /* remember me + forgot */
-    .form-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 22px;
-    }
-
-    .check-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .check-label input[type="checkbox"] {
-      width: 14px; height: 14px;
-      accent-color: var(--blue);
-      cursor: pointer;
-    }
-
-    .forgot {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--blue);
-      text-decoration: none;
-    }
-    .forgot:hover { text-decoration: underline; }
-
-
-    /* button- sign in */
-    .btn-signin {
-      width: 100%;
-      padding: 13px;
-      background: var(--blue);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 500;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-      box-shadow: 0 4px 14px rgba(0,61,165,0.3);
-    }
-    .btn-signin:hover  { background: var(--blue-dark); transform: translateY(-1px); }
-    .btn-signin:active { transform: translateY(0); }
-
-    .card-foot {
-      text-align: center;
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 20px;
-    }
-    .card-foot a {
-      color: var(--blue);
-      font-weight: 500;
-      text-decoration: none;
-    }
-    .card-foot a:hover { text-decoration: underline; }
-
-    /* mobile settings/scaling settings - hide left panel*/
-    @media (max-width: 768px) {
-      .left  { display: none; }
-      .right { padding: 32px 20px; }
-    }
-
-  </style>
-</head>
-
-<!-- html -->
-<body>
-
-  <!-- left-panel -->
-  <div class="left">
-
-    <!-- Logo + university name -->
-    <div class="brand">
-      <img src="{% static 'images/login_images/uwi.jpg' %}" alt="UWI"/>
-      <div>
-        <div class="brand-name">University of the<br/>West Indies</div>
-        <div class="brand-sub">St. Augustine Campus</div>
-      </div>
-    </div>
-
-    <!-- heading-description -->
-    <div class="left-body">
-      <!--<div class="left-divider"></div>-->
-      <h1>Staff Annual<br/>Reporting<br/>Platform</h1>
-      <p>Centralised reporting for the Department of Computing &amp; Information Technology, Faculty of Science &amp; Technology.</p>
-    </div>
-
+  <div class="card-head">
+    <h2>Welcome back</h2>
+    <p>Sign in to your DCIT Reports account</p>
   </div>
 
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
 
-  <!-- right-login form -->
-  <div class="right">
-    <div class="card">
+  <form method="POST" action="{% url 'users:login' %}" novalidate>
+    {% csrf_token %}
 
-      <div class="card-head">
-        <h2>Welcome back</h2>
-        <p>Sign in to your DCIT Reports account</p>
+    <!-- username -->
+    <div class="form-group">
+      <label class="form-label" for="id_username">Username</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+          </svg>
+        </span>
+        <input type="text" name="username" id="id_username"
+          placeholder="Enter your username" autocomplete="username"/>
       </div>
-
-
-      <!-- django error message -->
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-
-
-      <!--login form -->
-      <form method="POST" action="{% url 'users:login' %}" novalidate>
-        {% csrf_token %}
-
-        <!-- username (needs feedback on email)--> 
-        <div class="form-group">
-          <label class="form-label" for="id_username">Username</label>
-          <div class="input-wrap">
-            <span class="input-icon">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A9 9 0 1118.88 6.196M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-            </span>
-            <input type="text" name="username" id="id_username"
-              placeholder="Enter your username" autocomplete="username"/>
-          </div>
-        </div>
-
-        <!-- password (simple- needs rules)-->
-        <div class="form-group">
-          <label class="form-label" for="id_password">Password</label>
-          <div class="input-wrap">
-            <span class="input-icon">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-              </svg>
-            </span>
-            <input type="password" name="password" id="id_password"
-              placeholder="Enter your password" autocomplete="current-password"/>
-            <button type="button" class="toggle-pw" id="togglePw" aria-label="Show/hide password">
-              <svg id="eyeIcon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-
-        <!-- remember me + forgot (still needs functionality) -->
-        <div class="form-row">
-          <label class="check-label">
-            <input type="checkbox" name="remember_me" id="id_remember_me"/>
-            Keep me signed in
-          </label>
-          <a href="#" class="forgot">Forgot password?</a>
-        </div>
-
-
-        <!-- button- sign in -->
-        <button type="submit" class="btn-signin">Sign In</button>
-
-      </form>
-
-      <!-- button- create account -->
-      <div class="card-foot">
-        Don't have an account? <a href="{% url 'users:register' %}">Create one</a>
-      </div>
-
     </div>
+
+    <!-- password -->
+    <div class="form-group">
+      <label class="form-label" for="id_password">Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </span>
+        <input type="password" name="password" id="id_password"
+          placeholder="Enter your password" autocomplete="current-password"/>
+        <button type="button" class="toggle-pw" id="togglePw" aria-label="Show/hide password">
+          <svg id="eyeIcon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- remember me + forgot -->
+    <div class="form-row">
+      <label class="check-label">
+        <input type="checkbox" name="remember_me" id="id_remember_me"/>
+        Keep me signed in
+      </label>
+      <a href="#" class="forgot">Forgot password?</a>
+    </div>
+
+    <button type="submit" class="btn-primary">Sign In</button>
+
+  </form>
+
+  <div class="card-foot">
+    Don't have an account? <a href="{% url 'users:register' %}">Create one</a>
   </div>
 
+{% endblock %}
 
-  <!-- hide password toggle -->
-  <script>
-    const togglePw  = document.getElementById('togglePw');
-    const pwField   = document.getElementById('id_password');
-    const eyeIcon   = document.getElementById('eyeIcon');
-
-    const eyeOpen   = `<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
-    const eyeClosed = `<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 012.038-3.546M9.88 9.88a3 3 0 104.243 4.243M3 3l18 18"/>`;
-
-    togglePw.addEventListener('click', () => {
-      const show = pwField.type === 'password';
-      pwField.type = show ? 'text' : 'password';
-      eyeIcon.innerHTML = show ? eyeClosed : eyeOpen;
-    });
-  </script>
-
-</body>
-</html>
+{% block extra_scripts %}
+<script>
+  const togglePw = document.getElementById('togglePw');
+  const pwField  = document.getElementById('id_password');
+  const eyeIcon  = document.getElementById('eyeIcon');
+  const eyeOpen   = `<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
+  const eyeClosed = `<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 012.038-3.546M9.88 9.88a3 3 0 104.243 4.243M3 3l18 18"/>`;
+  togglePw.addEventListener('click', () => {
+    const show = pwField.type === 'password';
+    pwField.type = show ? 'text' : 'password';
+    eyeIcon.innerHTML = show ? eyeClosed : eyeOpen;
+  });
+</script>
+{% endblock %}

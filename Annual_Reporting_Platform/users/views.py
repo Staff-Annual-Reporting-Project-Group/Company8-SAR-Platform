@@ -388,9 +388,10 @@ def account_view(request):
 
                         # Handle avatar deletion
                         if delete_avatar:
-                            if profile.profilePic:
+                            current = str(profile.profilePic) if profile.profilePic else ''
+                            if current and current != 'profile_pictures/user.png':
                                 profile.profilePic.delete(save=False)
-                            profile.profilePic = "profile_pictures/user.png"
+                            profile.profilePic = 'profile_pictures/user.png'
 
                         # Handle new upload
                         if avatar:

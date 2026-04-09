@@ -22,7 +22,7 @@
         .report-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.10); transform: translateY(-2px); }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 h-screen overflow-hidden flex flex-col">
 
 <header class="w-full bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sticky top-0 z-40 shadow-sm">
   <div class="flex items-center gap-2 sm:gap-4">
@@ -163,7 +163,9 @@
   </div>
 {% endif %}
 
+<div class="flex-1 overflow-y-auto">
 {% block body %}{% endblock %}
+</div>
 
 <script>
   const modal    = document.getElementById('filter-modal');

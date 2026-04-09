@@ -1,0 +1,353 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block page_title %}DCIT Reports{% endblock %} — DCIT Reports</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #003DA5;
+      --blue-dark:  #002B78;
+      --blue-glow:  rgba(0, 61, 165, 0.12);
+      --text:       #0D1B2A;
+      --muted:      #556070;
+      --border:     #D4DCE8;
+      --input-bg:   #F7F9FC;
+      --bg:         #F0F4FA;
+      --red:        #C0392B;
+      --white:      #ffffff;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+    }
+
+    /* ── left panel ── */
+    .left {
+      width: 36%;
+      background: var(--blue);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 48px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .left::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: -80px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .left::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; right: -100px;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* logo link */
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      z-index: 1;
+      transition: opacity 0.2s;
+    }
+    .brand-link:hover { opacity: 0.85; }
+
+    .brand-link img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      padding: 4px;
+    }
+    .brand-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      line-height: 1.3;
+      text-align: left;
+    }
+    .brand-sub {
+      font-size: 10px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2px;
+      text-align: left;
+    }
+
+    .left-body {
+      z-index: 1;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+    .left-body h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 40px;
+      color: white;
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+    .left-body p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* ── right panel ── */
+    .right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 40px;
+      overflow-y: auto;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .card-head {
+      margin-bottom: 28px;
+    }
+    .card-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .card-head p {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* ── alerts ── */
+    .alert {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      border: 1px solid transparent;
+    }
+    .alert-error   { background: #FEF2F2; color: var(--red);  border-color: #FECACA; }
+    .alert-success { background: #EFF6FF; color: var(--blue); border-color: #BFDBFE; }
+
+    /* ── form elements ── */
+    .form-group { margin-bottom: 16px; }
+
+    .name-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-icon {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+      width: 100%;
+      padding: 11px 12px 11px 38px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--input-bg);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      text-align: left;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input.no-icon {
+      padding-left: 12px;
+    }
+    input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-glow);
+      background: white;
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .toggle-pw:hover { color: var(--blue); }
+
+    /* ── remember + forgot row ── */
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .check-label input[type="checkbox"] {
+      width: 14px; height: 14px;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+    .forgot {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .forgot:hover { text-decoration: underline; }
+
+    /* ── password strength ── */
+    .strength-track {
+      margin-top: 6px;
+      height: 4px;
+      border-radius: 9999px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .strength-fill {
+      height: 100%;
+      border-radius: 9999px;
+      width: 0;
+      transition: width 0.3s, background 0.3s;
+    }
+    .strength-label {
+      font-size: 11px;
+      margin-top: 4px;
+      color: var(--muted);
+      min-height: 16px;
+    }
+    .match-label {
+      font-size: 11px;
+      margin-top: 4px;
+      min-height: 16px;
+      color: var(--muted);
+    }
+
+    /* ── submit button ── */
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 14px rgba(0,61,165,0.3);
+    }
+    .btn-primary:hover  { background: var(--blue-dark); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .card-foot {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 20px;
+    }
+    .card-foot a {
+      color: var(--blue);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .card-foot a:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+      .left  { display: none; }
+      .right { padding: 32px 20px; }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- left panel -->
+  <div class="left">
+
+    <a href="{% url 'reports:index' %}" class="brand-link">
+      <img src="{% static 'images/login_images/uwi.jpg' %}" alt="UWI — return to home"/>
+      <div>
+        <div class="brand-name">University of the<br/>West Indies</div>
+        <div class="brand-sub">St. Augustine Campus</div>
+      </div>
+    </a>
+
+    <div class="left-body">
+      <h1>Staff Annual<br/>Reporting<br/>Platform</h1>
+      <p>Centralised reporting for the Department of Computing &amp; Information Technology, Faculty of Science &amp; Technology.</p>
+    </div>
+
+  </div>
+
+  <!-- right panel -->
+  <div class="right">
+    <div class="card">
+      {% block right_content %}{% endblock %}
+    </div>
+  </div>
+
+  {% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

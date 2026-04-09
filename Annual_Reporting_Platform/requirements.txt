@@ -4,11 +4,14 @@ better-profanity==0.7.0
 certifi==2026.2.25
 charset-normalizer==3.4.4
 cloudinary==1.44.1
+django-cloudinary-storage==0.3.0
 Django==6.0.2
+dotenv==0.9.9
 gunicorn==25.1.0
 idna==3.11
 packaging==26.0
 pillow==12.1.1
+python-dotenv==1.2.2
 reportlab==4.4.10
 requests==2.33.1
 six==1.17.0

@@ -241,23 +241,39 @@ def _report_sections(story, reports, include_author=True):
 
 
 # ═══════════════════════════════════════════════════════════════
-#  ANNUAL REPORT PDF
+#  ANNUAL REPORT PDF  (date-range aware)
 # ═══════════════════════════════════════════════════════════════
 
-def generate_annual_pdf(reports, year):
+def generate_date_range_pdf(reports, date_from, date_to, label=None):
+    """
+    Generate an annual-style PDF for any arbitrary date range.
+
+    Args:
+        reports   : queryset/list already filtered to the date range
+        date_from : datetime.date – range start
+        date_to   : datetime.date – range end
+        label     : short title string, e.g. "2024", "2023/2024",
+                    or "01 Jan 2024 – 30 Jun 2024".  Auto-derived if None.
+    """
+    if label is None:
+        label = (f'{date_from.strftime("%d %B %Y")} \u2013 '
+                 f'{date_to.strftime("%d %B %Y")}')
+
+    date_str = (f'{date_from.strftime("%d %B %Y")} \u2013 '
+                f'{date_to.strftime("%d %B %Y")}')
+
     buf = BytesIO()
     doc = SimpleDocTemplate(
         buf, pagesize=A4,
         leftMargin=MARGIN, rightMargin=MARGIN,
         topMargin=MARGIN,  bottomMargin=MARGIN,
-        title=f'DCIT Annual Report {year}',
-        author='University of the West Indies – DCIT',
+        title=f'DCIT Annual Report {label}',
+        author='University of the West Indies \u2013 DCIT',
     )
     story = []
-    date_str = f'01 August {year - 1} \u2013 31 July {year}'
 
     _cover(story,
-           title_line=f'Annual Report {year}',
+           title_line=f'Annual Report {label}',
            date_line=date_str,
            total=len(reports))
 
@@ -272,6 +288,17 @@ def generate_annual_pdf(reports, year):
     doc.build(story)
     buf.seek(0)
     return buf
+
+
+# Keep the old name as a thin wrapper so nothing else breaks
+def generate_annual_pdf(reports, year):
+    from datetime import date
+    return generate_date_range_pdf(
+        reports,
+        date_from=date(year, 1, 1),
+        date_to=date(year, 12, 31),
+        label=str(year),
+    )
 
 
 # ═══════════════════════════════════════════════════════════════

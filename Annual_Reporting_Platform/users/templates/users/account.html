@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block body %}
 
-<div class="flex min-h-[calc(100vh-65px)]">
+<div class="flex h-full overflow-hidden">
 
   <!-- ══════════  LEFT SIDEBAR  ══════════ -->
-  {% include "users/sidebar.html" with page='account' %}
+  {% include "users/sidebar.html" with page='account' active_tab=active_tab %}
 
   <!-- ══════════  MAIN CONTENT  ══════════ -->
   <main class="flex-1 bg-gray-50 overflow-y-auto">
-    <div class="max-w-4xl mx-auto px-4 md:px-8 py-8">
+    <div class="max-w-2xl mx-auto px-4 md:px-8 py-8">
 
       <!-- ── Profile header ── -->
       <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-200">
@@ -61,11 +61,8 @@
       </div>
       {% endif %}
 
-      <!-- ── Two-column layout: form | tab nav ── -->
-      <div class="flex gap-6 items-start">
-
-        <!-- Form panel -->
-        <div class="flex-1 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <!-- Form panel -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 
           <!-- ════ ACCOUNT INFORMATION TAB ════ -->
           {% if active_tab == 'info' %}
@@ -192,22 +189,6 @@
             </button>
           </form>
           {% endif %}
-
-        </div>
-
-        <!-- ── Right tab nav ── -->
-        <div class="w-44 shrink-0 space-y-2">
-          <a href="{% url 'users:account' %}?tab=info"
-             class="block text-center px-4 py-2.5 rounded-lg text-sm font-semibold transition
-               {% if active_tab == 'info' %}bg-blue-500 text-white shadow-sm{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
-            Account Information
-          </a>
-          <a href="{% url 'users:account' %}?tab=password"
-             class="block text-center px-4 py-2.5 rounded-lg text-sm font-semibold transition
-               {% if active_tab == 'password' %}bg-blue-500 text-white shadow-sm{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
-            Change Password
-          </a>
-        </div>
 
       </div>
     </div>

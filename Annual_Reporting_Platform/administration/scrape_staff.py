@@ -8,12 +8,12 @@ import requests
 from bs4 import BeautifulSoup
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Annual_Reporting_Platform.settings')
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 django.setup()
 
 from django.contrib.auth.models import User
 from users.models import UserProfilePic
-from core.cloudinary_storage import upload_avatar
+from administration.cloudinary_storage import upload_avatar
 
 STAFF_URL = 'https://sta.uwi.edu/fst/dcit/staff-profiles'
 BASE_HOST = 'https://sta.uwi.edu'
@@ -154,9 +154,6 @@ def create_or_update_staff(member):
         was_created = True
 
     profile, _ = UserProfilePic.objects.get_or_create(user=user)
-    if not profile.is_approved:
-        profile.is_approved = True
-        profile.save(update_fields=['is_approved'])
     if not user.is_active:
         user.is_active = True
         user.save(update_fields=['is_active'])

@@ -1,53 +1,119 @@
 {%extends 'base.html'%}
 
 {% block body %}
- 
-  <!-- Main content -->
+
   <main class="flex-1 px-8 py-10 overflow-y-auto">
 
-  <!-- Header -->
-  <div class="mb-8 flex items-end justify-between flex-wrap gap-4">
-    <div>
-      <p class="text-xs font-semibold uppercase tracking-widest text-blue-500 mb-1">Annual Report</p>
-      <h1 class="font-display text-3xl font-bold text-gray-900">DCIT Reports — {{ year }}</h1>
-      <p class="text-sm text-gray-400 mt-1">All reports submitted in {{ year }}</p>
-    </div>
+  <!-- ── Header ── -->
+  <div class="mb-6">
+    <p class="text-xs font-semibold uppercase tracking-widest text-blue-500 mb-1">Annual Report</p>
+    <h1 class="font-display text-3xl font-bold text-gray-900" id="report-heading">
+      DCIT Reports — {{ label }}
+    </h1>
+    <p class="text-sm text-gray-400 mt-1" id="report-subheading">
+      {{ reports|length }} report{{ reports|length|pluralize }} in this period
+    </p>
+  </div>
 
-    <div class="flex items-center gap-3">
-      {% if user.is_authenticated %}
-      <a href="{% url 'reports:annual_report_pdf' %}?year={{ year }}"
+  <!-- ── Date range picker + Download ── -->
+  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 mb-8">
+
+    {# Hidden form that drives page navigation #}
+    <form method="GET" id="rangeForm" action="{% url 'reports:annual_report' %}">
+
+      {# Tab switcher #}
+      <div class="flex gap-1 mb-5 border-b border-gray-100 pb-4">
+        <button type="button" data-tab="year"
+          class="range-tab px-4 py-1.5 rounded-full text-sm font-semibold transition
+            {% if range_type == 'year' %}bg-blue-600 text-white{% else %}text-gray-500 hover:bg-gray-100{% endif %}">
+          Year
+        </button>
+        <button type="button" data-tab="academic"
+          class="range-tab px-4 py-1.5 rounded-full text-sm font-semibold transition
+            {% if range_type == 'academic' %}bg-blue-600 text-white{% else %}text-gray-500 hover:bg-gray-100{% endif %}">
+          Academic Year
+        </button>
+        <button type="button" data-tab="custom"
+          class="range-tab px-4 py-1.5 rounded-full text-sm font-semibold transition
+            {% if range_type == 'custom' %}bg-blue-600 text-white{% else %}text-gray-500 hover:bg-gray-100{% endif %}">
+          Custom
+        </button>
+      </div>
+
+      <input type="hidden" name="range_type" id="rangeTypeInput" value="{{ range_type }}">
+
+      {# ── Year panel ── #}
+      <div id="panel-year" class="range-panel {% if range_type != 'year' %}hidden{% endif %} flex items-center gap-3">
+        <label class="text-sm text-gray-500 font-medium">Year:</label>
+        <select name="year" id="yearSelect" onchange="document.getElementById('rangeForm').submit()"
+          class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+          {% for y in year_range %}
+            <option value="{{ y }}" {% if range_type == 'year' and y == selected_year %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {# ── Academic Year panel ── #}
+      <div id="panel-academic" class="range-panel {% if range_type != 'academic' %}hidden{% endif %} flex items-center gap-3">
+        <label class="text-sm text-gray-500 font-medium">Academic Year:</label>
+        <select name="start_year" id="acadSelect" onchange="document.getElementById('rangeForm').submit()"
+          class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+          {% for sy, sy_label in academic_years %}
+            <option value="{{ sy }}" {% if range_type == 'academic' and sy == start_year %}selected{% endif %}>{{ sy_label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {# ── Custom panel ── #}
+      <div id="panel-custom" class="range-panel {% if range_type != 'custom' %}hidden{% endif %} flex flex-wrap items-end gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Start Date</label>
+          <input type="date" name="date_from" id="dateFrom"
+            value="{{ date_from_val|default:date_from }}"
+            class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">End Date</label>
+          <input type="date" name="date_to" id="dateTo"
+            value="{{ date_to_val|default:date_to }}"
+            class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+        </div>
+        <button type="submit"
+          class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition">
+          Apply
+        </button>
+      </div>
+
+    </form>
+
+    {# Download PDF — mirrors current range params #}
+    {% if user.is_authenticated %}
+    <div class="mt-5 pt-4 border-t border-gray-100 flex justify-end">
+      <a id="pdfLink"
+         href="{% url 'reports:annual_report_pdf' %}?range_type={{ range_type }}&date_from={{ date_from }}&date_to={{ date_to }}{% if range_type == 'year' %}&year={{ selected_year }}{% elif range_type == 'academic' %}&start_year={{ start_year }}{% endif %}"
          class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition shadow-sm">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
         </svg>
         Download PDF
       </a>
-      {% endif %}
-      <form method="GET" class="flex items-center gap-2">
-        <label class="text-sm text-gray-500">Year:</label>
-        <select name="year" onchange="this.form.submit()"
-          class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
-          {% for y in year_range %}
-          <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
-          {% endfor %}
-        </select>
-      </form>
     </div>
+    {% endif %}
   </div>
 
-  <!-- Stats bar -->
+  <!-- ── Stats bar ── -->
   <div class="grid grid-cols-2 gap-4 mb-10">
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 text-center">
       <p class="font-display text-3xl font-bold text-blue-600">{{ reports|length }}</p>
       <p class="text-xs text-gray-500 mt-1 uppercase tracking-wide">Total Reports</p>
     </div>
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 text-center">
-      <p class="font-display text-3xl font-bold text-green-600">{{ year }}</p>
-      <p class="text-xs text-gray-500 mt-1 uppercase tracking-wide">Reporting Year</p>
+      <p class="font-display text-lg font-bold text-green-600 leading-tight">{{ label }}</p>
+      <p class="text-xs text-gray-500 mt-1 uppercase tracking-wide">Reporting Period</p>
     </div>
   </div>
 
-  <!-- Reports Grid -->
+  <!-- ── Reports Grid ── -->
   {% if reports %}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
     {% for report in reports %}
@@ -62,10 +128,72 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v13a2 2 0 01-2 2z"/>
       </svg>
     </div>
-    <h3 class="font-display text-xl font-semibold text-gray-500 mb-1">No reports for {{ year }}</h3>
-    <p class="text-sm text-gray-400">Try selecting a different year.</p>
+    <h3 class="font-display text-xl font-semibold text-gray-500 mb-1">No reports for this period</h3>
+    <p class="text-sm text-gray-400">Try selecting a different date range.</p>
   </div>
   {% endif %}
 
   </main>
+
+<script>
+  // ── Tab switching ──
+  const tabs   = document.querySelectorAll('.range-tab');
+  const panels = document.querySelectorAll('.range-panel');
+  const rangeTypeInput = document.getElementById('rangeTypeInput');
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      rangeTypeInput.value = tab;
+
+      // Update tab styles
+      tabs.forEach(t => {
+        t.classList.remove('bg-blue-600', 'text-white');
+        t.classList.add('text-gray-500', 'hover:bg-gray-100');
+      });
+      btn.classList.add('bg-blue-600', 'text-white');
+      btn.classList.remove('text-gray-500', 'hover:bg-gray-100');
+
+      // Show correct panel
+      panels.forEach(p => p.classList.add('hidden'));
+      document.getElementById('panel-' + tab).classList.remove('hidden');
+
+      // Auto-submit year and academic tabs; custom waits for Apply
+      if (tab === 'year' || tab === 'academic') {
+        document.getElementById('rangeForm').submit();
+      }
+    });
+  });
+
+  // ── Keep PDF link in sync with custom date pickers ──
+  const pdfLink  = document.getElementById('pdfLink');
+  const dateFrom = document.getElementById('dateFrom');
+  const dateTo   = document.getElementById('dateTo');
+
+  function updatePdfLink() {
+    if (!pdfLink) return;
+    const rt   = rangeTypeInput.value;
+    const base = '{% url "reports:annual_report_pdf" %}';
+    const params = new URLSearchParams({ range_type: rt });
+
+    if (rt === 'year') {
+      const sel = document.getElementById('yearSelect');
+      if (sel) params.set('year', sel.value);
+    } else if (rt === 'academic') {
+      const sel = document.getElementById('acadSelect');
+      if (sel) params.set('start_year', sel.value);
+    } else {
+      if (dateFrom) params.set('date_from', dateFrom.value);
+      if (dateTo)   params.set('date_to',   dateTo.value);
+    }
+    pdfLink.href = base + '?' + params.toString();
+  }
+
+  if (dateFrom) dateFrom.addEventListener('change', updatePdfLink);
+  if (dateTo)   dateTo.addEventListener('change', updatePdfLink);
+  document.querySelectorAll('#yearSelect, #acadSelect').forEach(
+    el => el && el.addEventListener('change', updatePdfLink)
+  );
+</script>
+
 {% endblock %}
