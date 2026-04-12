@@ -1,0 +1,189 @@
+{% extends 'users/auth_base.html' %}
+
+{% block page_title %}Create Account{% endblock %}
+
+{% block right_content %}
+
+  <div class="card-head">
+    <h2>Create account</h2>
+    <p>DCIT Department staff only</p>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="POST" action="{% url 'users:register' %}" novalidate>
+    {% csrf_token %}
+
+    <!-- first name + last name -->
+    <div class="name-grid">
+      <div>
+        <label class="form-label" for="id_first_name">First Name</label>
+        <input type="text" name="first_name" id="id_first_name"
+          value="{{ first_name|default:'' }}"
+          placeholder="e.g. John"
+          autocomplete="given-name"
+          class="no-icon"/>
+      </div>
+      <div>
+        <label class="form-label" for="id_last_name">Last Name</label>
+        <input type="text" name="last_name" id="id_last_name"
+          value="{{ last_name|default:'' }}"
+          placeholder="e.g. Doe"
+          autocomplete="family-name"
+          class="no-icon"/>
+      </div>
+    </div>
+
+    <!-- username -->
+    <div class="form-group">
+      <label class="form-label" for="id_username">Username</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+          </svg>
+        </span>
+        <input type="text" name="username" id="id_username"
+          value="{{ username|default:'' }}"
+          placeholder="Choose a username"
+          autocomplete="username"/>
+      </div>
+    </div>
+
+    <!-- email -->
+    <div class="form-group">
+      <label class="form-label" for="id_email">Email</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+        </span>
+        <input type="email" name="email" id="id_email"
+          value="{{ email|default:'' }}"
+          placeholder="your@email.com"
+          autocomplete="email"/>
+      </div>
+    </div>
+
+    <!-- password -->
+    <div class="form-group">
+      <label class="form-label" for="id_password">Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </span>
+        <input type="password" name="password" id="id_password"
+          placeholder="Create a password"
+          autocomplete="new-password"/>
+        <button type="button" class="toggle-pw" id="togglePw1" aria-label="Show/hide password">
+          <svg id="eyeIcon1" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="strength-track"><div class="strength-fill" id="strengthFill"></div></div>
+      <p class="strength-label" id="strengthLabel">&nbsp;</p>
+    </div>
+
+    <!-- confirm password -->
+    <div class="form-group">
+      <label class="form-label" for="id_password2">Confirm Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </span>
+        <input type="password" name="password2" id="id_password2"
+          placeholder="Repeat your password"
+          autocomplete="new-password"/>
+        <button type="button" class="toggle-pw" id="togglePw2" aria-label="Show/hide confirm password">
+          <svg id="eyeIcon2" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+        </button>
+      </div>
+      <p class="match-label" id="matchLabel">&nbsp;</p>
+    </div>
+
+    <button type="submit" class="btn-primary">Create Account</button>
+
+  </form>
+
+  <div class="card-foot">
+    Already have an account? <a href="{% url 'users:login' %}">Sign in</a>
+  </div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const eyeOpen   = `<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
+  const eyeClosed = `<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 012.038-3.546M9.88 9.88a3 3 0 104.243 4.243M3 3l18 18"/>`;
+
+  function makeToggle(btnId, fieldId, iconId) {
+    const btn   = document.getElementById(btnId);
+    const field = document.getElementById(fieldId);
+    const icon  = document.getElementById(iconId);
+    btn.addEventListener('click', () => {
+      const show = field.type === 'password';
+      field.type = show ? 'text' : 'password';
+      icon.innerHTML = show ? eyeClosed : eyeOpen;
+    });
+  }
+  makeToggle('togglePw1', 'id_password',  'eyeIcon1');
+  makeToggle('togglePw2', 'id_password2', 'eyeIcon2');
+
+  // strength bar
+  const pwField       = document.getElementById('id_password');
+  const strengthFill  = document.getElementById('strengthFill');
+  const strengthLabel = document.getElementById('strengthLabel');
+  const strengthColors = ['#ef4444', '#f97316', '#eab308', '#16a34a'];
+  const strengthTexts  = ['Weak', 'Fair', 'Good', 'Strong'];
+  const strengthWidths = ['25%', '50%', '75%', '100%'];
+
+  pwField.addEventListener('input', () => {
+    const v = pwField.value;
+    if (!v) {
+      strengthFill.style.width = '0';
+      strengthLabel.textContent = '\u00A0';
+      strengthLabel.style.color = 'var(--muted)';
+      checkMatch();
+      return;
+    }
+    let score = 0;
+    if (v.length >= 8)          score++;
+    if (/[A-Z]/.test(v))        score++;
+    if (/[0-9]/.test(v))        score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    const idx = score - 1;
+    strengthFill.style.width      = strengthWidths[idx] || '25%';
+    strengthFill.style.background = strengthColors[idx] || strengthColors[0];
+    strengthLabel.textContent     = strengthTexts[idx]  || strengthTexts[0];
+    strengthLabel.style.color     = strengthColors[idx] || strengthColors[0];
+    checkMatch();
+  });
+
+  // match indicator
+  const pw2Field   = document.getElementById('id_password2');
+  const matchLabel = document.getElementById('matchLabel');
+  function checkMatch() {
+    if (!pw2Field.value) { matchLabel.textContent = '\u00A0'; matchLabel.style.color = 'var(--muted)'; return; }
+    if (pwField.value === pw2Field.value) {
+      matchLabel.textContent = '✓ Passwords match';
+      matchLabel.style.color = '#16a34a';
+    } else {
+      matchLabel.textContent = '✗ Passwords do not match';
+      matchLabel.style.color = 'var(--red)';
+    }
+  }
+  pw2Field.addEventListener('input', checkMatch);
+</script>
+{% endblock %}

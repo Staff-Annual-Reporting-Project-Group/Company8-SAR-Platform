@@ -1,0 +1,110 @@
+<!-- ── Mobile hamburger button ── -->
+<button id="admin-sidebar-btn"
+  class="lg:hidden fixed top-[72px] left-3 z-50 p-2 rounded-lg bg-white border border-gray-200 shadow-sm text-gray-600 hover:text-gray-900 transition"
+  aria-label="Open menu">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+  </svg>
+</button>
+
+<!-- ── Backdrop ── -->
+<div id="admin-sidebar-overlay"
+  class="lg:hidden fixed inset-0 bg-black/40 z-30 hidden"
+  aria-hidden="true"></div>
+
+<aside id="admin-sidebar"
+  class="fixed lg:relative inset-y-0 left-0 z-40
+         -translate-x-full lg:translate-x-0
+         transition-transform duration-200
+         w-64 shrink-0 bg-white border-r border-gray-200 h-full overflow-y-auto px-5 py-6 flex flex-col">
+  <div class="flex items-center gap-3 pb-6 border-b border-gray-100">
+    <div class="w-14 h-14 rounded-full overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
+      {% if admin_profile and admin_profile.profilePic %}
+        <img src="{{ admin_profile.profilePic.url }}" alt="{{ request.user.username }}" class="w-full h-full object-cover">
+      {% else %}
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
+        </svg>
+      {% endif %}
+    </div>
+
+    <div class="min-w-0">
+      <p class="text-sm font-semibold text-gray-900 truncate">
+        {{ request.user.get_full_name|default:request.user.username }}
+      </p>
+      <p class="text-xs text-gray-400 truncate">
+        Administrator
+      </p>
+    </div>
+  </div>
+
+  <nav class="mt-6 space-y-2">
+    <a href="{% url 'administration:admin-accounts' %}"
+      class="block w-full px-4 py-3 rounded-xl text-sm font-semibold transition
+      {% if page == 'Users' %}
+        bg-blue-50 text-blue-700 border border-blue-100
+      {% else %}
+        text-gray-600 hover:bg-gray-50 hover:text-gray-900
+      {% endif %}">
+      All Accounts
+    </a>
+
+    <a href="{% url 'administration:admin-reports' %}"
+      class="block w-full px-4 py-3 rounded-xl text-sm font-semibold transition
+      {% if page == 'Reports' %}
+        bg-blue-50 text-blue-700 border border-blue-100
+      {% else %}
+        text-gray-600 hover:bg-gray-50 hover:text-gray-900
+      {% endif %}">
+      All Reports
+    </a>
+
+    <a href="{% url 'administration:generate-reports' %}"
+      class="block w-full px-4 py-3 rounded-xl text-sm font-semibold transition
+      {% if page == 'Generate Reports' %}
+        bg-blue-50 text-blue-700 border border-blue-100
+      {% else %}
+        text-gray-600 hover:bg-gray-50 hover:text-gray-900
+      {% endif %}">
+      Generate Reports
+    </a>
+
+    <a href="{% url 'users:account' %}"
+      class="block w-full px-4 py-3 rounded-xl text-sm font-semibold transition
+      {% if page == 'Account Information' %}
+        bg-blue-50 text-blue-700 border border-blue-100
+      {% else %}
+        text-gray-600 hover:bg-gray-50 hover:text-gray-900
+      {% endif %}">
+      Account Information
+    </a>
+  </nav>
+
+  <div class="mt-auto pt-6">
+    <a href="{% url 'reports:index' %}"
+      class="block w-full text-center px-4 py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-sm font-semibold text-gray-700 transition">
+      Back to Site
+    </a>
+  </div>
+</aside>
+
+<script>
+  (function () {
+    const btn     = document.getElementById('admin-sidebar-btn');
+    const sidebar = document.getElementById('admin-sidebar');
+    const overlay = document.getElementById('admin-sidebar-overlay');
+    if (!btn || !sidebar || !overlay) return;
+
+    function openSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+    }
+    function closeSidebar() {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    }
+
+    btn.addEventListener('click', openSidebar);
+    overlay.addEventListener('click', closeSidebar);
+  })();
+</script>

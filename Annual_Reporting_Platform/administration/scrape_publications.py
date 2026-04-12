@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from datetime import date
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Annual_Reporting_Platform.settings')
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 django.setup()
 
 from django.contrib.auth.models import User
@@ -186,10 +186,14 @@ def _parse_name_token(token):
       'J. Doe'    → 'J. Doe'
       'John Doe'  → 'John Doe'
       'Doe'       → 'Doe'
+      'V .'       → 'V.'   (space before period, common in scraped text)
     """
     token = token.strip().strip(',').strip()
     if not token:
         return ''
+
+    # Normalise "V ." → "V." and "V . D." → "V.D."
+    token = re.sub(r'([A-Za-z])\s+\.', r'\1.', token)
 
     # "Lastname, F." or "Lastname, F.G." — comma separates last from initials
     comma_parts = [p.strip() for p in token.split(',', 1) if p.strip()]
@@ -231,9 +235,16 @@ def parse_authors_from_html(citation_field_tag):
     # Second pass — parse full citation text for all authors
     full_text = citation_field_tag.get_text(separator=' ', strip=True)
 
-    # Cut at opening quote of the title
-    cut = re.split(r'["\u201c\u2018\u0022]', full_text, maxsplit=1)[0]
-    cut = cut.strip().rstrip(',').strip()
+    # Cut the author block from the rest of the citation.
+    # Prefer cutting at an opening title-quote; fall back to a year marker
+    # like "(2009)" or ", 2009," which signals the end of the author list.
+    _AUTHOR_BLOCK_END = re.compile(
+        r'["\u201c\u2018\u0022]'   # opening title quote  "  "  '
+        r'|\s*\(\d{4}\)'           # year in parens  (2009)
+        r'|,\s*\d{4}\s*[,.]'       # bare year  , 2009,
+    )
+    cut = _AUTHOR_BLOCK_END.split(full_text, maxsplit=1)[0]
+    cut = cut.strip().rstrip('.,').strip()
     if not cut:
         return results
 
@@ -241,7 +252,13 @@ def parse_authors_from_html(citation_field_tag):
     parts = re.split(r'\s+and\s+', cut, flags=re.IGNORECASE)
 
     for part in parts:
-        # Each part may be "Last, F." or "F. Last" or "First Last"
+        # Each part may be "Last, F." or "F. Last" or "First Last".
+        # Strip any trailing venue/year fragments that slipped through.
+        part = re.split(r'\(\d{4}\)|,\s*\d{4}', part, maxsplit=1)[0]
+        part = part.strip().rstrip('.,').strip()
+        if not part:
+            continue
+
         # Split on comma to handle "Last, F." pairs
         tokens = [t.strip() for t in part.split(',') if t.strip()]
         i = 0
@@ -249,9 +266,12 @@ def parse_authors_from_html(citation_field_tag):
             tok = tokens[i]
             next_tok = tokens[i + 1] if i + 1 < len(tokens) else ''
 
-            # "Lastname, F." — next token is a single initial
-            if next_tok and re.match(r'^[A-Z]\.?$', next_tok):
-                raw = f'{next_tok} {tok}'
+            # Normalise "V ." → "V." before matching
+            next_tok_norm = re.sub(r'([A-Za-z])\s+\.', r'\1.', next_tok).strip()
+
+            # "Lastname, F." — next token is a single initial (with or without period)
+            if next_tok_norm and re.match(r'^[A-Z]\.?$', next_tok_norm):
+                raw = f'{next_tok_norm} {tok}'
                 i += 2
             else:
                 raw = tok
@@ -361,7 +381,6 @@ def save_publications(publications, owner, category, committee):
             description=pub['citation'] or f'{pub["pub_type"]}\n\n{title}',
             category=category,
             date_of_report=date(pub['year'], 1, 1),
-            status='approved',
         )
         report.committees.add(committee)
 

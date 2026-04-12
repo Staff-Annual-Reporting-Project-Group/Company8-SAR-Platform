@@ -1,45 +1,21 @@
 {% extends "base.html" %}
 {% block body %}
 
-<div class="flex min-h-[calc(100vh-65px)]">
+<div class="flex h-full overflow-hidden">
 
   <!-- ══════════  LEFT SIDEBAR  ══════════ -->
-  <aside class="hidden md:flex w-52 shrink-0 bg-white border-r border-gray-200 flex-col items-center pt-8 pb-6 px-4 gap-4">
-    <div class="w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-center justify-center">
-      {% if profile.avatar %}
-        <img src="{{ profile.avatar }}" alt="Avatar" class="w-full h-full object-cover">
-      {% else %}
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
-        </svg>
-      {% endif %}
-    </div>
-    <div class="text-center">
-      <p class="font-semibold text-sm text-gray-800 leading-tight">{{ request.user.get_full_name|default:request.user.username }}</p>
-      <p class="text-xs text-gray-400 mt-0.5 break-all">{{ request.user.email }}</p>
-    </div>
-    <form method="POST" action="{% url 'reports:logout' %}">
-      {% csrf_token %}
-      <button type="submit" class="px-4 py-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white text-xs font-semibold transition">SIGN OUT</button>
-    </form>
-    <nav class="w-full mt-2 space-y-1">
-      <a href="{% url 'reports:profile' %}"
-         class="block w-full text-sm text-gray-500 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-50 transition">Reports</a>
-      <a href="{% url 'reports:account' %}"
-         class="block w-full text-sm font-semibold text-blue-600 px-3 py-2 rounded-lg bg-blue-50">Account Information</a>
-    </nav>
-  </aside>
+  {% include "users/sidebar.html" with page='account' active_tab=active_tab %}
 
   <!-- ══════════  MAIN CONTENT  ══════════ -->
   <main class="flex-1 bg-gray-50 overflow-y-auto">
-    <div class="max-w-4xl mx-auto px-4 md:px-8 py-8">
+    <div class="max-w-2xl mx-auto px-4 md:px-8 py-8">
 
       <!-- ── Profile header ── -->
       <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-200">
         <div class="w-16 h-16 rounded-full bg-gray-100 border-2 border-gray-200 overflow-hidden flex items-center justify-center shrink-0 relative cursor-pointer"
              onclick="document.getElementById('avatar-input').click()">
-          {% if profile.avatar %}
-            <img src="{{ profile.avatar }}" alt="Avatar" class="w-full h-full object-cover" id="avatar-preview">
+          {% if profile.profilePic %}
+            <img src="{{ profile.profilePic.url }}" alt="Avatar" class="w-full h-full object-cover" id="avatar-preview">
           {% else %}
             <svg id="avatar-placeholder" xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
               <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"/>
@@ -47,11 +23,19 @@
           {% endif %}
         </div>
         <div>
-          <p class="font-bold text-gray-900 text-lg leading-tight">{{ request.user.get_full_name|default:request.user.username }}</p>
+          <p class="font-bold text-gray-900 text-lg leading-tight">
+            {% if request.user.get_full_name %}
+              {{ request.user.get_full_name }}
+            {% else %}
+              {{ request.user.username }}
+            {% endif %}
+          </p>
           <button type="button" onclick="document.getElementById('avatar-input').click()"
             class="text-xs text-gray-400 hover:text-blue-600 transition mt-0.5">Edit profile picture</button>
+
           <input type="file" id="avatar-input" name="avatar" accept="image/*" class="hidden">
-          {% if profile.avatar %}
+
+          {% if profile.profilePic and profile.profilePic.name != "profile_pictures/user.png" %}
           <label class="flex items-center gap-1 text-xs text-red-400 cursor-pointer mt-1">
             <input type="checkbox" id="delete-avatar-check" class="accent-red-500 h-3 w-3"> Remove photo
           </label>
@@ -68,6 +52,7 @@
         Changes saved successfully.
       </div>
       {% endif %}
+
       {% if errors %}
       <div class="mb-5 bg-red-50 border border-red-200 rounded-xl px-4 py-3 space-y-1">
         {% for err in errors %}
@@ -76,20 +61,19 @@
       </div>
       {% endif %}
 
-      <!-- ── Two-column layout: form | tab nav ── -->
-      <div class="flex gap-6 items-start">
-
-        <!-- Form panel -->
-        <div class="flex-1 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <!-- Form panel -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 
           <!-- ════ ACCOUNT INFORMATION TAB ════ -->
           {% if active_tab == 'info' %}
           <div class="px-6 py-4 border-b border-gray-100">
             <h2 class="font-semibold text-gray-900 text-base">Account Information</h2>
           </div>
-          <form method="POST" action="{% url 'reports:account' %}" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+
+          <form method="POST" action="{% url 'users:account' %}" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
             {% csrf_token %}
             <input type="hidden" name="action" value="update_info">
+
             <!-- hidden avatar input linked from header -->
             <input type="file" id="avatar-form-input" name="avatar" accept="image/*" class="hidden">
             <input type="checkbox" name="delete_avatar" id="delete-avatar-form" class="hidden">
@@ -97,12 +81,16 @@
             <!-- First / Last name -->
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">First Name <span class="text-red-400">*</span></label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  First Name <span class="text-red-400">*</span>
+                </label>
                 <input type="text" name="first_name" value="{{ request.user.first_name }}"
                   class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name <span class="text-red-400">*</span></label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Last Name <span class="text-red-400">*</span>
+                </label>
                 <input type="text" name="last_name" value="{{ request.user.last_name }}"
                   class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
               </div>
@@ -110,14 +98,18 @@
 
             <!-- Email -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-400">*</span></label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Email <span class="text-red-400">*</span>
+              </label>
               <input type="email" name="email" value="{{ request.user.email }}"
                 class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
             </div>
 
             <!-- Phone -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone <span class="text-red-400">*</span></label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Phone
+              </label>
               <input type="tel" name="phone" value="{{ profile.phone|default:'' }}"
                 placeholder="1 868 000-0000"
                 class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
@@ -125,14 +117,16 @@
 
             <!-- Gender -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Gender <span class="text-red-400">*</span></label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Gender
+              </label>
               <div class="relative">
                 <select name="gender"
                   class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition pr-10">
-                  <option value="">Prefer not to say</option>
-                  <option value="male"   {% if profile.gender == 'male'   %}selected{% endif %}>Male</option>
+                  <option value="" {% if not profile.gender %}selected{% endif %}>Prefer not to say</option>
+                  <option value="male" {% if profile.gender == 'male' %}selected{% endif %}>Male</option>
                   <option value="female" {% if profile.gender == 'female' %}selected{% endif %}>Female</option>
-                  <option value="other"  {% if profile.gender == 'other'  %}selected{% endif %}>Other</option>
+                  <option value="other" {% if profile.gender == 'other' %}selected{% endif %}>Other</option>
                 </select>
                 <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -153,7 +147,8 @@
           <div class="px-6 py-4 border-b border-gray-100">
             <h2 class="font-semibold text-gray-900 text-base">Change Password</h2>
           </div>
-          <form method="POST" action="{% url 'reports:account' %}?tab=password" class="px-6 py-5 space-y-4">
+
+          <form method="POST" action="{% url 'users:account' %}?tab=password" class="px-6 py-5 space-y-4">
             {% csrf_token %}
             <input type="hidden" name="action" value="change_password">
 
@@ -167,17 +162,17 @@
               <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
               <input type="password" name="new_password" id="id_new_pw" placeholder="Create new password"
                 class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition"/>
-              <!-- Strength bar -->
+
               <div class="mt-2 h-1 rounded-full bg-gray-200 overflow-hidden">
                 <div id="strength-bar" class="h-full rounded-full transition-all duration-300 w-0"></div>
               </div>
-              <!-- Requirements list -->
+
               <ul class="mt-2 space-y-0.5">
-                <li id="req-len"    class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> Minimum characters 12</li>
-                <li id="req-upper"  class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One uppercase character</li>
-                <li id="req-lower"  class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One lowercase character</li>
-                <li id="req-special"class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One special character</li>
-                <li id="req-num"    class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One number</li>
+                <li id="req-len" class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> Minimum characters 12</li>
+                <li id="req-upper" class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One uppercase character</li>
+                <li id="req-lower" class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One lowercase character</li>
+                <li id="req-special" class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One special character</li>
+                <li id="req-num" class="req-item text-xs text-gray-400 flex items-center gap-1.5"><span class="req-dot">•</span> One number</li>
               </ul>
             </div>
 
@@ -195,79 +190,77 @@
           </form>
           {% endif %}
 
-        </div>
-
-        <!-- ── Right tab nav ── -->
-        <div class="w-44 shrink-0 space-y-2">
-          <a href="{% url 'reports:account' %}?tab=info"
-             class="block text-center px-4 py-2.5 rounded-lg text-sm font-semibold transition
-               {% if active_tab == 'info' %}bg-blue-500 text-white shadow-sm{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
-            Account Information
-          </a>
-          <a href="{% url 'reports:account' %}?tab=password"
-             class="block text-center px-4 py-2.5 rounded-lg text-sm font-semibold transition
-               {% if active_tab == 'password' %}bg-blue-500 text-white shadow-sm{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
-            Change Password
-          </a>
-        </div>
-
       </div>
     </div>
   </main>
 </div>
 
 <script>
-  // ── Sync avatar input from header click to form ───────────────
-  document.getElementById('avatar-input').addEventListener('change', function() {
-    const file = this.files[0];
-    if (!file) return;
-    // Update preview
-    const url = URL.createObjectURL(file);
-    let img = document.getElementById('avatar-preview');
-    const ph = document.getElementById('avatar-placeholder');
-    if (!img) {
-      img = document.createElement('img');
-      img.id = 'avatar-preview';
-      img.className = 'w-full h-full object-cover';
-      if (ph) ph.replaceWith(img); else this.parentElement.appendChild(img);
-    }
-    img.src = url;
-    // Transfer file to the form input via DataTransfer
-    const dt = new DataTransfer();
-    dt.items.add(file);
-    const formInput = document.getElementById('avatar-form-input');
-    if (formInput) formInput.files = dt.files;
-  });
+  const headerAvatarInput = document.getElementById('avatar-input');
+  const formAvatarInput = document.getElementById('avatar-form-input');
 
-  // Sync delete avatar checkbox
-  const delCheck = document.getElementById('delete-avatar-check');
-  const delForm  = document.getElementById('delete-avatar-form');
-  if (delCheck && delForm) {
-    delCheck.addEventListener('change', () => { delForm.checked = delCheck.checked; });
+  if (headerAvatarInput) {
+    headerAvatarInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+
+      const url = URL.createObjectURL(file);
+      let img = document.getElementById('avatar-preview');
+      const ph = document.getElementById('avatar-placeholder');
+
+      if (!img) {
+        img = document.createElement('img');
+        img.id = 'avatar-preview';
+        img.className = 'w-full h-full object-cover';
+        if (ph) {
+          ph.replaceWith(img);
+        }
+      }
+
+      img.src = url;
+
+      const dt = new DataTransfer();
+      dt.items.add(file);
+
+      if (formAvatarInput) {
+        formAvatarInput.files = dt.files;
+      }
+    });
   }
 
-  // ── Password requirements ────────────────────────────────────
+  const delCheck = document.getElementById('delete-avatar-check');
+  const delForm = document.getElementById('delete-avatar-form');
+
+  if (delCheck && delForm) {
+    delCheck.addEventListener('change', () => {
+      delForm.checked = delCheck.checked;
+    });
+  }
+
   const pwInput = document.getElementById('id_new_pw');
   if (pwInput) {
-    const bar     = document.getElementById('strength-bar');
+    const bar = document.getElementById('strength-bar');
     const confirm = document.getElementById('id_confirm_pw');
-    const matchLbl= document.getElementById('match-label');
+    const matchLbl = document.getElementById('match-label');
 
     const reqs = {
-      'req-len':     v => v.length >= 12,
-      'req-upper':   v => /[A-Z]/.test(v),
-      'req-lower':   v => /[a-z]/.test(v),
+      'req-len': v => v.length >= 12,
+      'req-upper': v => /[A-Z]/.test(v),
+      'req-lower': v => /[a-z]/.test(v),
       'req-special': v => /[^A-Za-z0-9]/.test(v),
-      'req-num':     v => /[0-9]/.test(v),
+      'req-num': v => /[0-9]/.test(v),
     };
-    const strengthColors = ['bg-red-400','bg-orange-400','bg-yellow-400','bg-blue-400','bg-green-500'];
+
+    const strengthColors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-blue-400', 'bg-green-500'];
 
     pwInput.addEventListener('input', () => {
       const v = pwInput.value;
       let passed = 0;
+
       Object.entries(reqs).forEach(([id, fn]) => {
         const el = document.getElementById(id);
         if (!el) return;
+
         if (fn(v)) {
           el.classList.remove('text-gray-400');
           el.classList.add('text-green-600');
@@ -279,18 +272,29 @@
           el.querySelector('.req-dot').textContent = '•';
         }
       });
+
       bar.className = 'h-full rounded-full transition-all duration-300';
+
       if (v) {
-        const widths = ['w-1/5','w-2/5','w-3/5','w-4/5','w-full'];
+        const widths = ['w-1/5', 'w-2/5', 'w-3/5', 'w-4/5', 'w-full'];
         bar.classList.add(strengthColors[passed - 1] || strengthColors[0], widths[passed - 1] || widths[0]);
+      } else {
+        bar.classList.add('w-0');
       }
+
       checkMatch();
     });
 
     if (confirm) {
       confirm.addEventListener('input', checkMatch);
+
       function checkMatch() {
-        if (!confirm.value) { matchLbl.textContent = '\u00A0'; return; }
+        if (!confirm.value) {
+          matchLbl.textContent = '\u00A0';
+          matchLbl.className = 'text-xs mt-1 text-gray-400';
+          return;
+        }
+
         if (pwInput.value === confirm.value) {
           matchLbl.textContent = '✓ Passwords match';
           matchLbl.className = 'text-xs mt-1 text-green-600';

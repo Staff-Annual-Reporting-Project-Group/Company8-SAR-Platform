@@ -3,23 +3,25 @@
 {% block body %}
 <div class="flex min-h-screen">
 
-  <!-- Sidebar -->
-  {% include "users/profile-sidebar.html" %}
+  {% include "users/sidebar.html" %}
 
-  <!-- Main Content -->
   <main class="flex-1 bg-white px-10 py-8">
     <h1 class="text-2xl font-semibold text-gray-800 mb-6">
-      Create a new report
+      {% if report %}Edit report{% else %}Create a new report{% endif %}
     </h1>
 
-    <form method="POST" enctype="multipart/form-data" action="{%url 'users:create-report'%}">
+    <form
+      method="POST"
+      enctype="multipart/form-data"
+      action="{% if report %}{% url 'users:edit-report' report.id %}{% else %}{% url 'users:create-report' %}{% endif %}"
+    >
       {% csrf_token %}
 
       <div class="grid grid-cols-2 gap-10">
 
         <!-- LEFT COLUMN -->
         <div>
-          <!-- Title -->
+
           <label class="block text-sm font-medium text-gray-700">
             Report title *
           </label>
@@ -27,11 +29,11 @@
             type="text"
             name="title"
             placeholder="New Report"
+            value="{% if form_data.title %}{{ form_data.title }}{% elif report %}{{ report.title }}{% endif %}"
             class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
             required
           />
 
-          <!-- Description -->
           <label class="block text-sm font-medium text-gray-700 mt-6">
             Description *
           </label>
@@ -41,9 +43,8 @@
             placeholder="New Report Description"
             class="mt-1 w-full border border-gray-300 rounded px-3 py-2 text-sm"
             required
-          ></textarea>
+          >{% if form_data.description %}{{ form_data.description }}{% elif report %}{{ report.description }}{% endif %}</textarea>
 
-          <!-- Participants -->
           <label class="block text-sm font-medium text-gray-700 mt-6">
             Add Participants
           </label>
@@ -59,18 +60,23 @@
             <input
               type="text"
               id="participant-input"
-              class="flex-1 outline-none text-sm"
+              class="flex-1 outline-none text-sm min-w-[140px]"
               placeholder="Enter names..."
             />
           </div>
 
-          <!-- Hidden input to submit -->
-          <input type="hidden" name="participants" id="participants-hidden" />
+          <input
+            type="hidden"
+            name="participants"
+            id="participants-hidden"
+            value="{% if form_data.participants %}{{ form_data.participants }}{% elif report %}{% for participant in report.participants.all %}{{ participant.name }}{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}"
+          />
+
         </div>
 
         <!-- RIGHT COLUMN -->
         <div>
-          <!-- Category Dropdown -->
+
           <label class="block text-sm font-medium text-gray-700">
             Category *
           </label>
@@ -81,11 +87,18 @@
           >
             <option value="">Select Category</option>
             {% for category in categories %}
-            <option value="{{ category.id }}">{{ category.name }}</option>
+              <option value="{{ category.id }}"
+                {% if form_data.category_id == category.id|stringformat:"s" %}
+                  selected
+                {% elif report and report.category and report.category.id == category.id %}
+                  selected
+                {% endif %}
+              >
+                {{ category.name }}
+              </option>
             {% endfor %}
           </select>
 
-          <!-- Committee (ONLY IF EXISTS) -->
           {% if committees %}
           <label class="block text-sm font-medium text-gray-700 mt-6">
             Committee
@@ -93,47 +106,70 @@
 
           <div class="grid grid-cols-2 gap-3 mt-2">
             {% for committee in committees %}
-            <label class="flex items-center gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                name="committees"
-                value="{{ committee.id }}"
-                class="accent-blue-500"
-              />
-              {{ committee.name }}
-            </label>
+              <label class="flex items-center gap-2 text-sm text-gray-700">
+                <input
+                  type="checkbox"
+                  name="committees"
+                  value="{{ committee.id }}"
+                  class="accent-blue-500"
+                  {% if form_data.committee_ids and committee.id|stringformat:"s" in form_data.committee_ids %}
+                    checked
+                  {% elif report and committee in report.committees.all %}
+                    checked
+                  {% endif %}
+                />
+                {{ committee.name }}
+              </label>
             {% endfor %}
           </div>
           {% endif %}
 
-          <!-- Feature Image -->
           <label class="block text-sm font-medium text-gray-700 mt-6">
-            Add Feature Image
+            {% if report %}Change Feature Image{% else %}Add Feature Image{% endif %}
           </label>
 
           <div class="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
             <p class="text-xs text-gray-400 mb-2">
               10.0MB maximum file size
             </p>
-            <input type="file" name="image" class="hidden" id="imageUpload"/>
+
+            <input type="file" name="image" class="hidden" id="imageUpload" accept="image/*" />
+
             <label
               for="imageUpload"
               class="cursor-pointer inline-block px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
             >
-              Upload Image
+              {% if report %}Upload New Image{% else %}Upload Image{% endif %}
             </label>
+
+            <p id="imageFileName" class="mt-3 text-sm text-gray-500">
+              {% if report and report.feature_image %}
+                Current image: {{ report.feature_image.name|cut:"report_images/" }}
+              {% else %}
+                No image selected
+              {% endif %}
+            </p>
+
+            <div id="imagePreviewWrapper" class="mt-4 {% if report and report.feature_image %}{% else %}hidden{% endif %}">
+              <img
+                id="imagePreview"
+                src="{% if report and report.feature_image %}{{ report.feature_image.url }}{% endif %}"
+                alt="Selected image preview"
+                class="mx-auto max-h-52 rounded-lg border border-gray-200 shadow-sm object-contain"
+              />
+            </div>
           </div>
+
         </div>
 
       </div>
 
-      <!-- Submit -->
       <div class="mt-10">
         <button
           type="submit"
           class="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-3 rounded"
         >
-          SUBMIT REPORT FOR APPROVAL
+          {% if report %}UPDATE REPORT{% else %}SUBMIT REPORT FOR APPROVAL{% endif %}
         </button>
       </div>
 
@@ -141,48 +177,100 @@
   </main>
 </div>
 
-<!-- Participants Script -->
 <script>
   const input = document.getElementById("participant-input");
   const container = document.getElementById("participants-container");
   const hiddenInput = document.getElementById("participants-hidden");
 
-  let participants = [];
-
-  input.addEventListener("keydown", function (e) {
-    if (e.key === "," && input.value.trim() !== "") {
-      e.preventDefault();
-
-      const name = input.value.trim();
-      participants.push(name);
-
-      // Create pill
-      const pill = document.createElement("span");
-      pill.className =
-        "bg-gray-200 text-sm px-2 py-1 rounded-full flex items-center gap-1";
-
-      pill.innerHTML = `
-        ${name}
-        <button type="button" class="text-gray-600 hover:text-red-500">&times;</button>
-      `;
-
-      // Remove pill
-      pill.querySelector("button").onclick = () => {
-        participants = participants.filter(p => p !== name);
-        pill.remove();
-        updateHidden();
-      };
-
-      container.insertBefore(pill, input);
-
-      input.value = "";
-      updateHidden();
-    }
-  });
+  let participants = hiddenInput.value
+    ? hiddenInput.value.split(",").map(p => p.trim()).filter(p => p)
+    : [];
 
   function updateHidden() {
     hiddenInput.value = participants.join(",");
   }
+
+  function createParticipantPill(name) {
+    const pill = document.createElement("span");
+    pill.className = "bg-gray-200 text-sm px-2 py-1 rounded-full flex items-center gap-1";
+
+    pill.innerHTML = `
+      <span>${name}</span>
+      <button type="button" class="text-gray-600 hover:text-red-500">&times;</button>
+    `;
+
+    pill.querySelector("button").onclick = () => {
+      participants = participants.filter(p => p !== name);
+      pill.remove();
+      updateHidden();
+    };
+
+    container.insertBefore(pill, input);
+  }
+
+  function renderParticipants() {
+    const existingPills = [...container.querySelectorAll("span.bg-gray-200")];
+    existingPills.forEach(p => p.remove());
+
+    participants.forEach(name => createParticipantPill(name));
+    updateHidden();
+  }
+
+  input.addEventListener("keydown", function (e) {
+    if ((e.key === "," || e.key === "Enter") && input.value.trim() !== "") {
+      e.preventDefault();
+
+      const name = input.value.replace(",", "").trim();
+
+      if (name && !participants.some(p => p.toLowerCase() === name.toLowerCase())) {
+        participants.push(name);
+        createParticipantPill(name);
+        updateHidden();
+      }
+
+      input.value = "";
+    }
+  });
+
+  renderParticipants();
+
+  const imageUpload = document.getElementById("imageUpload");
+  const imageFileName = document.getElementById("imageFileName");
+  const imagePreview = document.getElementById("imagePreview");
+  const imagePreviewWrapper = document.getElementById("imagePreviewWrapper");
+
+  imageUpload.addEventListener("change", function () {
+    if (imageUpload.files && imageUpload.files.length > 0) {
+      const file = imageUpload.files[0];
+      imageFileName.textContent = file.name;
+      imageFileName.classList.remove("text-gray-500");
+      imageFileName.classList.add("text-gray-700", "font-medium");
+
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreview.src = e.target.result;
+          imagePreviewWrapper.classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imagePreview.src = "";
+        imagePreviewWrapper.classList.add("hidden");
+      }
+    } else {
+      {% if report and report.feature_image %}
+        imageFileName.textContent = "Current image: {{ report.feature_image.name|cut:'report_images/' }}";
+        imagePreview.src = "{{ report.feature_image.url }}";
+        imagePreviewWrapper.classList.remove("hidden");
+      {% else %}
+        imageFileName.textContent = "No image selected";
+        imagePreview.src = "";
+        imagePreviewWrapper.classList.add("hidden");
+      {% endif %}
+      imageFileName.classList.remove("text-gray-700", "font-medium");
+      imageFileName.classList.add("text-gray-500");
+    }
+  });
 </script>
 
 {% endblock %}

@@ -53,5 +53,13 @@
       >
         Account Information
       </a>
+      {% if request.user.is_superuser or request.user.is_staff or request.user.is_admin %}
+        <a
+          href="{% url 'administration:admin-accounts' %}"
+          class="block text-[14px] font-semibold text-gray-400 hover:text-gray-600 py-1"
+        >
+          Admin Accounts
+        </a>
+      {% endif %}
     </nav>
   </aside>

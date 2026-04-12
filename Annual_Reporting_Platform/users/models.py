@@ -1,10 +1,38 @@
 from django.db import models
 from django.contrib.auth.models import User
-# Create your models here.
+
 
 class UserProfilePic(models.Model):
-    user = models.OneToOneField(User,null=False,blank=False ,on_delete=models.CASCADE,unique=True,related_name='profile_pic')
-    profilePic = models.ImageField(default="profile_pictures/user.png",upload_to='profile_pictures')
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+    ]
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='profile_pic',
+        unique=True
+    )
+
+    profilePic = models.ImageField(
+        default="profile_pictures/user_default",
+        upload_to='profile_pictures'
+    )
+
+    phone = models.CharField(
+        max_length=30,
+        blank=True,
+        null=True
+    )
+
+    gender = models.CharField(
+        max_length=10,
+        choices=GENDER_CHOICES,
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
-        return self.user.username + " Profile Picture"
+        return f"{self.user.username} Profile"
