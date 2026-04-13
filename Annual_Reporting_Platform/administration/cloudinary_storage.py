@@ -24,7 +24,10 @@ def _configure():
 
 
 def upload_image(file_obj, folder='uploads', filename=None):
-    """Upload a file to Cloudinary. Returns the secure HTTPS URL."""
+    """Upload a file to Cloudinary. Returns the public_id (not the full URL)
+    so it can be stored directly in a Django ImageField backed by
+    cloudinary_storage — calling .url on the field will then produce the
+    correct Cloudinary link."""
     _configure()
     file_obj.seek(0)
     options = {
@@ -36,7 +39,7 @@ def upload_image(file_obj, folder='uploads', filename=None):
     if filename:
         options['public_id'] = filename
     result = cloudinary.uploader.upload(file_obj, **options)
-    return result['secure_url']
+    return result['public_id']
 
 
 def delete_image(url):
@@ -60,8 +63,8 @@ def delete_image(url):
 
 
 def upload_avatar(file_obj):
-    return upload_image(file_obj, folder='dcit_reports/avatars')
+    return upload_image(file_obj, folder='images/profile_pictures')
 
 
 def upload_report_image(file_obj):
-    return upload_image(file_obj, folder='dcit_reports/report_images')
+    return upload_image(file_obj, folder='images/report_images')

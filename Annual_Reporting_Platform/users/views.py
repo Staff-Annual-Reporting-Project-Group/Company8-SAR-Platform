@@ -202,7 +202,7 @@ def _save_report(report, user, form_data, category, participant_names):
                 title=form_data['title'],
                 description=form_data['description'],
                 category=category,
-                feature_image=form_data['feature_image'] if form_data['feature_image'] else 'default_image.jpg',
+                feature_image=form_data['feature_image'] if form_data['feature_image'] else Report.DEFAULT_IMAGE,
             )
         else:
             report.title = form_data['title']
@@ -389,9 +389,9 @@ def account_view(request):
                         # Handle avatar deletion
                         if delete_avatar:
                             current = str(profile.profilePic) if profile.profilePic else ''
-                            if current and current != 'profile_pictures/user.png':
+                            if current and not current.startswith('http'):
                                 profile.profilePic.delete(save=False)
-                            profile.profilePic = 'profile_pictures/user.png'
+                            profile.profilePic = UserProfilePic.DEFAULT_PIC
 
                         # Handle new upload
                         if avatar:

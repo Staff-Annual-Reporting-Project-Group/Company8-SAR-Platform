@@ -153,7 +153,7 @@
             <div id="imagePreviewWrapper" class="mt-4 {% if report and report.feature_image %}{% else %}hidden{% endif %}">
               <img
                 id="imagePreview"
-                src="{% if report and report.feature_image %}{{ report.feature_image.url }}{% endif %}"
+                src="{% if report and report.feature_image %}{{ report.feature_img_url }}{% endif %}"
                 alt="Selected image preview"
                 class="mx-auto max-h-52 rounded-lg border border-gray-200 shadow-sm object-contain"
               />
@@ -260,7 +260,7 @@
     } else {
       {% if report and report.feature_image %}
         imageFileName.textContent = "Current image: {{ report.feature_image.name|cut:'report_images/' }}";
-        imagePreview.src = "{{ report.feature_image.url }}";
+        imagePreview.src = "{{ report.feature_img_url }}";
         imagePreviewWrapper.classList.remove("hidden");
       {% else %}
         imageFileName.textContent = "No image selected";

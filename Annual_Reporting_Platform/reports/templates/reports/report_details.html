@@ -70,8 +70,8 @@
 
       <!-- Feature Image / UWI Fallback -->
       <div class="w-28 h-28 sm:w-48 sm:h-48 shrink-0 bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-sm overflow-hidden">
-        {% if report.feature_image and report.feature_image.name != 'default_image.jpg' %}
-          <img src="{{ report.feature_image.url }}" alt="{{ report.title }}" class="w-full h-full object-cover">
+        {% if report.feature_image %}
+          <img src="{{ report.feature_img_url }}" alt="{{ report.title }}" class="w-full h-full object-cover">
         {% else %}
           <div class="text-center p-3">
             <div class="w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-2 rounded-full bg-blue-700 flex items-center justify-center">
