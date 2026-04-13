@@ -33,8 +33,12 @@
 
     /* ── left panel ── */
     .left {
-      width: 36%;
+      width: 40%;
+      min-width: 260px;
       background: var(--blue);
+      background-image: url('https://res.cloudinary.com/dop5fzjom/image/upload/v1775723804/images/report_images/uwi_zocrhc.jpg');
+      background-size: cover;
+      background-position: center;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -44,21 +48,13 @@
       overflow: hidden;
     }
 
+    /* dark overlay over the background image */
     .left::before {
       content: '';
       position: absolute;
-      top: -80px; left: -80px;
-      width: 280px; height: 280px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.06);
-    }
-    .left::after {
-      content: '';
-      position: absolute;
-      bottom: -100px; right: -100px;
-      width: 360px; height: 360px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
+      inset: 0;
+      background: linear-gradient(160deg, rgba(0,45,130,0.87) 0%, rgba(0,20,75,0.80) 100%);
+      z-index: 0;
     }
 
     /* logo link */
@@ -110,7 +106,7 @@
     }
     .left-body p {
       font-size: 14px;
-      color: rgba(255,255,255,0.55);
+      color: rgba(255,255,255,0.65);
       line-height: 1.75;
       font-weight: 300;
     }
@@ -312,9 +308,71 @@
     }
     .card-foot a:hover { text-decoration: underline; }
 
-    @media (max-width: 768px) {
-      .left  { display: none; }
-      .right { padding: 32px 20px; }
+    /* ── below 860px: stack vertically, panel becomes top banner ── */
+    @media (max-width: 860px) {
+      body {
+        flex-direction: column;
+      }
+
+      .left {
+        width: 100%;
+        min-width: unset;
+        min-height: unset;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: left;
+        padding: 18px 28px;
+        gap: 20px;
+      }
+
+      /* reposition overlay to still cover full banner */
+      .left::before {
+        inset: 0;
+      }
+
+      .brand-link {
+        flex-shrink: 0;
+      }
+
+      .left-body {
+        margin: 0;
+        text-align: left;
+      }
+      .left-body h1 {
+        font-size: 22px;
+        margin-bottom: 4px;
+        /* keep on one line in banner */
+        white-space: nowrap;
+      }
+      .left-body p {
+        font-size: 12px;
+        color: rgba(255,255,255,0.6);
+        line-height: 1.5;
+      }
+
+      .right {
+        flex: 1;
+        padding: 36px 28px;
+      }
+    }
+
+    /* ── below 540px: compact banner, hide description ── */
+    @media (max-width: 540px) {
+      .left {
+        padding: 14px 20px;
+        gap: 14px;
+      }
+      .left-body h1  { font-size: 18px; }
+      .left-body p   { display: none; }
+      .brand-link img { width: 38px; height: 38px; }
+      .right { padding: 28px 20px; }
+    }
+
+    /* ── below 380px: minimal banner, logo + title only ── */
+    @media (max-width: 380px) {
+      .left-body h1  { font-size: 15px; }
+      .brand-name, .brand-sub { display: none; }
     }
 
   </style>
@@ -326,7 +384,7 @@
   <div class="left">
 
     <a href="{% url 'reports:index' %}" class="brand-link">
-      <img src="{% static 'images/login_images/uwi.jpg' %}" alt="UWI — return to home"/>
+      <img src="https://res.cloudinary.com/dop5fzjom/image/upload/v1775723804/images/report_images/uwi_zocrhc.jpg" alt="UWI — return to home"/>
       <div>
         <div class="brand-name">University of the<br/>West Indies</div>
         <div class="brand-sub">St. Augustine Campus</div>

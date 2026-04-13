@@ -32,7 +32,7 @@ class Report(models.Model):
     participants = models.ManyToManyField(Participant,blank=True)
     category = models.ForeignKey(Category,on_delete=models.SET_NULL,default=1,null=True)
     committees= models.ManyToManyField(Committee,blank=True)
-    feature_image = models.ImageField(default='images/report_images/uwi_zocrhc',upload_to='report_images')
+    feature_image = models.ImageField(default='default_image_o8sym9',upload_to='report_images')
     date_of_report= models.DateField(blank=False,null=False,default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
