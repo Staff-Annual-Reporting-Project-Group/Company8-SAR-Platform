@@ -1,8 +1,9 @@
-import os
-import sys
-import re
+import csv
 import io
+import os
+import re
 import secrets
+import sys
 import django
 import requests
 from bs4 import BeautifulSoup
@@ -172,9 +173,26 @@ def create_or_update_staff(member):
     return user, was_created, False
 
 
+def write_staff_csv(members, output_path):
+    """Write scraped staff members to a CSV file for later bulk import."""
+    fieldnames = ['first_name', 'last_name', 'email', 'photo_url']
+    with open(output_path, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for m in members:
+            parts = m['clean_name'].split()
+            writer.writerow({
+                'first_name': parts[0],
+                'last_name':  ' '.join(parts[1:]),
+                'email':      m['email'],
+                'photo_url':  m['photo_url'],
+            })
+    print(f'\n  Saved {len(members)} staff records -> {output_path}')
+
+
 def main():
     print('=' * 55)
-    print('  DCIT Staff Scraper')
+    print('  DCIT Staff Scraper  (CSV export mode)')
     print(f'  {STAFF_URL}')
     print('=' * 55)
 
@@ -186,20 +204,20 @@ def main():
     members = parse_staff(soup)
     print(f'\nFound {len(members)} staff members\n')
 
-    created = skipped = photos = 0
     for m in members:
-        user, was_created, photo_uploaded = create_or_update_staff(m)
-        photo_tag = ' 📷' if photo_uploaded else ''
-        status = '[CREATED]' if was_created else '[EXISTS] '
-        print(f'  {status} {m["raw_name"]:40} → @{user.username}{photo_tag}')
-        if was_created:
-            created += 1
-        else:
-            skipped += 1
-        if photo_uploaded:
-            photos += 1
+        print(f'  {m["raw_name"]:40}  email: {m["email"] or "(none)"}')
 
-    print(f'\nDone.  Created: {created}  |  Existed: {skipped}  |  Photos: {photos}')
+    output_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'staff_export.csv'
+    )
+    write_staff_csv(members, output_file)
+
+    print('\n' + '=' * 55)
+    print(f'  Done!  {len(members)} rows written to CSV.')
+    print(f'  Upload this file via the admin Generate Reports page')
+    print(f'  once the staff CSV import feature is available.')
+    print('=' * 55)
 
 
 if __name__ == '__main__':

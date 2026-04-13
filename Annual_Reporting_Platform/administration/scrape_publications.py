@@ -1,6 +1,7 @@
+import csv
 import os
-import sys
 import re
+import sys
 import time
 import django
 import requests
@@ -335,15 +336,18 @@ def parse_page(soup, year):
     return publications
 
 
-# -- save to DB --
+# -- resolve to CSV rows --
 
-def save_publications(publications, owner, category, committee):
-    created = skipped = 0
+def resolve_publications_to_rows(publications, owner, category_name, committee_name):
+    """
+    Resolve author names to usernames and return a list of dicts ready for
+    writing to CSV (matches the web importer's expected column format).
+    """
+    rows = []
 
     for pub in publications:
         title = pub['title']
 
-        # Resolve all authors first
         author_data = []
         for author in pub['authors']:
             name = author['name']
@@ -357,65 +361,43 @@ def save_publications(publications, owner, category, committee):
             )
             author_data.append((name, display_name, matched_user, is_staff))
 
-        # Hybrid ownership:
-        # If exactly one author matches a site user, they become the owner.
-        # If multiple authors match, admin owns it (ambiguous).
-        # If none match, admin owns it.
         matched_users = [u for _, _, u, _ in author_data if u is not None]
         if len(matched_users) == 1:
             report_owner = matched_users[0]
-            ownership_note = f'owner → @{report_owner.username}'
         else:
             report_owner = owner
-            ownership_note = f'owner → @{owner.username} (admin fallback)'
 
-        if Report.objects.filter(title=title, user=report_owner).exists():
-            if Report.objects.filter(title=title, user=owner).exists():
-                print(f'  [SKIP]    {title[:65]}')
-                skipped += 1
-                continue
+        participant_names = [display_name for _, display_name, _, _ in author_data]
 
-        report = Report.objects.create(
-            user=report_owner,
-            title=title,
-            description=pub['citation'] or f'{pub["pub_type"]}\n\n{title}',
-            category=category,
-            date_of_report=date(pub['year'], 1, 1),
-        )
-        report.committees.add(committee)
+        rows.append({
+            'username':        report_owner.username,
+            'title':           title,
+            'description':     pub['citation'] or f'{pub["pub_type"]}\n\n{title}',
+            'category':        category_name,
+            'date_of_report':  f'{pub["year"]}-01-01',
+            'committees':      committee_name,
+            'participants':    ';'.join(participant_names),
+        })
 
-        linked = []
-        unlinked = []
+    return rows
 
-        for author_name, display_name, matched_user, is_staff in author_data:
-            p, _ = Participant.objects.get_or_create(name=display_name)
-            if matched_user and p.user != matched_user:
-                p.user = matched_user
-                p.save(update_fields=['user'])
-            report.participants.add(p)
-            tag = '★' if is_staff else ' '
-            if matched_user:
-                linked.append(f'{tag}{display_name} (@{matched_user.username})')
-            else:
-                unlinked.append(f'{tag}{author_name}')
 
-        print(f'  [OK]      {title[:65]}')
-        print(f'            {ownership_note}')
-        if linked:
-            print(f'            Linked:   {", ".join(linked[:3])}{"..." if len(linked) > 3 else ""}')
-        if unlinked:
-            print(f'            Unlinked: {", ".join(unlinked[:3])}{"..." if len(unlinked) > 3 else ""}')
-
-        created += 1
-
-    return created, skipped
+def write_csv(rows, output_path):
+    """Write resolved publication rows to a CSV file."""
+    fieldnames = ['username', 'title', 'description', 'category',
+                  'date_of_report', 'committees', 'participants']
+    with open(output_path, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+    print(f'\n  Saved {len(rows)} rows -> {output_path}')
 
 
 # -- main --
 
 def main():
     print('=' * 60)
-    print('  DCIT Publications Scraper')
+    print('  DCIT Publications Scraper  (CSV export mode)')
     print('=' * 60)
 
     try:
@@ -423,19 +405,15 @@ def main():
     except User.DoesNotExist:
         print(f'\n[ERROR] User "{OWNER_USERNAME}" not found.')
         print('Available users:', list(User.objects.values_list('username', flat=True)))
-        username = input('Enter username to assign reports to: ').strip()
+        username = input('Enter fallback owner username: ').strip()
         owner = User.objects.get(username=username)
 
-    category, _ = Category.objects.get_or_create(name='Publication')
-    committee, _ = Committee.objects.get_or_create(name='Research & Development')
+    category_name  = 'Publication'
+    committee_name = 'Research & Development'
 
-    print(f'Owner:     {owner.username}')
-    print(f'Category:  {category.name}')
-    print(f'Committee: {committee.name}')
-
-    # Show how many users are available for matching
     matchable = User.objects.filter(is_active=True).exclude(last_name='').count()
-    print(f'Users available for name matching: {matchable}\n')
+    print(f'Fallback owner : {owner.username}')
+    print(f'Matchable users: {matchable}\n')
 
     print(f'Fetching {BASE_URL}/2026 ...')
     soup = fetch(f'{BASE_URL}/2026')
@@ -446,7 +424,7 @@ def main():
     years = get_years(soup)
     print(f'Years found: {years}\n')
 
-    total_created = total_skipped = 0
+    all_rows = []
 
     for i, year in enumerate(years):
         print(f'-- {year} --')
@@ -457,15 +435,23 @@ def main():
 
         pubs = parse_page(year_soup, year)
         if pubs:
-            c, s = save_publications(pubs, owner, category, committee)
-            total_created += c
-            total_skipped += s
+            rows = resolve_publications_to_rows(
+                pubs, owner, category_name, committee_name
+            )
+            all_rows.extend(rows)
 
         if i < len(years) - 1:
             time.sleep(DELAY)
 
+    output_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'publications_export.csv'
+    )
+    write_csv(all_rows, output_file)
+
     print('\n' + '=' * 60)
-    print(f'  Done!  Created: {total_created}  |  Skipped: {total_skipped}')
+    print(f'  Done!  {len(all_rows)} rows written to CSV.')
+    print(f'  Upload this file via the admin Generate Reports page.')
     print('=' * 60)
 
 
