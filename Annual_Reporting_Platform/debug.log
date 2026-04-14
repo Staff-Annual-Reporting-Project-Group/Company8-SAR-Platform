@@ -2460,3 +2460,652 @@ C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semest
 Watching for file changes with StatReloader
 C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\administration\views.py changed, reloading.
 Watching for file changes with StatReloader
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Error fetching report with id 1: No Report matches the given query.
+Not Found: /reports/report/1
+Internal Server Error: /administration/admin-accounts/
+Traceback (most recent call last):
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\administration\decorators.py", line 9, in wrapper
+    return redirect('reports:login')
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 51, in redirect
+    resolve_url(to, *args, **kwargs),
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 184, in resolve_url
+    return reverse(to, args=args, kwargs=kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\resolvers.py", line 842, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'login' not found. 'login' is not a valid view function or pattern name.
+Internal Server Error: /administration/admin-reports/
+Traceback (most recent call last):
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\administration\decorators.py", line 9, in wrapper
+    return redirect('reports:login')
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 51, in redirect
+    resolve_url(to, *args, **kwargs),
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 184, in resolve_url
+    return reverse(to, args=args, kwargs=kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\resolvers.py", line 842, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'login' not found. 'login' is not a valid view function or pattern name.
+Internal Server Error: /administration/generate-reports/
+Traceback (most recent call last):
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\administration\decorators.py", line 9, in wrapper
+    return redirect('reports:login')
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 51, in redirect
+    resolve_url(to, *args, **kwargs),
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 184, in resolve_url
+    return reverse(to, args=args, kwargs=kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\resolvers.py", line 842, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'login' not found. 'login' is not a valid view function or pattern name.
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Error fetching report with id 1: No Report matches the given query.
+Not Found: /reports/report/1
+Internal Server Error: /administration/admin-accounts/
+Traceback (most recent call last):
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\administration\decorators.py", line 9, in wrapper
+    return redirect('reports:login')
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 51, in redirect
+    resolve_url(to, *args, **kwargs),
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 184, in resolve_url
+    return reverse(to, args=args, kwargs=kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\resolvers.py", line 842, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'login' not found. 'login' is not a valid view function or pattern name.
+Internal Server Error: /administration/admin-reports/
+Traceback (most recent call last):
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\administration\decorators.py", line 9, in wrapper
+    return redirect('reports:login')
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 51, in redirect
+    resolve_url(to, *args, **kwargs),
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 184, in resolve_url
+    return reverse(to, args=args, kwargs=kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\resolvers.py", line 842, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'login' not found. 'login' is not a valid view function or pattern name.
+Internal Server Error: /administration/generate-reports/
+Traceback (most recent call last):
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\administration\decorators.py", line 9, in wrapper
+    return redirect('reports:login')
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 51, in redirect
+    resolve_url(to, *args, **kwargs),
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\shortcuts.py", line 184, in resolve_url
+    return reverse(to, args=args, kwargs=kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\.venv\Lib\site-packages\django\urls\resolvers.py", line 842, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'login' not found. 'login' is not a valid view function or pattern name.
+C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\administration\decorators.py changed, reloading.
+Watching for file changes with StatReloader
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Error fetching report with id 1: No Report matches the given query.
+Not Found: /reports/report/1
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Error fetching report with id 1: No Report matches the given query.
+Not Found: /reports/report/1
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Error fetching report with id 1: No Report matches the given query.
+Not Found: /reports/report/1
+C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\reports\middleware.py changed, reloading.
+Watching for file changes with StatReloader
+Response took 0.79 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.67 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.67 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Response took 0.03 seconds to get completed
+Response took 0.01 seconds to get completed
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Response took 0.02 seconds to get completed
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Response took 0.03 seconds to get completed
+Response took 0.02 seconds to get completed
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Not Found: /users/delete-report/1
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Response took 0.02 seconds to get completed
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Response took 0.02 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Error fetching report with id 1: No Report matches the given query.
+Response took 0.00 seconds to get completed
+Not Found: /reports/report/1
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.02 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.69 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.67 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.70 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.70 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Response took 0.03 seconds to get completed
+Response took 0.01 seconds to get completed
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Response took 0.03 seconds to get completed
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Response took 0.03 seconds to get completed
+Response took 0.02 seconds to get completed
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Not Found: /users/delete-report/1
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Response took 0.02 seconds to get completed
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Response took 0.02 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Error fetching report with id 1: No Report matches the given query.
+Response took 0.00 seconds to get completed
+Not Found: /reports/report/1
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.71 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.69 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.67 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.74 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.73 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.67 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Response took 0.03 seconds to get completed
+Response took 0.01 seconds to get completed
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Response took 0.03 seconds to get completed
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Response took 0.03 seconds to get completed
+Response took 0.02 seconds to get completed
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Not Found: /users/delete-report/1
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Response took 0.03 seconds to get completed
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Response took 0.02 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Error fetching report with id 1: No Report matches the given query.
+Response took 0.00 seconds to get completed
+Not Found: /reports/report/1
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.68 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.67 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Watching for file changes with StatReloader
+Response took 0.10 seconds to get completed
+Response took 0.04 seconds to get completed
+Response took 0.02 seconds to get completed
+Not Found: /favicon.ico
+Response took 0.01 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.69 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.00 seconds to get completed
+Response took 0.66 seconds to get completed
+Response took 0.66 seconds to get completed
+Response took 0.00 seconds to get completed
+C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\reports\middleware.py changed, reloading.
+Watching for file changes with StatReloader
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/static/images/login_images/uwi.ico
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Not Found: /administration/static/images/login_images/uwi.ico
+Error fetching report with id 1: No Report matches the given query.
+Not Found: /reports/report/1
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Error fetching report with id 1: No Report matches the given query.
+Not Found: /reports/report/1
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 1
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 1
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 1
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 2
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 3
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 1
+Not Found: /users/delete-report/1
+Not Found: /users/profile/edit-report/1
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 1
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 1
+Error fetching report with id 1: No Report matches the given query.
+Not Found: /reports/report/1
