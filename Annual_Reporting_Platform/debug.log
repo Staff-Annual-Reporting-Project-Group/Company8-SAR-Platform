@@ -3120,3 +3120,15 @@ C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semest
 Watching for file changes with StatReloader
 C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\reports\models.py changed, reloading.
 Watching for file changes with StatReloader
+Report 'Report Owned By The Test User' created successfully by user 'testuser' with id 10
+Report 'Report Linked To A Committee' created successfully by user 'testuser' with id 11
+Report 'First Research Report Created Here' created successfully by user 'testuser' with id 12
+Report 'Second Research Report Created Here' created successfully by user 'testuser' with id 13
+Report 'Third Research Report Created Here' created successfully by user 'testuser' with id 14
+Report 'A Valid New Report Title Here' created successfully by user 'testuser' with id 15
+Not Found: /users/delete-report/18
+Not Found: /users/profile/edit-report/23
+Report 'Report With Updated Description Title' updated successfully by user 'testuser' with id 24
+Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 25
+Error fetching report with id 40: No Report matches the given query.
+Not Found: /reports/report/40
