@@ -21,7 +21,8 @@ class UserProfilePic(models.Model):
 
     profilePic = models.ImageField(
         default=DEFAULT_PIC,
-        upload_to='profile_pictures'
+        upload_to='profile_pictures',
+        max_length=500
     )
 
     phone = models.CharField(

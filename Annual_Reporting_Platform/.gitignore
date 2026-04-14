@@ -4,3 +4,5 @@ db.sqlite3
 *.pyc
 debug.log
 *.sqlite3
+db_backup.json
+.env
