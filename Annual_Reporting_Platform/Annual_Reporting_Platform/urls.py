@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    path('', include('reports.urls')), 
     path('admin/', admin.site.urls),
     path('reports/',include('reports.urls')),
     path('users/',include('users.urls')),

@@ -3132,3 +3132,29 @@ Report 'Report With Updated Description Title' updated successfully by user 'tes
 Report 'Updated Report Title After The Edit' updated successfully by user 'testuser' with id 25
 Error fetching report with id 40: No Report matches the given query.
 Not Found: /reports/report/40
+Not Found: /reports/reports/user/1/
+Not Found: /reports/reports/user/1/
+Not Found: /reports/reports/user/static/images/login_images/uwi.ico
+C:\Users\Jonathan\OneDrive\Documents\University of the West Indies\Year 3\Semester 2\New folder\Assignments\Company8-SAR-Platform\Annual_Reporting_Platform\Annual_Reporting_Platform\urls.py changed, reloading.
+Watching for file changes with StatReloader
+Starting new HTTPS connection (1): sta.uwi.edu:443
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2026 HTTP/1.1" 200 8019
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2025 HTTP/1.1" 200 12217
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2024 HTTP/1.1" 200 8363
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2023 HTTP/1.1" 200 9612
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2021 HTTP/1.1" 200 9125
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2020 HTTP/1.1" 200 10150
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2019 HTTP/1.1" 200 10328
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2018 HTTP/1.1" 200 9825
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2017 HTTP/1.1" 200 11797
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2016 HTTP/1.1" 200 11662
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2015 HTTP/1.1" 200 10721
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2014 HTTP/1.1" 200 8563
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2013 HTTP/1.1" 200 9871
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2012 HTTP/1.1" 200 13281
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2011 HTTP/1.1" 200 13110
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2010 HTTP/1.1" 200 12084
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2009 HTTP/1.1" 200 9248
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/2004 HTTP/1.1" 200 8071
+https://sta.uwi.edu:443 "GET /fst/dcit/publications/1999 HTTP/1.1" 200 7770
+Report 'Test Report' created successfully by user 'Admin' with id 418
