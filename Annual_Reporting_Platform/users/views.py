@@ -1,9 +1,12 @@
+from datetime import date as date_type
+
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from reports.models import Report,Category,Committee,Participant
 from django.db import IntegrityError, transaction
 from .extra_functionality import verify_title,verify_description
@@ -98,6 +101,7 @@ def _get_report_form_data(request):
         'category_id': request.POST.get('category', '').strip(),
         'committee_ids': request.POST.getlist('committees'),
         'participants': request.POST.get('participants', '').strip(),
+        'date_of_report': request.POST.get('date_of_report', '').strip(),
         'feature_image': request.FILES.get('image'),
     }
 
@@ -184,6 +188,7 @@ def _build_report_context(page, dependencies, report=None, form_data=None):
             'category_id': form_data['category_id'],
             'committee_ids': form_data['committee_ids'],
             'participants': form_data['participants'],
+            'date_of_report': form_data['date_of_report'],
         }
 
     return context
@@ -192,6 +197,12 @@ def _build_report_context(page, dependencies, report=None, form_data=None):
 def _save_report(report, user, form_data, category, participant_names):
     selected_committees = Committee.objects.filter(id__in=form_data['committee_ids'])
     participant_objects = _get_or_create_participants(participant_names, user)
+
+    date_str = form_data.get('date_of_report', '')
+    try:
+        report_date = date_type.fromisoformat(date_str) if date_str else date_type.today()
+    except ValueError:
+        report_date = date_type.today()
 
     with transaction.atomic():
         is_create = report is None
@@ -202,12 +213,14 @@ def _save_report(report, user, form_data, category, participant_names):
                 title=form_data['title'],
                 description=form_data['description'],
                 category=category,
+                date_of_report=report_date,
                 feature_image=form_data['feature_image'] if form_data['feature_image'] else Report.DEFAULT_IMAGE,
             )
         else:
             report.title = form_data['title']
             report.description = form_data['description']
             report.category = category
+            report.date_of_report = report_date
 
             if form_data['feature_image']:
                 report.feature_image = form_data['feature_image']
@@ -538,3 +551,27 @@ def registerView(request):
                 messages.error(request, err)
 
     return render(request, 'users/register.html',context)
+
+
+def user_search(request):
+    q = request.GET.get('q', '').strip()
+    if len(q) < 2:
+        return JsonResponse([], safe=False)
+
+    users = (
+        User.objects
+        .filter(is_active=True)
+        .filter(
+            Q(first_name__icontains=q) |
+            Q(last_name__icontains=q) |
+            Q(username__icontains=q)
+        )
+        .exclude(first_name='', last_name='')
+        [:8]
+    )
+
+    results = [
+        {'name': u.get_full_name() or u.username, 'username': u.username}
+        for u in users
+    ]
+    return JsonResponse(results, safe=False)
