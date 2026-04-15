@@ -1,11 +1,10 @@
 
 
-from datetime import date as date_type
+from datetime import date as date_type, timedelta
 
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http.response import HttpResponse
 from .models import Report,Committee
-from django.views.decorators.cache import cache_page
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import logging
@@ -63,28 +62,67 @@ def _parse_annual_range(request):
 
     return date_from, date_to, range_type, label, extra
 
-logger = logging.getLogger(__name__)# Create a logger for this module the__name__ variable will be set to the name of the module, which is a common practice for organizing loggers in Python applications.
-# Create your views here.
-# @cache_page(60 * 15)
+logger = logging.getLogger(__name__)
+
+
+def _apply_period_filter(queryset, period):
+    now = timezone.now().date()
+    if period == 'this_week':
+        return queryset.filter(date_of_report__gte=now - timedelta(days=7))
+    elif period == 'this_month':
+        return queryset.filter(date_of_report__year=now.year, date_of_report__month=now.month)
+    elif period == 'this_year':
+        return queryset.filter(date_of_report__year=now.year)
+    return queryset
+
+
 def index(request):
-    filtered = True if request.GET.get('period') != None else False
+    reports = (
+        Report.objects.active()
+        .select_related('user', 'category')
+        .prefetch_related('committees', 'participants')
+    )
 
-    if filtered:
-        period = request.GET.get('period')
-        category = request.GET.get("category") if request.GET.get("category") != "All" else None
-        committee = request.GET.get("committee") if request.GET.get("committee") != "All" else None
-        participant = request.GET.get("participant") if request.GET.get("participant") != None else None
+    q = request.GET.get('q', '').strip()
+    if q:
+        reports = reports.search(q)
 
-        reports = Report.objects.filterReports(period, category, committee, participant).active()
-    else:
-        keyword = request.GET.get('q') if request.GET.get('q') != None else ''
-        reports = Report.objects.search(keyword).active()
+    category = request.GET.get('category', '').strip()
+    if category and category != 'All':
+        reports = reports.filter(category__name=category)
+
+    committee_id = request.GET.get('committee', '').strip()
+    selected_committee = None
+    if committee_id and committee_id != 'All':
+        try:
+            selected_committee = Committee.objects.get(pk=committee_id)
+            reports = reports.filter(committees=selected_committee)
+        except (Committee.DoesNotExist, ValueError):
+            pass
+
+    participant = request.GET.get('participant', '').strip()
+    if participant:
+        reports = reports.filter(participants__name__icontains=participant)
+
+    period = request.GET.get('period', '').strip()
+    if period and period != 'Forever':
+        reports = _apply_period_filter(reports, period)
+
+    reports = reports.distinct()
 
     paginator = Paginator(reports, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context = {'page_obj': page_obj}
 
+    context = {
+        'page_obj': page_obj,
+        'committees': Committee.objects.all(),
+        'q': q,
+        'selected_category': category if category not in ('', 'All') else '',
+        'selected_committee': selected_committee,
+        'selected_participant': participant,
+        'selected_period': period if period not in ('', 'Forever') else '',
+    }
     return render(request, 'reports/index.html', context)
 
 def reportView(request, pk):
